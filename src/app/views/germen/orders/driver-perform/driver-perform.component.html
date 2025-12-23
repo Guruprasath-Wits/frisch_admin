@@ -1,0 +1,94 @@
+<div class="container mt-4">
+    <div class="filter-card p-4 mb-4">
+      <div class="row d-flex">
+        <h3 class="col-md-10 mb-3" style="font-weight: bold !important;">Driver Performance</h3>
+      </div>
+      <div class="row">
+        <!-- Driver Filter -->
+       <div class="col-md-3 mb-3">
+  <select
+    class="form-control filter-input"
+    [(ngModel)]="selectedDriver"
+    (change)="filterOrders()"
+  >
+    <option value="">Select Driver</option>
+    <option *ngFor="let driver of drivers" [value]="driver.id">
+      {{ driver.username }}
+    </option>
+  </select>
+</div>
+
+  
+        <!-- Date From Filter -->
+        <div class="col-md-3 mb-3">
+          <input
+            type="date"
+            class="form-control filter-input"
+            [(ngModel)]="fromDate"
+            (change)="filterOrders()"
+            placeholder="From Date"
+          />
+        </div>
+  
+        <!-- Date To Filter -->
+        <div class="col-md-3 mb-3">
+          <input
+            type="date"
+            class="form-control filter-input"
+            [(ngModel)]="toDate"
+            (change)="filterOrders()"
+            placeholder="To Date"
+          />
+        </div>
+  
+        
+        
+  
+        <!-- Button to Calculate Total Distance and Time -->
+        <div class="col-md-3 mb-3">
+          <button
+            class="btn btn-warning"
+            (click)="showCalculationResult()"
+          >
+            Calculate 
+          </button>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Table with Pagination -->
+    <div class="table-card p-3">
+      <table class="table table-hover cursor-pointer">
+        <thead class="table-header">
+          <tr>
+            <th>S.No</th>
+            <th>Driver Name</th>
+            <th>Delivery Date</th>
+            <th>Total Distance (km)</th>
+            <th>Total Duration (mins)</th>
+            <th>Total Orders</th>
+          </tr>
+        </thead>
+        <tbody style="text-align: center;">
+          <tr
+            *ngFor="let order of filteredOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index"
+          >
+            <td>{{ i + 1 + (page - 1) * itemsPerPage }}</td>
+            <td>{{ order.driverName }}</td>
+            <td>{{ order.deliveryDate | date: 'dd/MM/yyyy' }}</td>
+
+            <td>{{ order.deliveryDistance }}</td>
+            <td>{{ order.deliveryTime }}</td>
+            <td>{{ order.totalOrders }}</td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <div class="pagination-controls mt-3">
+        <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
+        <span>Page {{ page }} of {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,83 @@
+.container {
+    max-width: 2050px;
+    margin: 0 auto;
+    font-family: "Nunito", "Segoe UI", Arial, sans-serif;
+  }
+  
+
+  // .form-group input,textarea,select{
+
+  //   width: 75%;
+
+  // }
+  .add-user-card {
+    background-color: #ffffff;
+    border: 1px solid #e1b12c;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  
+  /* Form title styling */
+  h3 {
+    margin-bottom: 20px; /* Space below the heading */
+  }
+  
+  /* Form label styling */
+  .add-user-card form label {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  /* Form input styling */
+  .form-group {
+    margin-bottom: 15px; /* Space between form groups */
+  }
+
+  .error {
+    color: red;
+    font-size: 14px;
+}
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%; /* Full width for all inputs */
+    padding: 10px; /* Padding for inputs */
+    border: 1px solid #e1b12c; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 14px; /* Font size for inputs */
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    box-shadow: 0 0 5px 1px #e1b12c; /* Focus shadow */
+    outline: none; /* Remove default outline */
+  }
+  
+  /* Button styling */
+  .btn-primary {
+    background-color: #e1b12c;
+    border-color: #e1b12c;
+    color: #000;
+    padding: 10px 15px; /* Padding for button */
+    border-radius: 4px; /* Rounded corners for button */
+    font-size: 16px; /* Font size for button */
+    cursor: pointer; /* Pointer on hover */
+  }
+  
+  .btn-primary:hover {
+    background-color: #ecb50f; /* Hover effect */
+  }
+  
+  .btn-primary:disabled {
+    background-color: #d3d3d3; /* Disabled button */
+    cursor: not-allowed; /* Cursor style when disabled */
+  }
+  
+  /* Margin for button */
+  .btn {
+    margin-top: 15px; /* Add margin for spacing */
+  }
+  

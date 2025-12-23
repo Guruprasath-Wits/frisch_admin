@@ -1,0 +1,189 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AdminService } from 'src/app/admin.service';
+import { ActivatedRoute } from '@angular/router';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-addproduct',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './addproduct.component.html',
+  styleUrls: ['./addproduct.component.scss'],
+})
+export class AddproductComponent {
+  productForm: FormGroup;
+  productId: string;
+  categories: any[] = []; // Store categories fetched from API
+  selectedFile: File | null = null; // Store selected file for image upload
+
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private apiService: AdminService,
+    private router: Router
+  ) {
+    // Initialize the form with fields and validators
+    this.productForm = this.fb.group({
+      product_name: ['', Validators.required],
+      nick_name: [''],
+      product_status: [''],
+      category_id: ['', Validators.required],
+      desc: [''],
+      price: [null],
+      weight: [null],
+      ingredients: [''],
+      nutri_inform: [''],
+      status: [false], 
+      product_img: [null]
+    });
+
+    
+    this.productId = this.route.snapshot.paramMap.get('id') || '';
+  }
+
+  ngOnInit() {
+    this.loadCategories(); // Load categories from API
+    if (this.productId) {
+      this.loadProductData(this.productId); // Load product data if editing
+    }
+  }
+
+  // Load product categories for the dropdown
+  loadCategories() {
+    this.apiService.getCategory({}).subscribe(
+      (response) => {
+        this.categories = response.category;
+      },
+      (error) => {
+        console.error('Error fetching categories:', error);
+      }
+    );
+  }
+
+  // Load product data to populate form fields
+  loadProductData(id: string) {
+    this.apiService.getProductById(id).subscribe(
+      (response) => {
+        const product = response.product;
+        this.productForm.patchValue({
+          product_name: product.product_name,
+          nick_name: product.nick_name,
+          product_status: product.product_status,
+          category_id: product.category_id,
+          desc: product.desc || '',
+          price: product.price,
+          weight: product.weight,
+          ingredients: product.ingredients,
+          nutri_inform: product.nutri_inform || '',
+          status: product.status === 1, // Set to true if product is active
+          product_img: product.product_img
+        });
+      },
+      (error) => {
+        console.error('Error loading product data:', error);
+      }
+    );
+  }
+
+  
+
+  onFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length) {
+      this.selectedFile = input.files[0];
+  
+      // Show image preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.productForm.patchValue({ product_img: e.target.result });
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
+  }
+
+  categoryDropdownOpen = false;
+
+  toggleCategoryDropdown() {
+  this.categoryDropdownOpen = !this.categoryDropdownOpen;
+  }
+  
+
+
+  onCategoryChange(id: number, event: Event) {
+  const selectedCategories = this.productForm.get('category_id')?.value || [];
+  const input = event.target as HTMLInputElement;
+
+  if (input.checked) {
+    selectedCategories.push(id);
+  } else {
+    const index = selectedCategories.indexOf(id);
+    if (index > -1) {
+      selectedCategories.splice(index, 1);
+    }
+  }
+
+  this.productForm.get('category_id')?.setValue(selectedCategories);
+}
+
+isCategorySelected(id: number): boolean {
+  return this.productForm.get('category_id')?.value.includes(id);
+}
+
+getSelectedCategoryNames(): string {
+  const selectedIds = this.productForm.get('category_id')?.value || [];
+  return this.categories
+    .filter(cat => selectedIds.includes(cat.id))
+    .map(cat => cat.category_name)
+    .join(', ');
+}
+
+  
+  // Function to remove the image
+  removeImage() {
+    this.selectedFile = null;
+    this.productForm.patchValue({ product_img: null });
+  }
+  
+  
+
+  // Submit the form data to update product
+  onSubmit() {
+    if (this.productForm.valid) {
+      // Formulate FormData for submission
+      const formData = new FormData();
+      formData.append('product_name', this.productForm.get('product_name')?.value);
+      formData.append('nick_name', this.productForm.get('nick_name')?.value);
+      formData.append('product_status', this.productForm.get('product_status')?.value);
+      formData.append('category_id', this.productForm.get('category_id')?.value);
+      formData.append('desc', this.productForm.get('desc')?.value);
+      formData.append('price', this.productForm.get('price')?.value);
+      formData.append('weight', this.productForm.get('weight')?.value);
+      formData.append('ingredients', this.productForm.get('ingredients')?.value);
+      formData.append('nutri_inform', this.productForm.get('nutri_inform')?.value);
+      formData.append('status', this.productForm.get('status')?.value ? '1' : '0');
+
+      if (this.selectedFile) {
+        formData.append('product_img', this.selectedFile);
+      }
+
+   
+      this.apiService.createProduct( formData).subscribe(
+        (response) => {
+          console.log('Product Created successfully:', response);
+          Swal.fire('Added!', 'Product has been added.', 'success');
+          this.router.navigate(['/products'])
+        },
+        (error) => {
+          Swal.fire('ErrorX', 'Something Went Wrong.', 'error');
+          console.error('Error updating product:', error);
+        }
+      );
+    } else {
+      
+      this.productForm.markAllAsTouched();
+    }
+  }
+}

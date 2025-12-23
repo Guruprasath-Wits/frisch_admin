@@ -1,0 +1,142 @@
+/* Container and layout */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    font-family: "Nunito", "Segoe UI", arial;
+  }
+  
+  /* Filter Card Design */
+  .filter-card {
+    background-color: #ffffff;
+    border: 1px solid #e1b12c;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+
+  
+  .estimated-time-box {
+  white-space: nowrap;         /* Prevent text from wrapping */
+  display: inline-block;       /* Prevent full-width stretching */
+  padding: 12px 20px;
+  border-radius: 6px;
+  background-color: #d9f4fb;   /* Match your blue alert background */
+  border: 1px solid #aee1f3;
+  font-size: 16px;
+  font-weight: 500;
+  color: #004d61;
+}
+
+  .filter-input {
+    border-color: #e1b12c;
+  }
+  
+  .filter-input:focus {
+    box-shadow: 0 0 5px 1px #e1b12c;
+  }
+  
+  /* Card-styled table */
+  .table-card {
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #e1b12c;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow-x: auto; /* Allow horizontal scrolling */
+    overflow-y: hidden; /* Hide vertical overflow */
+    margin-bottom: 20px;
+  }
+  
+  
+  .userlist-table {
+    margin-bottom: 0;
+    width: 100%; /* Ensure the table takes full width */
+    border-collapse: collapse; /* Ensure borders collapse for clean styling */
+  }
+  
+  .table-header {
+    background-color: #e1b12c;
+    color: #000;
+    font-weight: bold;
+    border-bottom: 2px solid #e1b12c;
+    
+  }
+  
+  
+  
+  .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #fcf4d9;
+  }
+  
+  .table-hover > tbody > tr:hover {
+    background-color: #ffe680 !important;
+  }
+  
+  .table-card td,
+  .table-card th {
+    vertical-align: middle;
+    padding: 12px; /* Add padding to make the table cells look better */
+    border-bottom: 1px solid #e1b12c; /* Add bottom border to make rows distinct */
+  }
+  
+  .table-card th {
+    text-align: left;
+  }
+  
+  /* Button styling */
+  .btn-warning {
+    background-color: #e1b12c;
+    border-color: #e1b12c;
+    color: #000;
+    margin-bottom: 3px;
+  }
+  
+  .btn-warning:hover {
+    background-color: #ecb50f;
+  }
+  
+  .btn-danger:hover {
+    background-color: #c7130c;
+  }
+  
+  .btn-danger {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+  }
+  
+  .btn-sm i {
+    margin-right: 5px;
+  }
+  
+  .pagination-controls {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: static;
+  }
+  
+  .pagination-controls button {
+    background-color: #e1b12c;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    margin: 8px 5px;
+    cursor: pointer;
+  
+  }
+  
+  .pagination-controls button:hover:not(:disabled) {
+    background-color: #d39e00;
+  }
+  
+  .pagination-controls button:disabled {
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+  }
+  
+  .pagination-controls span {
+    margin: 0 10px;
+  }
+  

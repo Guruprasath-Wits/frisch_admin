@@ -1,0 +1,104 @@
+<div class="container">
+  <h3 class="mb-2" style="text-align: center; font-weight: bold !important;">{{ isEditMode ? 'Edit Category' : 'Add Category' }}</h3>
+  
+  <div class="add-user-card mb-3">
+    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+      <div class="form-group mb-3">
+        <label for="form-label category_name">Category Name</label>
+        <input type="text" id="category_name" formControlName="category_name" class="form-control" placeholder="Enter category name" />
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="category_type" class="form-label">Category Type</label>
+        <select id="category_type" formControlName="category_type" class="form-control" required>
+          <option value="" disabled selected>Select category type</option>
+          <option value="Bakkery">Bakkery Items</option>
+          <option value="free_trail">Free Trial</option>
+          <option value="Others">Others</option>
+        </select>
+      </div>
+      
+
+      <div class="form-group mb-3">
+        <label for="form-label category_desc">Description</label>
+        <textarea id="category_desc" formControlName="category_desc" class="form-control" placeholder="Enter category description"></textarea>
+      </div>
+
+
+
+      <div class="form-group mb-3">
+        <label for="image_file" class="form-label">Upload Image</label>
+        <input 
+          type="file" 
+          id="image_file" 
+          (change)="onFileChange($event)" 
+          class="form-control" 
+          accept="image/png, image/jpeg, image/jpg"
+        />
+        <small class="text-danger">**The file types must be jpg/png/jpeg</small>
+      
+        <!-- Image Preview -->
+        <div *ngIf="imagePreview" class="preview mt-3">
+          <h5>Preview:</h5>
+          <img [src]="imagePreview" alt="Image Preview" class="img-thumbnail">
+          <button class="btn btn-danger mt-2" style="margin-left: 10%;" (click)="removeImage()">Remove Image</button>
+        </div>
+      </div>
+      
+
+      
+
+     
+      
+
+      
+
+      <!-- <div *ngIf="imagePreview" class="form-group mb-3">
+        </div> -->
+
+
+   
+
+
+      <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update Category' : 'Add Category' }}</button>
+    </form>
+  </div>
+
+  <h3 style="text-align: center; font-weight: bold !important;">Category List</h3>
+  
+  <table class="table table-hover category-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Category Name</th>
+        <th>Description</th>
+        <th>Image</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let category of paginatedCategories;let i = index">
+        <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+        <td>{{ category.category_name }}</td>
+        <td>{{ category.category_desc }}</td>
+        <td>
+          <a [href]="category.category_img" target="_blank">
+          <img [src]="file + category.category_img" style="width: 200px;height: 200px;"  class="category-image" />
+        </a>
+        </td>
+        <td>
+          <button style="margin-right: 5px;" class="btn btn-warning btn-sm" *ngIf="category.id" (click)="onEdit(category)"><i class="fa fa-edit"></i></button>
+          <button class="btn btn-danger btn-sm" *ngIf="category.id" (click)="onDelete(category.id)"><i class="fa fa-trash"></i></button>
+
+         
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination-controls">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+  </div>
+</div>

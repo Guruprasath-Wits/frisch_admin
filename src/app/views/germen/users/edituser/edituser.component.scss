@@ -1,0 +1,52 @@
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    font-family: "Nunito", "Segoe UI", Arial, sans-serif;
+  }
+  
+  
+  .add-user-card {
+    background-color: #ffffff;
+    border: 1px solid #e1b12c;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+
+  .add-user-card form label{
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  /* Form inputs */
+  .form-control {
+    width: 75%;
+    border: 1px solid #e1b12c; /* Add border color */
+  }
+  
+  .form-control:focus {
+    box-shadow: 0 0 5px 1px #e1b12c; /* Focus shadow */
+  }
+  
+  /* Button styling */
+  .btn-primary {
+    background-color: #e1b12c;
+    border-color: #e1b12c;
+    color: #000;
+  }
+  
+  .btn-primary:hover {
+    background-color: #ecb50f; /* Hover effect */
+  }
+  
+  .btn-primary:disabled {
+    background-color: #d3d3d3; /* Disabled button */
+    cursor: not-allowed;
+  }
+  
+  /* Adjust for button margin */
+  .btn {
+    margin-top: 15px; /* Add margin for spacing */
+  }
+  

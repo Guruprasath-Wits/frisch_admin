@@ -1,0 +1,125 @@
+.notification-list {
+  padding: 10px;
+}
+
+/* === CARD DESIGN === */
+.notification-card {
+  background-color: #ffffff;
+  border: 1px solid #e5c100;
+  margin-bottom: 15px !important;
+  transition: all 0.3s ease-in-out;
+  border-radius: 10px;
+}
+
+.notification-card.read {
+  border: 2px solid #007bff;
+}
+
+.notification-card.unread {
+  border: 2px solid #dc3545;
+}
+
+.notification-card:hover {
+  box-shadow: rgba(100, 100, 111, 0.5) 0px 7px 29px 0px;
+}
+
+/* === CARD BODY (Desktop Default) === */
+.card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap; /* keep single line on large screens */
+  color: #333;
+  padding: 15px;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+/* === BUTTON STYLE === */
+.btn {
+  background-color: #e5c100;
+  border-color: #d4b000;
+  color: #fff;
+  height: 40px;
+  transition: background-color 0.3s ease;
+  border-radius: 6px;
+}
+
+.btn:hover {
+  background-color: #d4b000;
+  border-color: #b89b00;
+}
+
+/* === Eye Button Styling === */
+.view-btn {
+  width: 45px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === FILTER BUTTONS === */
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px; /* space between buttons */
+  flex-wrap: nowrap;
+  margin-bottom: 20px;
+}
+
+.filter-buttons .btn {
+  padding: 8px 25px;
+  font-weight: 500;
+  border-radius: 6px;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .filter-buttons {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .filter-buttons .btn {
+    padding: 6px 15px;
+    font-size: 0.9rem;
+  }
+
+  .card-body {
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  .card-title,
+  .card-text {
+    width: 100%;
+    margin-bottom: 8px;
+    text-align: left;
+  }
+
+  /* move eye icon bottom-right */
+  .view-btn {
+    align-self: flex-end;
+    margin-top: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-buttons .btn {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+}

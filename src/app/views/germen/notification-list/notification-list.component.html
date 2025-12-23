@@ -1,0 +1,28 @@
+<div class="notification-list">
+  <!-- Filter Buttons -->
+  <div class="filter-buttons mb-3">
+    <button class="btn btn-warning" (click)="onFilterChange('all')">All</button>
+    <button class="btn btn-warning" (click)="onFilterChange('unread')">Unread</button>
+    <button class="btn btn-warning" (click)="onFilterChange('read')">Read</button>
+  </div>
+
+  <!-- Notification Cards -->
+  <div *ngFor="let notification of filteredNotifications" 
+       class="card notification-card mb-2"
+       [ngClass]="{'read': notification.status === 'read', 'unread': notification.status === 'unread'}">
+
+    <div class="card-body">
+      <h5 class="card-title">{{ notification.title }}</h5>
+      <p class="card-text">{{ notification.created_at | date:'medium' }}</p>
+
+      <button class="btn view-btn" (click)="viewNotification(notification.id)">
+        <i class="fas fa-eye" 
+           [ngClass]="{
+             'read-icon': notification.status === 'read', 
+             'unread-icon': notification.status === 'unread'
+           }">
+        </i>
+      </button>
+    </div>
+  </div>
+</div>

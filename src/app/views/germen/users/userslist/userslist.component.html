@@ -1,0 +1,84 @@
+<div class="container mt-4">
+  <div class="filter-card p-4 mb-4">
+    <div class="row d-flex">
+      <h3 class="col-md-10 mb-3" style="width: 650px; font-weight: bold !important;">User List</h3>
+      <button type="submit" class="btn btn-warning mb-3" style="width: 150px;float: right;" (click)="addUser()">Add
+        User</button>
+    </div>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <input type="text" class="form-control filter-input" placeholder="Search by Username"
+          [(ngModel)]="searchTerm" />
+      </div>
+      <div class="col-md-4 mb-3">
+        <input type="email" class="form-control filter-input" placeholder="Search by Email" [(ngModel)]="searchEmail" />
+      </div>
+      <div class="col-md-4 mb-3">
+        <input type="text" class="form-control filter-input" placeholder="Search by Phone No"
+          [(ngModel)]="searchPhone" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Table with Pagination -->
+  <div class="table-card p-3">
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered text-center align-middle">
+        <thead class="table-header bg-warning text-dark">
+          <tr>
+            <th scope="col">S.No</th>
+            <th scope="col">Username</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone No</th>
+            <th scope="col">Address</th>
+            <th scope="col">Zip Code</th>
+            <th scope="col">City/Area</th>
+            <th scope="col">Date of Birth</th>
+            <th scope="col">IBAN</th>
+            <th scope="col">Role</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let user of filteredUsers | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+            <td>{{ i + 1 + (page - 1) * itemsPerPage }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.phoneNo }}</td>
+            <td>{{ user.street }} {{ user.address }}, {{ user.zipCode }}, {{ user.ort}}</td>
+            <td>{{ user.zipCode }}</td>
+            <td>{{ user.subtown }}</td>
+            <td>{{ user.bday }}</td>
+            <td>{{ user.ban_no }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+              <button class="btn btn-warning btn-sm me-2" (click)="editUser(user)">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id)">
+                <i class="fa-solid fa-trash"></i>
+              </button>&nbsp;
+             <button class="toggle-btn" (click)="toggleUser(user)">
+  <i
+    [ngClass]="user.status === '1' ? 'fa-solid fa-toggle-on text-success' : 'fa-solid fa-toggle-off text-muted'"
+    style="cursor: pointer; font-size: 24px;"
+  ></i>
+</button>
+
+
+
+
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="pagination-controls">
+    <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
+    <span>Page {{ page }} of {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+  </div>
+</div>

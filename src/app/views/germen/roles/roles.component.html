@@ -1,0 +1,60 @@
+<div class="container">
+    <h3 class="mb-2" style="text-align: center; font-weight: bold !important;">{{ isEditMode ? 'Edit Roles' : 'Add Roles' }}</h3>
+  
+    <div class="add-user-card mb-3">
+      <form [formGroup]="roleForm" (ngSubmit)="onSubmit()" class="role-form" enctype="multipart/form-data">
+        <div class="form-group mb-3">
+          <label class="form-label" for="role_name">Role Name</label>
+          <input style="width: 450px;" type="text" id="role_name" formControlName="role_name" class="form-control" placeholder="Enter role name" />
+        </div>
+  
+        <!-- <div class="form-group mb-3">
+          <label class="form-label" for="description">Description</label>
+          <textarea id="description" formControlName="description" class="form-control" placeholder="Enter role description"></textarea>
+        </div> -->
+  
+  
+        <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update Role' : 'Add Role' }}</button>
+        <!-- <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset</button> -->
+      </form>
+    </div>
+  
+    <h3 style="text-align: center; font-weight: bold !important;">Roles List</h3>
+  
+    <div class="add-user-card">
+      <table class="table  table-hover role-table">
+        <thead>
+          <tr>
+            <!-- <th>ID</th> -->
+            <th>S.No</th>
+           
+            <th>role Name</th>
+            <!-- <th>Description</th> -->
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let role of paginatedRole ; let i = index">
+            <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
+            <!-- <td>{{ role.id }}</td> -->
+            <td>{{ role.role_name }}</td>
+            <!-- <td>{{ role.description }}</td> -->
+            
+            <td>
+              <button class="btn btn-warning btn-sm"  (click)="onEdit(role)">
+                <i class="fa-solid fa-pen-to-square" ></i></button>
+              <button class="btn btn-danger btn-sm" style="margin-left: 5px;" (click)="onDelete(role.id)">
+                <i class="fa-solid fa-trash" ></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div class="pagination-controls">
+      <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
+      <span>Page {{ page }} of {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+    </div>
+  </div>
+  

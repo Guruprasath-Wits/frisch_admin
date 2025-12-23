@@ -1,0 +1,126 @@
+<div class="container mt-4">
+    <div class="filter-card p-4 mb-4">
+        <div class="row">
+            <h3 class="col-md-10 mb-3" style="font-weight: bold !important;">Order Processing</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <input type="text" class="form-control filter-input" placeholder="Enter Postal Code"
+                    [(ngModel)]="searchZipcode" />
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="table-card p-3">
+        <table class="table table-hover">
+            <thead class="table-header">
+                <tr>
+                    <th></th>
+                    <th>S.No</th>
+                    <th>Order ID</th>
+                    <th>Price</th>
+                    <th>Delivery Date</th>
+                    <th>Address</th>
+                    <th>Contact</th>
+                    <th>Instruction</th>
+                    <th>Status</th>
+                    <th>Distance</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody *ngIf="!showSubscriptionOrders">
+                <tr
+                    *ngFor="let order of filteredOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+                    <td>
+                        <input type="checkbox" [(ngModel)]="order.selected" />
+
+                        <!-- (change)="checkTotalTimeLimit(order, $event)" -->
+                    </td>
+                    <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
+                    <td>{{ order.order_id }}</td>
+                    <td>€.{{ order.price }}</td>
+                    <td>{{ order.delivery_date | date }}</td>
+                     <td>{{ order.address }}</td>
+                    <!-- <td>{{ order.address }}, {{ order.zipcode }}, {{ order.ort }}</td> -->
+                    <td>{{ order.contact }}</td>
+                    <td>{{ order.instruction }}</td>
+                    <td>{{ order.status }}</td>
+                    <td style="text-align: center;">{{ order.selected && order.distanceKm ? order.distanceKm + ' km' :
+                        '0' }}</td>
+                    <td style="text-align: center;">{{ order.selected && order.estimatedTimeInMinutes ?
+                        order.estimatedTimeInMinutes + ' min' : '0' }}</td>
+
+
+                </tr>
+            </tbody>
+
+
+
+
+            <tbody *ngIf="showSubscriptionOrders">
+
+                <tr
+                    *ngFor="let order of subscriptionOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+
+                    <td>
+                        <input type="checkbox" [(ngModel)]="order.selected" />
+                    </td>
+                    <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
+                    <td>{{ order.order_id }}</td>
+
+                    <td>€.{{ order.price }}</td>
+                    <td>{{ order.delivery_date | date }}</td>
+                    <td>{{ order.address }}</td>
+                    <td>{{ order.contact }}</td>
+                    <td>{{ order.instruction }}</td>
+                    <td>{{ order.status }}</td>
+                </tr>
+            </tbody>
+
+
+        </table>
+
+
+        <div *ngIf="totalEstimatedTime > 0" class="alert alert-info mt-6 estimated-time-box">
+            <strong>Total Estimated Delivery Time:</strong> {{ totalEstimatedTime }} mins
+        </div>
+
+        <div class="pagination-controls">
+            <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
+            <span>Page {{ page }} of {{ totalPages }}</span>
+            <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+        </div>
+
+        <div class="mt-3 form-group">
+            <label class="form-label">Select Driver</label>
+            <select class="form-control" [(ngModel)]="selectedDriver" required style="width: 50%;">
+                <option value="" disabled>Select a Driver</option>
+                <ng-container *ngFor="let driver of drivers">
+                    <option *ngIf="driver.role?.toLowerCase() === 'driver'" [value]="driver.id">
+                        {{ driver.username }}
+                    </option>
+
+                </ng-container>
+            </select>
+            <button *ngIf="showSubscriptionOrders" class="btn btn-warning mt-2" (click)="assignOrdersToDriverss()">
+                Assign Orders
+            </button>
+
+            <button class="btn btn-warning mt-2" (click)="calculateRouteThroughOrders()">
+                Distance time calculation
+            </button> &nbsp;
+
+
+
+            <button *ngIf="!showSubscriptionOrders" class="btn btn-warning mt-2" (click)="assignOrdersToDrivers()"
+                [disabled]="!assignEnabled">
+                Assign Orders
+            </button>
+
+        </div>
+
+
+    </div>
+</div>

@@ -1,0 +1,77 @@
+<div class="container mt-4">
+    <div class="filter-card p-4 mb-4">
+        <div class="row d-flex">
+            <h3 class="col-md-10 mb-3" style="font-weight: bold !important;">Completed Orders</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <input
+                    type="text"
+                    class="form-control filter-input"
+                    placeholder="Search by Order ID"
+                    [(ngModel)]="searchOrderId"
+                />
+            </div>
+            <div class="col-md-3 mb-3">
+                <input class="form-control filter-input" type="date" [(ngModel)]="searchDate" placeholder="Search by Date">
+
+            </div>
+            <div class="col-md-3 mb-3">
+                <input
+                    type="text"
+                    class="form-control filter-input"
+                    placeholder="Search by Status"
+                    [(ngModel)]="searchStatus"
+                />
+            </div>
+        </div>
+    </div>
+
+    <!-- Table with Pagination -->
+    <div class="table-card p-3">
+        <table class="table table-hover cursor-pointer">
+            <thead class="table-header">
+                <tr>
+                    <th>S.No</th>
+                    <th>Order ID</th>
+                    <th>Delivery Date</th>
+                    <!-- <th>Completed Distance (km)</th> -->
+                    <th>Completed Time </th>
+                    <th>Picture</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr
+                    *ngFor="let order of filteredOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index"
+                >
+                    <td>{{ i + 1 + (page - 1) * itemsPerPage }}</td>
+                    <td>{{ order.order_id }}</td>
+                    <td>{{ order.date | date: 'dd/MM/yyyy' }}</td>
+                    <!-- <td>{{ order.complete_distance }}</td> -->
+                    <td>{{ order.time }}</td>
+                    <td>
+  <ng-container *ngIf="order.status === 'Door Handle'; else showImage">
+    No Picture
+  </ng-container>
+  <ng-template #showImage>
+    <img
+      [src]="order.picture"
+      alt="Delivery Picture"
+      style="width: 50px; height: 50px; object-fit: cover;"
+    />
+  </ng-template>
+</td>
+
+                    <td>{{ order.status }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="pagination-controls mt-3">
+            <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
+            <span>Page {{ page }} of {{ totalPages }}</span>
+            <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+        </div>
+    </div>
+</div>

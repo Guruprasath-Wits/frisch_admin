@@ -1,0 +1,117 @@
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    font-family: "Nunito", "Segoe UI", Arial, sans-serif;
+  }
+  
+  
+  .add-user-card {
+    background-color: #ffffff;
+    border: 1px solid #e1b12c;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+
+  .add-user-card form label{
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  /* Form inputs */
+  .form-control {
+    width: 75%;
+    border: 1px solid #e1b12c; /* Add border color */
+  }
+
+  input:checked{
+
+    border: 1px solid #e1b12c;
+    background-color: #d39e00;
+    box-shadow: none;
+
+  }
+
+  .access-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 50px;
+    margin-top: 15px;
+  }
+  
+  .form-control:focus {
+    box-shadow: 0 0 5px 1px #e1b12c; /* Focus shadow */
+  }
+
+  .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #fcf4d9;
+  }
+  
+  .table-hover > tbody > tr:hover {
+    background-color: #ffe680 !important;
+  }
+  
+  .table td,
+  .table th {
+    vertical-align: middle;
+    padding: 12px; /* Add padding to make the table cells look better */
+    border-bottom: 1px solid #e1b12c; /* Add bottom border to make rows distinct */
+  }
+  
+  /* Button styling */
+  .btn-primary {
+    background-color: #e1b12c;
+    border-color: #e1b12c;
+    color: #000;
+  }
+  
+  .btn-primary:hover {
+    background-color: #ecb50f; /* Hover effect */
+  }
+  
+  .btn-primary:disabled {
+    background-color: #d3d3d3; /* Disabled button */
+    cursor: not-allowed;
+  }
+  
+  /* Adjust for button margin */
+  .btn {
+    margin-top: 15px; /* Add margin for spacing */
+  }
+
+  .pagination-controls {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: static;
+  }
+  
+  .pagination-controls button {
+    background-color: #e1b12c;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    margin: 8px 5px;
+    cursor: pointer;
+  
+  }
+  
+  .pagination-controls button:hover:not(:disabled) {
+    background-color: #d39e00;
+  }
+  
+  .pagination-controls button:disabled {
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+  }
+  
+  .pagination-controls span {
+    margin: 0 10px;
+  }
+
+ 
+  
+  

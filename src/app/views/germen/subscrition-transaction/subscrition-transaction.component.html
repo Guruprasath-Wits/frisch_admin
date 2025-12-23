@@ -1,0 +1,68 @@
+<div class="container mt-4">
+  <div class="filter-card p-4 mb-4">
+    <div class="row d-flex">
+        <div class="col-md-8 d-flex align-items-center mb-3">
+          <h3 style="font-weight: bold !important; margin-bottom: 0;">Subscription Transaction</h3>
+        </div>
+        <div class="col-md-4 d-flex flex-column align-items-start mb-3">
+          <label for="monthSelect" class="form-label fw-bold mb-1">Select Month-Year</label>
+          <select id="monthSelect" class="form-control filter-input" [(ngModel)]="selectedMonth" (change)="onMonthChange()">
+            <option value="" disabled selected>Select Month-Year</option>
+            <option *ngFor="let month of transactionsMonth" [value]="month">{{ month }}</option>
+          </select>
+        </div>
+    </div>
+    <!-- <div class="row">
+      <div class="col-md-4 mb-3">
+        <input type="text" class="form-control filter-input" placeholder="Search by Username"
+          [(ngModel)]="searchTerm" />
+      </div>
+      <div class="col-md-4 mb-3">
+        <input type="email" class="form-control filter-input" placeholder="Search by Email" [(ngModel)]="searchEmail" />
+      </div>
+      <div class="col-md-4 mb-3">
+        <input type="text" class="form-control filter-input" placeholder="Search by Phone No"
+          [(ngModel)]="searchPhone" />
+      </div>
+    </div> -->
+  </div>
+
+  <!-- Table with Pagination -->
+  <div class="table-card p-3">
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered text-center align-middle">
+        <thead class="table-header bg-warning text-dark">
+          <tr>
+            <th scope="col">S.No</th>
+            <th scope="col">Username</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Payment ID</th>
+              <th scope="col">Status</th>
+              <th scope="col">Billing Month</th>
+              <th scope="col">Error Message</th>
+              <th scope="col">Created At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let user of transactions | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+            <td>{{ i + 1 + (page - 1) * itemsPerPage }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.amount }}</td>
+            <td>{{ user.payment_id }}</td>
+            <td>{{ user.status }}</td>
+            <td>{{ user.billing_month }}</td>
+            <td>{{ user.error_message }}</td>
+            <td>{{ user.created_at | date:'dd-MMM-yyyy' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="pagination-controls">
+    <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
+    <span>Page {{ page }} of {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+  </div>
+</div>

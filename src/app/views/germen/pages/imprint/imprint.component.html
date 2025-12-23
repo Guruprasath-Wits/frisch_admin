@@ -1,0 +1,150 @@
+<style>
+    .form-label {
+        font-weight: bold !important;
+    }
+    
+    .form-control {
+        width: 100% !important;
+    }
+    
+    .card {
+        max-width: 900px;
+        margin: auto;
+    }
+    
+    .row {
+        margin-bottom: 15px;
+    }
+
+    .btn-container {
+        text-align: center;
+    }
+
+    .btn-warning {
+        width: 150px;
+    }
+</style>
+
+
+<div class="container mt-4">
+    <h3 class="mb-4" style="text-align: center; font-weight: bold !important;">Imprint</h3>
+    <div class="card p-4 shadow">
+        <form [formGroup]="imprintForm" (ngSubmit)="onSubmit()">
+            <!-- Company Name -->
+
+            <div class="row">
+                <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" formControlName="name"  id="name" class="form-control" placeholder="Enter Name" />
+                <!-- <div *ngIf="settingForm.get('company_name')?.invalid && (settingForm.get('company_name')?.touched || settingForm.get('company_name')?.dirty)" class="text-danger small">
+                    <small *ngIf="settingForm.get('company_name')?.errors?.['required']">Company Name is required.</small>
+                </div> -->
+            </div>
+            </div>
+
+            <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label for="company_name" class="form-label">Company Name</label>
+                <input type="text" formControlName="company_name"  id="company_name"class="form-control" placeholder="Enter Company Name" />
+                <!-- <div *ngIf="settingForm.get('email')?.invalid && (settingForm.get('email')?.touched || settingForm.get('email')?.dirty)" class="text-danger small">
+                    <small *ngIf="settingForm.get('email')?.errors?.['required']">Email is required.</small>
+                </div> -->
+            </div>
+
+            </div>
+        </div>
+           
+        <div class="row">
+
+           
+            <div class="col-md-6">
+            <!-- Contact Number -->
+            <div class="form-group mb-3">
+                <label for="address" class="form-label">Address</label>
+                <input type="text" id="address" formControlName="address"   class="form-control" placeholder="Enter Address" />
+                <!-- <div *ngIf="settingForm.get('contact_no')?.invalid && (settingForm.get('contact_no')?.touched || settingForm.get('contact_no')?.dirty)" class="text-danger small">
+                    <small *ngIf="settingForm.get('contact_no')?.errors?.['required']">Contact No is required.</small>
+                </div> -->
+            </div>
+            </div>
+
+            <div class="col-md-6">
+            <div class="form-group mb-4">
+                <label for="tel" class="form-label">Mobile No</label>
+                <input type="text" id="tel" formControlName="tel"   class="form-control" placeholder="Enter Mobile No" />
+            </div>
+            </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+        <div class="form-group mb-4">
+            <label for="email" class="form-label">E-Mail</label>
+            <input type="email" id="email" formControlName="email"  class="form-control" placeholder="Enter E-Mail" />
+        </div>
+        </div>
+
+        <div class="col-md-6">
+        <div class="form-group mb-4">
+            <label for="business_type" class="form-label">Business Type</label>
+            <input type="text" id="business_type" formControlName="business_type"  class="form-control" placeholder="Enter Business Type" />
+        </div>
+        </div>
+
+         
+
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-6">
+        <div class="form-group mb-4">
+            <label for="platform" class="form-label">Platform</label>
+            <input type="text" id="platform"  formControlName="platform"  class="form-control" placeholder="Enter Platform" />
+        </div>
+        </div>
+        <div class="col-md-6">
+        <div class="form-group mb-4">
+            <label for="link" class="form-label">Link</label>
+            <input type="text" id="link"  class="form-control" formControlName="link" placeholder="Enter Link" />
+        </div>
+        </div>
+
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="notes" class="form-label">Notes</label>
+                <input type="text" id="notes" formControlName="notes" class="form-control" placeholder="Enter Notes" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="privacy_policy" class="form-label">Delivery App Privacy Policy</label>
+                <textarea id="privacy_policy" formControlName="privacy_policy" class="form-control" placeholder="Enter Privacy Policy"></textarea>
+
+            </div>
+        </div>
+    </div>
+
+        
+
+
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between">
+                <button type="submit" style="margin-left: 620px;width: 150px;" class="btn btn-warning">
+                    {{ isEditMode ? 'Update' : 'Submit' }}
+                </button>
+                <!-- <button type="button" *ngIf="!isEditMode" class="btn btn-secondary" (click)="editSetting()">Edit</button> -->
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="container">
+    <h3 class="mb-2" style="text-align: center; font-weight: bold !important;">{{ isEditMode ? 'Edit jobs' : 'Add jobs' }}</h3>
+  
+    <div class="add-user-card mb-3">
+      <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" class="job-form" enctype="multipart/form-data">
+        <div class="form-group mb-3">
+          <label class="form-label" for="job_name">Job Title</label>
+          <input type="text" id="job_name" formControlName="title" class="form-control" placeholder="Enter job title" />
+        </div>
+  
+        <div class="form-group mb-3">
+          <label class="form-label" for="description">Job Description</label>
+          <textarea id="description" formControlName="description" class="form-control" placeholder="Enter job Description"></textarea>
+        </div>
+  
+  
+        <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update job' : 'Add job' }}</button>
+        <!-- <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset</button> -->
+      </form>
+    </div>
+  
+    <h3 style="text-align: center; font-weight: bold !important;">jobs List</h3>
+  
+    <div class="add-user-card">
+      <table class="table  table-hover job-table">
+        <thead>
+          <tr>
+            <!-- <th>ID</th> -->
+            <th>S.No</th>
+            <th>Job Title</th>
+            <th>Job Description</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let job of paginatedJobs ; let i = index ">
+            <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
+            <!-- <td>{{ job.id }}</td> -->
+            <td>{{ job.title }}</td>
+            <td [innerHTML]="formatDescription(job.description)"></td>
+
+
+            <td>
+              <button class="btn btn-warning btn-sm"  (click)="onEdit(job)">
+                <i class="fa-solid fa-pen-to-square" ></i></button>
+              <button class="btn btn-danger btn-sm" style="margin-left: 5px;" (click)="onDelete(job.id)">
+                <i class="fa-solid fa-trash" ></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div class="pagination-controls">
+      <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
+      <span>Page {{ page }} of {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+    </div>
+  </div>
+  

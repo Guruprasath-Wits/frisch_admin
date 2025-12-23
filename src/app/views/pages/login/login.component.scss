@@ -1,0 +1,41 @@
+
+
+.custom-back {
+    position: relative;
+    background: url('../../../../assets/images/sea.jpg') no-repeat center center; 
+    background-size: cover; 
+    
+    
+}
+
+.custom-form{
+    width: 711px;
+    z-index: 10;
+    background-color: transparent;
+   
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+.custom-girl {
+    background: white url('../../../../assets/images/logo.png') no-repeat center center;
+    background-size: 250px 250px; /* Adjust width and height as needed */
+    width: 350px; /* Set container width */
+    height: 350px; /* Set container height */
+    display: flex; /* Optional: Helps with content alignment */
+    justify-content: center;
+    align-items: cente
+}
+
+
+.custom-btn{
+    width: 125px;
+    font: 18px bold;
+    letter-spacing: 2px;
+
+}
+
+@media(max-width:430px){
+    .custom-girl{
+        display: none;
+    }
+}
+
