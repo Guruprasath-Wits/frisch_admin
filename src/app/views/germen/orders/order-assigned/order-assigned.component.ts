@@ -20,6 +20,7 @@ export interface Order {
   instruction: string;
   status: string;
   driverName: string; // Resolved driver name
+  customerName?: string; // Resolved customer name
   driver_id: number;
   lat: string;
   lng: string;
@@ -53,13 +54,14 @@ export class OrderAssignedComponent implements OnInit {
   itemsPerPage: number = 50;
   mergedOrders: any[] = [];
   hasDistanceColumn = false;
-hasTimeColumn = false;
+  hasTimeColumn = false;
 
 
   showSubscriptionOrders: boolean = false;
-   subscriptionOrders: Order[] = [];
-   isLoading = false;
-  constructor(private router: Router, private adminService: AdminService, private http: HttpClient) {}
+  subscriptionOrders: Order[] = [];
+  allUsers: any[] = []; // Store all users for lookup
+  isLoading = false;
+  constructor(private router: Router, private adminService: AdminService, private http: HttpClient) { }
 
   ngOnInit(): void {
     this.loadDriversAndOrders();
@@ -70,43 +72,43 @@ hasTimeColumn = false;
   }
 
   loadSubsOrder(): void {
-  this.adminService.loadSubsOrders().subscribe(
-    (response: any) => {
-      this.subscriptionOrders = response.subscribeData
-        .filter((order: any) => {
-          const status = (order.status || 'assigned').toLowerCase();
-          return status === 'assigned';
-        })
-        .map((order: any) => ({
-          id: order.id,
-          user_id: order.user_id,
-          order_id: order.order_id,
-          zipcode : order.zipcode,
-          price: order.price,
-          delivery_date: order.delivery_date,
-          address: order.address,
-          contact: order.contact,
-          instruction: order.instruction,
-          status: order.status || 'assigned',
-          tips: order.tips
-        }));
-        
-    },
+    this.adminService.loadSubsOrders().subscribe(
+      (response: any) => {
+        this.subscriptionOrders = response.subscribeData
+          .filter((order: any) => {
+            const status = (order.status || 'assigned').toLowerCase();
+            return status === 'assigned';
+          })
+          .map((order: any) => ({
+            id: order.id,
+            user_id: order.user_id,
+            order_id: order.order_id,
+            zipcode: order.zipcode,
+            price: order.price,
+            delivery_date: order.delivery_date,
+            address: order.address,
+            contact: order.contact,
+            instruction: order.instruction,
+            status: order.status || 'assigned',
+            tips: order.tips
+          }));
 
-    
-    error => {
-      console.error('Error fetching Subscription Orders:', error);
-    }
-  );
-}
+      },
 
-SubscripOrders(): void {
-  if (!this.showSubscriptionOrders && this.subscriptionOrders.length === 0) {
-    this.loadSubsOrder();
+
+      error => {
+        console.error('Error fetching Subscription Orders:', error);
+      }
+    );
   }
-  this.showSubscriptionOrders = !this.showSubscriptionOrders;
-  this.page = 1; // Reset to the first page when toggling.
-}
+
+  SubscripOrders(): void {
+    if (!this.showSubscriptionOrders && this.subscriptionOrders.length === 0) {
+      this.loadSubsOrder();
+    }
+    this.showSubscriptionOrders = !this.showSubscriptionOrders;
+    this.page = 1; // Reset to the first page when toggling.
+  }
 
   loadDrivers(): void {
     this.adminService.loadUsers().subscribe(
@@ -130,20 +132,20 @@ SubscripOrders(): void {
       (response: { orders: Order[] }) => {
 
         this.Orders = response.orders
-  .filter(order => order.status?.toLowerCase() === 'assigned') 
-  .map(order => ({
-    ...order,
-    driverName: this.getDriverName(order.driver_id),
-  }));
-  console.log('Filtered and mapped Orders:', this.Orders);
-      
-        
+          .filter(order => order.status?.toLowerCase() === 'assigned')
+          .map(order => ({
+            ...order,
+            driverName: this.getDriverName(order.driver_id),
+          }));
+        console.log('Filtered and mapped Orders:', this.Orders);
+
+
       },
       (error) => console.error('Error fetching Orders:', error)
     );
   }
 
- 
+
   loadDriversAndOrders(): void {
     this.adminService.loadUsers().subscribe(
       (response: { user: Driver[] }) => {
@@ -158,180 +160,214 @@ SubscripOrders(): void {
     );
   }
 
- 
-  
+
+
 
   allOrders: any[] = [];         // Stores all fetched orders
-updateColumnFlags() {
-  this.hasDistanceColumn = this.mergedOrders?.some(order => !!order.distanceKm) ?? false;
-  this.hasTimeColumn = this.mergedOrders?.some(order => !!order.estimatedTimeInMinutes) ?? false;
-}
-
-GetOrder() {
-  const order = {
-    driver_id: this.selectedDriver,
-    delivery_date: this.searchDate,
-    status: "Assigned"
-  };
-
-  this.adminService.getOrder(order).subscribe(
-    res => {
-      console.log('Raw API response:', res);
-
-      if (res.status === false) {
-        Swal.fire('Please Select Required Fields', '', 'info');
-        return;
-      }
-
-      console.log('Orders fetched successfully', res.orders);
-
-      // Convert both sides to YYYY-MM-DD for comparison
-      const filteredOrders = res.orders.filter((o: any) => {
-  // Convert delivery_date to local YYYY-MM-DD
-  const apiDate = new Date(o.delivery_date).toLocaleDateString('en-CA'); // en-CA gives YYYY-MM-DD
-  const searchDate = new Date(this.searchDate).toLocaleDateString('en-CA');
-  return apiDate === searchDate;
-});
-
-console.log('Filtered Orders by Date:', filteredOrders);
-
-
-      const sortedOrders = filteredOrders.sort((a: any, b: any) => a.index_id - b.index_id);
-
-      this.allMergedOrders = [...sortedOrders];
-      this.mergedOrders = [...sortedOrders];
-      this.updateColumnFlags();
-
-      this.showSubscriptionOrders = false;
-    },
-    err => {
-      console.error('Error fetching orders', err);
-      Swal.fire('Error', 'An error occurred while fetching orders.', 'error');
-    }
-  );
-}
-
-
-
-
-
-
-
-// loadOrders(): void {
-//   this.adminService.loadOrders().subscribe(
-//     (response: { orders: Order[] }) => {
-//       if (!response || !response.orders) {
-//         console.error('Invalid response:', response);
-//         return;
-//       }
-
-//       const referenceLat = 51.5177192; 
-//       const referenceLng = 7.4179611;
-
-//       this.Orders = response.orders
-//         .filter(order => order.status?.toLowerCase() === 'assigned')
-//         .map(order => {
-//           const distance = this.calculateDistance(referenceLat, referenceLng, Number(order.lat), Number(order.lng));
-//           const estimatedTime = this.getEstimatedTime(distance);
-
-//           return {
-//             ...order,
-//             driverName: this.getDriverName(order.driver_id),
-//             distance: distance,
-//             estimatedTimeInMinutes: estimatedTime
-//           };
-//         })
-//         .sort((a, b) => a.distance - b.distance);
-
-//         console.log(this.Orders)
-
-//       // ✅ Store to new table
-//       const ordersToStore = this.Orders.map(order => {
-//         const { id, ...rest } = order;
-//         return { ...rest }; // Only fields except `id`
-//       });
-
-//       console.log('Orders to store (without ID):', ordersToStore);
-
-//       this.adminService.storeProcessedOrders(ordersToStore).subscribe(
-//         res => console.log('Orders stored successfully', res),
-//         err => console.error('Error storing processed orders', err)
-//       );
-//     },
-//     (error) => console.error('Error fetching Orders:', error)
-//   );
-// }
-// async GetOrder(): Promise<void> {
-
-//   this.mergedOrders = []
-
-//   // Uncomment if you want to reload data every time
-//   // this.mergedOrders = [];
-//   // await this.loadAllOrders();
-
-//   const driverId = this.selectedDriver;
-//   const selectedDate = this.searchDate;
-//   const formattedSearchDate = selectedDate
-//     ? new Date(selectedDate).toISOString().split('T')[0]
-//     : null;
-
-//   // Assign the filtered result back to mergedOrders
-//   this.mergedOrders = this.allMergedOrders.filter((order: any) => {
-//     const isDriverMatch = driverId ? order.driver_id == driverId : true;
-
-//     const orderDate = new Date(order.delivery_date).toISOString().split('T')[0];
-//     const isDateMatch = formattedSearchDate ? orderDate === formattedSearchDate : true;
-
-//     const isStatusMatch = order.status?.toLowerCase() === 'assigned';
-
-//     return isDriverMatch && isDateMatch && isStatusMatch;
-//   });
-
-//   console.log('Filtered Merged Orders:', this.mergedOrders);
-// }
-
-
-
-
-  
-  
-calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
-  if (isNaN(lat1) || isNaN(lng1) || isNaN(lat2) || isNaN(lng2)) {
-    return Number.MAX_VALUE;
+  updateColumnFlags() {
+    this.hasDistanceColumn = this.mergedOrders?.some(order => !!order.distanceKm) ?? false;
+    this.hasTimeColumn = this.mergedOrders?.some(order => !!order.estimatedTimeInMinutes) ?? false;
   }
 
-  const R = 6371; // Radius of Earth in km
-  const dLat = this.degToRad(lat2 - lat1);
-  const dLng = this.degToRad(lng2 - lng1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(this.degToRad(lat1)) * Math.cos(this.degToRad(lat2)) *
-    Math.sin(dLng / 2) * Math.sin(dLng / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
+  GetOrder() {
+    const order = {
+      driver_id: this.selectedDriver,
+      delivery_date: this.searchDate,
+      status: "Assigned"
+    };
 
-degToRad(deg: number): number {
-  return deg * (Math.PI / 180);
-}
+    this.adminService.getOrder(order).subscribe(
+      res => {
+        console.log('Raw API response:', res);
 
-// 🕒 Rough estimate based on average speed
-getEstimatedTime(distanceKm: number): number {
-  const averageDrivingSpeed = 40; // km/h (realistic speed for city driving)
-  const roadFactor = 1.1; // ~20% longer due to roads not being straight
-  const adjustedDistance = distanceKm * roadFactor;
+        if (res.status === false) {
+          Swal.fire('Please Select Required Fields', '', 'info');
+          return;
+        }
 
-  const timeInHours = adjustedDistance / averageDrivingSpeed;
-  return Math.round(timeInHours * 60); // in minutes
-}
+        console.log('Orders fetched successfully', res.orders);
+
+        // Convert both sides to YYYY-MM-DD for comparison
+        const filteredOrders = res.orders.filter((o: any) => {
+          // Convert delivery_date to local YYYY-MM-DD
+          const apiDate = new Date(o.delivery_date).toLocaleDateString('en-CA'); // en-CA gives YYYY-MM-DD
+          const searchDate = new Date(this.searchDate).toLocaleDateString('en-CA');
+          return apiDate === searchDate;
+        });
+
+        console.log('Filtered Orders by Date:', filteredOrders);
 
 
-  
+        const sortedOrders = filteredOrders.sort((a: any, b: any) => a.index_id - b.index_id);
 
- 
+        const processedOrders = sortedOrders.map((order: any) => ({
+          ...order,
+          customerName: this.getUserName(order.user_id || order.userid || order.customer_id)
+        }));
+
+        this.allMergedOrders = [...processedOrders];
+        this.mergedOrders = [...processedOrders];
+        this.updateColumnFlags();
+
+        this.showSubscriptionOrders = false;
+      },
+      err => {
+        console.error('Error fetching orders', err);
+        Swal.fire('Error', 'An error occurred while fetching orders.', 'error');
+      }
+    );
+  }
+
+
+
+
+
+
+
+  // loadOrders(): void {
+  //   this.adminService.loadOrders().subscribe(
+  //     (response: { orders: Order[] }) => {
+  //       if (!response || !response.orders) {
+  //         console.error('Invalid response:', response);
+  //         return;
+  //       }
+
+  //       const referenceLat = 51.5177192; 
+  //       const referenceLng = 7.4179611;
+
+  //       this.Orders = response.orders
+  //         .filter(order => order.status?.toLowerCase() === 'assigned')
+  //         .map(order => {
+  //           const distance = this.calculateDistance(referenceLat, referenceLng, Number(order.lat), Number(order.lng));
+  //           const estimatedTime = this.getEstimatedTime(distance);
+
+  //           return {
+  //             ...order,
+  //             driverName: this.getDriverName(order.driver_id),
+  //             distance: distance,
+  //             estimatedTimeInMinutes: estimatedTime
+  //           };
+  //         })
+  //         .sort((a, b) => a.distance - b.distance);
+
+  //         console.log(this.Orders)
+
+  //       // ✅ Store to new table
+  //       const ordersToStore = this.Orders.map(order => {
+  //         const { id, ...rest } = order;
+  //         return { ...rest }; // Only fields except `id`
+  //       });
+
+  //       console.log('Orders to store (without ID):', ordersToStore);
+
+  //       this.adminService.storeProcessedOrders(ordersToStore).subscribe(
+  //         res => console.log('Orders stored successfully', res),
+  //         err => console.error('Error storing processed orders', err)
+  //       );
+  //     },
+  //     (error) => console.error('Error fetching Orders:', error)
+  //   );
+  // }
+  // async GetOrder(): Promise<void> {
+
+  //   this.mergedOrders = []
+
+  //   // Uncomment if you want to reload data every time
+  //   // this.mergedOrders = [];
+  //   // await this.loadAllOrders();
+
+  //   const driverId = this.selectedDriver;
+  //   const selectedDate = this.searchDate;
+  //   const formattedSearchDate = selectedDate
+  //     ? new Date(selectedDate).toISOString().split('T')[0]
+  //     : null;
+
+  //   // Assign the filtered result back to mergedOrders
+  //   this.mergedOrders = this.allMergedOrders.filter((order: any) => {
+  //     const isDriverMatch = driverId ? order.driver_id == driverId : true;
+
+  //     const orderDate = new Date(order.delivery_date).toISOString().split('T')[0];
+  //     const isDateMatch = formattedSearchDate ? orderDate === formattedSearchDate : true;
+
+  //     const isStatusMatch = order.status?.toLowerCase() === 'assigned';
+
+  //     return isDriverMatch && isDateMatch && isStatusMatch;
+  //   });
+
+  //   console.log('Filtered Merged Orders:', this.mergedOrders);
+  // }
+
+
+
+
+
+
+  calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    if (isNaN(lat1) || isNaN(lng1) || isNaN(lat2) || isNaN(lng2)) {
+      return Number.MAX_VALUE;
+    }
+
+    const R = 6371; // Radius of Earth in km
+    const dLat = this.degToRad(lat2 - lat1);
+    const dLng = this.degToRad(lng2 - lng1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.degToRad(lat1)) * Math.cos(this.degToRad(lat2)) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  degToRad(deg: number): number {
+    return deg * (Math.PI / 180);
+  }
+
+  // 🕒 Rough estimate based on average speed
+  getEstimatedTime(distanceKm: number): number {
+    const averageDrivingSpeed = 40; // km/h (realistic speed for city driving)
+    const roadFactor = 1.1; // ~20% longer due to roads not being straight
+    const adjustedDistance = distanceKm * roadFactor;
+
+    const timeInHours = adjustedDistance / averageDrivingSpeed;
+    return Math.round(timeInHours * 60); // in minutes
+  }
+
+
+
+
+
   getDriverName(driverId: number): string {
     const driver = this.drivers.find((d) => d.id == driverId);
     return driver ? driver.username : 'Unassigned';
+  }
+
+  getUserName(userId: any): string {
+    if (!userId) {
+      console.warn('No userId provided for lookup');
+      return 'Unknown Customer';
+    }
+
+    // Debug: log once if allUsers is populated
+    if (this.allUsers.length > 0 && !this.allUsers[0].logged) {
+      console.log('Sample User from allUsers:', this.allUsers[0]);
+      this.allUsers[0].logged = true;
+    }
+
+    const user = this.allUsers.find((u: any) => u.id == userId);
+    if (!user) {
+      console.warn(`User not found in allUsers (length: ${this.allUsers.length}) for ID: ${userId}`);
+      return `Unknown Customer (ID: ${userId})`;
+    }
+
+    // Prioritize username, then fname + lname, then company name
+    if (user.username && user.username.trim() !== '') return user.username;
+    if (user.fname || user.lname) {
+      const fullName = `${user.fname || ''} ${user.lname || ''}`.trim();
+      if (fullName !== '') return fullName;
+    }
+    if (user.company_name && user.company_name.trim() !== '') return user.company_name;
+
+    return user.email || `Customer ${userId}`;
   }
 
   editOrder(order: Order): void {
@@ -423,7 +459,7 @@ getEstimatedTime(distanceKm: number): number {
   //           type: 'normal', // To identify source if needed
   //           tips: null
   //         }));
-  
+
   //       const processedSubsOrders = (subsOrders.subscribeData || [])
   //         .filter((order: any) => {
   //           const status = (order.status || 'Assigned').toLowerCase();
@@ -441,7 +477,7 @@ getEstimatedTime(distanceKm: number): number {
   //           type: 'subscription', // To identify source
   //           tips: order.tips ?? null
   //         }));
-  
+
   //       // Merge both
   //       this.mergedOrders = [...processedOrders, ...processedSubsOrders];
   //        console.log('Merged Orders:', this.mergedOrders);
@@ -451,92 +487,95 @@ getEstimatedTime(distanceKm: number): number {
   //     }
   //   );
   // }
-allMergedOrders : any = []
+  allMergedOrders: any = []
   loadAllOrders(): void {
 
-  // First, load drivers
-  this.adminService.loadUsers().pipe(
-    catchError((error) => {
-      console.error('Error loading drivers:', error);
-      Swal.fire('Error', 'Failed to load drivers.', 'error');
-      return of({ user: [] }); // fallback to empty users
-    })
-  ).subscribe((userResponse: any) => {
-    this.drivers = userResponse.user.filter((user: any) =>
-      user.role?.toLowerCase() === 'driver'
-    );
+    // First, load drivers
+    this.adminService.loadUsers().pipe(
+      catchError((error) => {
+        console.error('Error loading drivers:', error);
+        Swal.fire('Error', 'Failed to load drivers.', 'error');
+        return of({ user: [] }); // fallback to empty users
+      })
+    ).subscribe((userResponse: any) => {
+      this.allUsers = userResponse.user || []; // Store all users
+      this.drivers = userResponse.user.filter((user: any) =>
+        user.role?.toLowerCase() === 'driver'
+      );
 
-    forkJoin({
-      normalOrders: this.adminService.loadOrders().pipe(
-        catchError((error) => {
-          console.error('Error loading normal orders:', error);
-          return of({ orders: [] }); // fallback to empty
-        })
-      ),
-      subsOrders: this.adminService.loadSubsOrders().pipe(
-        catchError((error) => {
-          console.error('Error loading subscription orders:', error);
-          return of({ subscribeData: [] }); // fallback to empty
-        })
-      )
-    }).subscribe(
-      ({ normalOrders, subsOrders }: any) => {
-        const processedOrders = (normalOrders.orders || [])
-          .filter((order: any) => (order.status || '').toLowerCase() === 'assigned')
-          .map((order: any) => ({
-            id: order.id ?? '',
-            order_id: order.order_id ?? '',
-            price: order.price ?? 0,
-            delivery_date: order.delivery_date ?? '',
-              address: `${order.address ?? ''},${order.zipcode ?? ''},${order.ort ?? ''}`,
-            // address: order.address ?? '' + ',' + order.zipcode ?? '' + ',' + order.ort ?? '',
-            // address : order.address ?? '',
-            // zipcode: order.zipcode ?? '',
-            // ort: order.ort ?? '',
-            contact: order.contact ?? '',
-            instruction: order.instruction ?? '',
-            status: order.status ? order.status.toLowerCase() : '',
-            driver_id: order.driver_id ?? null,
-            driverName: this.getDriverName(order.driver_id),
-            user_id: order.user_id ?? null,
-            type: 'normal',
-            tips: null
-          }));
+      forkJoin({
+        normalOrders: this.adminService.loadOrders().pipe(
+          catchError((error) => {
+            console.error('Error loading normal orders:', error);
+            return of({ orders: [] }); // fallback to empty
+          })
+        ),
+        subsOrders: this.adminService.loadSubsOrders().pipe(
+          catchError((error) => {
+            console.error('Error loading subscription orders:', error);
+            return of({ subscribeData: [] }); // fallback to empty
+          })
+        )
+      }).subscribe(
+        ({ normalOrders, subsOrders }: any) => {
+          const processedOrders = (normalOrders.orders || [])
+            .filter((order: any) => (order.status || '').toLowerCase() === 'assigned')
+            .map((order: any) => ({
+              id: order.id ?? '',
+              order_id: order.order_id ?? '',
+              price: order.price ?? 0,
+              delivery_date: order.delivery_date ?? '',
+              address: `${order.address ?? ''}`,
+              // address: order.address ?? '' + ',' + order.zipcode ?? '' + ',' + order.ort ?? '',
+              // address : order.address ?? '',
+              // zipcode: order.zipcode ?? '',
+              // ort: order.ort ?? '',
+              contact: order.contact ?? '',
+              instruction: order.instruction ?? '',
+              status: order.status ? order.status.toLowerCase() : '',
+              driver_id: order.driver_id ?? null,
+              driverName: this.getDriverName(order.driver_id),
+              customerName: this.getUserName(order.user_id),
+              user_id: order.user_id ?? null,
+              type: 'normal',
+              tips: null
+            }));
 
-        const processedSubsOrders = (subsOrders.subscribeData || [])
-          .filter((order: any) => (order.status || 'assigned').toLowerCase() === 'assigned')
-          .map((order: any) => ({
-            id: order.id ?? '',
-            order_id: order.order_id ?? '',
-            price: order.price ?? 0,
-            delivery_date: order.delivery_date ?? '',
-              address: `${order.address ?? ''},${order.zipcode ?? ''},${order.ort ?? ''}`,
-            // address: order.address ?? '' + ',' + order.zipcode ?? '' + ',' + order.ort ?? '',
-            //  address : order.address ?? '',
-            // zipcode: order.zipcode ?? '',
-            // ort: order.ort ?? '',
-            contact: order.contact ?? '',
-            instruction: order.instruction ?? '',
-            status: order.status ? order.status.toLowerCase() : 'assigned',
-            driver_id: order.driver_id ?? null,
-            driverName: this.getDriverName(order.driver_id),
-               user_id: order.user_id ?? null,
-            type: 'subscription',
-            tips: order.tips ?? null
-          }));
+          const processedSubsOrders = (subsOrders.subscribeData || [])
+            .filter((order: any) => (order.status || 'assigned').toLowerCase() === 'assigned')
+            .map((order: any) => ({
+              id: order.id ?? '',
+              order_id: order.order_id ?? '',
+              price: order.price ?? 0,
+              delivery_date: order.delivery_date ?? '',
+              address: `${order.address ?? ''}`,
+              // address: order.address ?? '' + ',' + order.zipcode ?? '' + ',' + order.ort ?? '',
+              //  address : order.address ?? '',
+              // zipcode: order.zipcode ?? '',
+              // ort: order.ort ?? '',
+              contact: order.contact ?? '',
+              instruction: order.instruction ?? '',
+              status: order.status ? order.status.toLowerCase() : 'assigned',
+              driver_id: order.driver_id ?? null,
+              driverName: this.getDriverName(order.driver_id),
+              customerName: this.getUserName(order.user_id || order.id),
+              user_id: order.user_id ?? null,
+              type: 'subscription',
+              tips: order.tips ?? null
+            }));
 
-        this.allMergedOrders = [...processedOrders, ...processedSubsOrders];
+          this.allMergedOrders = [...processedOrders, ...processedSubsOrders];
 
-          
-  this.mergedOrders = [...this.allMergedOrders];     
-        console.log('Merged Orders with driver names:', this.mergedOrders);
-      },
-      error => {
-        console.error('Error loading all orders:', error);
-      }
-    );
-  });
-}
+
+          this.mergedOrders = [...this.allMergedOrders];
+          console.log('Merged Orders with driver names:', this.mergedOrders);
+        },
+        error => {
+          console.error('Error loading all orders:', error);
+        }
+      );
+    });
+  }
 
 
   get filteredOrders(): Order[] {
@@ -577,86 +616,86 @@ allMergedOrders : any = []
 </div>
 
       `,
-  //     preConfirm: () => {
-  //       const dateInput = document.getElementById('deliveryDate') as HTMLInputElement;
-  //       const categorySelect = document.getElementById('categoryType') as HTMLSelectElement;
-  
-  //       if (!dateInput || !dateInput.value) {
-  //         Swal.showValidationMessage('Please select a valid date.');
-  //         return false;
-  //       }
-  
-  //       if (!categorySelect || !categorySelect.value) {
-  //         Swal.showValidationMessage('Please select a category.');
-  //         return false;
-  //       }
+      //     preConfirm: () => {
+      //       const dateInput = document.getElementById('deliveryDate') as HTMLInputElement;
+      //       const categorySelect = document.getElementById('categoryType') as HTMLSelectElement;
 
-  
-  //       const selectedDate = new Date(dateInput.value);
-  //       const day = selectedDate.getDay();
-  //       if (day !== 6 && day !== 0) { // Not Saturday or Sunday
-  //         Swal.showValidationMessage('Only Saturdays and Sundays are allowed.');
-  //         return false;
-  //       }
-  
-  //       return {
-  //         date: dateInput.value,
-  //         category: categorySelect.value
-  //       }; // Return both date and category
-  //     },
-  //   }).then(result => {
-  //     if (result.isConfirmed) {
-  //       const { date, category } = result.value;
-  //       this.getLabels(date, category); // Pass the selected date and category
-  //     }
-  //   });
-  // }
-  preConfirm: async () => {
-  const dateInput = document.getElementById('deliveryDate') as HTMLInputElement;
-  const categorySelect = document.getElementById('categoryType') as HTMLSelectElement;
+      //       if (!dateInput || !dateInput.value) {
+      //         Swal.showValidationMessage('Please select a valid date.');
+      //         return false;
+      //       }
 
-  if (!dateInput || !dateInput.value) {
-    Swal.showValidationMessage('Please select a valid date.');
-    return false;
+      //       if (!categorySelect || !categorySelect.value) {
+      //         Swal.showValidationMessage('Please select a category.');
+      //         return false;
+      //       }
+
+
+      //       const selectedDate = new Date(dateInput.value);
+      //       const day = selectedDate.getDay();
+      //       if (day !== 6 && day !== 0) { // Not Saturday or Sunday
+      //         Swal.showValidationMessage('Only Saturdays and Sundays are allowed.');
+      //         return false;
+      //       }
+
+      //       return {
+      //         date: dateInput.value,
+      //         category: categorySelect.value
+      //       }; // Return both date and category
+      //     },
+      //   }).then(result => {
+      //     if (result.isConfirmed) {
+      //       const { date, category } = result.value;
+      //       this.getLabels(date, category); // Pass the selected date and category
+      //     }
+      //   });
+      // }
+      preConfirm: async () => {
+        const dateInput = document.getElementById('deliveryDate') as HTMLInputElement;
+        const categorySelect = document.getElementById('categoryType') as HTMLSelectElement;
+
+        if (!dateInput || !dateInput.value) {
+          Swal.showValidationMessage('Please select a valid date.');
+          return false;
+        }
+
+        if (!categorySelect || !categorySelect.value) {
+          Swal.showValidationMessage('Please select a category.');
+          return false;
+        }
+
+        // Parse input date
+        const inputDate = new Date(dateInput.value);
+        if (!inputDate) {
+          Swal.showValidationMessage('Invalid date format.');
+          return false;
+        }
+
+        const formattedDate = inputDate.toISOString().split('T')[0];
+
+        // ✅ Check if holiday
+        const isHoliday = await this.checkPublicHoliday(formattedDate);
+
+        // ✅ Condition 1: Only Saturday and Sunday are allowed (if NOT holiday)
+        const day = inputDate.getDay(); // 0 = Sunday, 6 = Saturday
+        if (!isHoliday && day !== 6 && day !== 0) {
+          Swal.showValidationMessage('Only Saturdays, Sundays, or public holidays are allowed.');
+          return false;
+        }
+
+        return {
+          date: dateInput.value,
+          category: categorySelect.value
+        };
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        const { date, category } = result.value;
+        this.getLabels(date, category); // ✅ Download report if valid
+      }
+    });
   }
 
-  if (!categorySelect || !categorySelect.value) {
-    Swal.showValidationMessage('Please select a category.');
-    return false;
-  }
-
-  // Parse input date
-  const inputDate = new Date(dateInput.value);
-  if (!inputDate) {
-    Swal.showValidationMessage('Invalid date format.');
-    return false;
-  }
-
-  const formattedDate = inputDate.toISOString().split('T')[0];
-
-  // ✅ Check if holiday
-  const isHoliday = await this.checkPublicHoliday(formattedDate);
-
-  // ✅ Condition 1: Only Saturday and Sunday are allowed (if NOT holiday)
-  const day = inputDate.getDay(); // 0 = Sunday, 6 = Saturday
-  if (!isHoliday && day !== 6 && day !== 0) {
-    Swal.showValidationMessage('Only Saturdays, Sundays, or public holidays are allowed.');
-    return false;
-  }
-
-  return {
-    date: dateInput.value,
-    category: categorySelect.value
-  };
-}
-}).then(result => {
-  if (result.isConfirmed) {
-    const { date, category } = result.value;
-    this.getLabels(date, category); // ✅ Download report if valid
-  }
-});
-  }
-  
   async checkPublicHoliday(date: string): Promise<boolean> {
     const apiUrl = `https://date.nager.at/api/v3/PublicHolidays/${new Date().getFullYear()}/DE`;
     return new Promise((resolve) => {
@@ -673,11 +712,11 @@ allMergedOrders : any = []
     });
   }
 
-  
+
   // Fetch PDF from backend
   getLabels(date: string, category: string): void {
     this.isLoading = true; // Start loader
-  
+
     this.adminService.getLabels(date, category).subscribe(
       (response: Blob) => {
         const blob = new Blob([response], { type: 'application/pdf' });
@@ -693,40 +732,40 @@ allMergedOrders : any = []
     );
   }
 
-  
+
   getLabelReport(): void {
     this.subscriptionOrders
     this.filteredOrders
-    let data : any = [];
+    let data: any = [];
     if (this.showSubscriptionOrders) {
       data = this.mergedOrders;
     } else {
       data = this.mergedOrders;
     }
     this.adminService.getLabelReport(data).subscribe(
-  (response: Blob) => {
-    const blob = new Blob([response], { type: 'application/pdf' });
-    const blobUrl = URL.createObjectURL(blob);
-    window.open(blobUrl, '_blank');
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-    Swal.fire('Success', 'File opened in a new tab.', 'success');
-  },
-  (error) => {
-    Swal.fire('Error', 'Could not open file.', 'error');
-  }
-);
+      (response: Blob) => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank');
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+        Swal.fire('Success', 'File opened in a new tab.', 'success');
+      },
+      (error) => {
+        Swal.fire('Error', 'Could not open file.', 'error');
+      }
+    );
 
     // this.adminService.getLabelReport(data).subscribe(
     //   (response: Blob) => {
     //     const blob = new Blob([response], { type: 'application/pdf' }); // Set the correct MIME type for PDF
     //     const blobUrl = URL.createObjectURL(blob);
-        
+
     //     // Open the PDF in a new tab
     //     window.open(blobUrl, '_blank');
-  
+
     //     // Optionally, revoke the URL after some time
     //     setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-        
+
     //     Swal.fire('Success', 'File is opened in a new tab.', 'success');
     //   },
     //   (error) => {
@@ -735,42 +774,50 @@ allMergedOrders : any = []
     //   }
     // );
   }
-  
-  
-  
-  
+
+
+
+
 
 
   viewOrder(order_id: any): void {
     const orderDetails$ = this.adminService.loadDetailsOrder(order_id);
 
-    console.log("Order Detaisl",orderDetails$ )
-  
-    
+    console.log("Order Detaisl", orderDetails$)
+
+
     const order$ = this.adminService.loadOrders();
     const subscriptionOrder$ = this.adminService.loadSubsOrders();
 
     Promise.all([orderDetails$.toPromise(), order$.toPromise(), subscriptionOrder$.toPromise()]).then(([orderDetailsResponse, ordersResponse, subscriptionOrdersResponse]: any[]) => {
 
-        const orderDetails = orderDetailsResponse.orders.map((order: any) => ({
-          product_name: order.product_name,
-          quantity: order.quantity,
-          price: order.price 
-        }));
+      const orderDetails = orderDetailsResponse.orders.map((order: any) => ({
+        product_name: order.product_name,
+        quantity: order.quantity,
+        price: order.price
+      }));
 
-        // console.log("orderDetails",orderDetails)
-  
-       const mergedOrders = [
-    ...(ordersResponse.orders || []),
-    ...(subscriptionOrdersResponse.subscribeData || [])
-  ];
-  // console.log("Merged Orders:", mergedOrders);
+      // console.log("orderDetails",orderDetails)
 
-  // 🔍 Find the order by ID in merged array
-  const order = mergedOrders.find((o: any) => o.order_id === order_id);
-        // console.log("Order :",order );
-  
-        if (order) {
+      const mergedOrders = [
+        ...(ordersResponse.orders || []),
+        ...(subscriptionOrdersResponse.subscribeData || [])
+      ];
+      // console.log("Merged Orders:", mergedOrders);
+
+      // 🔍 Find the order by ID in merged array
+      const order = mergedOrders.find((o: any) => o.order_id === order_id);
+      console.log("Selected Order for modal (Normal):", order);
+
+      if (order) {
+        const userId = order.user_id || order.userid || order.customer_id;
+        // Fallback: If user not in allUsers, fetch it
+        const userExists = this.allUsers.find(u => u.id == userId);
+        const userPromise = userExists ? Promise.resolve(userExists) : this.adminService.getUserById(userId).toPromise().then(res => res.user[0]).catch(() => null);
+
+        userPromise.then(fetchedUser => {
+          if (fetchedUser && !userExists) this.allUsers.push(fetchedUser);
+
           Swal.fire({
             title: `Order Details - ${order_id}`,
             html: `
@@ -781,7 +828,7 @@ allMergedOrders : any = []
               }
             </style>
               <p><strong>Order ID:</strong> ${order.order_id}</p>
-              <p><strong>Customer Name:</strong> ${order.username}</p>
+              <p><strong>Customer Name:</strong> ${this.getUserName(userId)}</p>
               <p><strong>Address:</strong> ${order.address}</p>
               <p><strong>Contact:</strong> ${order.contact}</p>
               <p><strong>Instruction:</strong> ${order.instruction}</p>
@@ -806,34 +853,34 @@ allMergedOrders : any = []
 
               <tr>
                 <td>Baguette Tüte</td>
-                <td>${order. bagu_bag}</td>
+                <td>${order.bagu_bag}</td>
               </tr>
 
               <tr>
                 <td>Zusätzliche Tüte</td>
-                <td>${order. zusätzliche_tüte}</td>
+                <td>${order.zusätzliche_tüte}</td>
               </tr>
               </table>
               <hr>
               <h5>Products:</h5>
               <ul>
                 ${orderDetails
-                  .map(
-                    (detail: any) =>
-                      `<li style='margin-top:10px;list-style-type:none'>${detail.product_name} - Quantity: ${detail.quantity} &nbsp; &nbsp; ${detail.price}€</li>`
-                  )
-                  .join("")}
+                .map(
+                  (detail: any) =>
+                    `<li style='margin-top:10px;list-style-type:none'>${detail.product_name} - Quantity: ${detail.quantity} &nbsp; &nbsp; ${detail.price}€</li>`
+                )
+                .join("")}
               </ul>
             `,
             icon: "info",
             confirmButtonText: "Close",
             didOpen: () => {
-              
+
               const bagSelect = document.getElementById("bag-select") as HTMLSelectElement;
               if (bagSelect) {
                 bagSelect.addEventListener("change", (event: Event) => {
                   const selectedBag = (event.target as HTMLSelectElement).value;
-        
+
 
                   this.adminService.updateOrderBag(order_id, { bag: selectedBag }).subscribe(
                     (response: any) => {
@@ -848,12 +895,12 @@ allMergedOrders : any = []
               }
             },
           });
-        } else {
-          Swal.fire("Error", "Order not found!", "error");
-        }
-        
-      })
-      .catch((error) => {
+        });
+      } else {
+        Swal.fire("Error", "Order not found!", "error");
+      }
+    })
+      .catch((error: any) => {
         console.error("Error fetching order details:", error);
         Swal.fire("Error", "Failed to fetch order details. Please try again later.", "error");
       });
@@ -861,35 +908,39 @@ allMergedOrders : any = []
 
   viewOrders(order_id: any): void {
     const orderDetails$ = this.adminService.loadDetailsSubscriptionOrder(order_id);
-  
-    
+
+
     const order$ = this.adminService.loadSubsOrders();
-  
-    
+
+
     Promise.all([orderDetails$.toPromise(), order$.toPromise()])
       .then(([orderDetailsResponse, ordersResponse]: any[]) => {
-       
+
         const orderDetails = orderDetailsResponse.orders.map((order: any) => ({
           product_name: order.product_name,
           quantity: order.quantity,
-          price: order.price 
+          price: order.price
         }));
-  
-      
+
+
         const order = ordersResponse.orders.find((o: any) => o.order_id === order_id);
-  
+        console.log("Selected Order for modal (Subscription):", order);
+
         if (order) {
-          Swal.fire({
-            title: `Order Details - ${order_id}`,
-            html: `
-            <style>
-              table,th,td{
-              border:1px solid black;
-              
-              }
-            </style>
+          const userId = order.user_id || order.userid || order.customer_id || order.id;
+          // Fallback: If user not in allUsers, fetch it
+          const userExists = this.allUsers.find(u => u.id == userId);
+          const userPromise = userExists ? Promise.resolve(userExists) : this.adminService.getUserById(userId).toPromise().then((res: any) => res.user[0]).catch(() => null);
+
+          userPromise.then((fetchedUser: any) => {
+            if (fetchedUser && !userExists) this.allUsers.push(fetchedUser);
+
+            Swal.fire({
+              title: `Order Details - ${order_id}`,
+              html: `
               <p><strong>User ID:</strong> ${order.id}</p>
               <p><strong>Order ID:</strong> ${order.order_id}</p>
+              <p><strong>Customer Name:</strong> ${this.getUserName(userId)}</p>
               <p><strong>Address:</strong> ${order.address}</p>
               <p><strong>Contact:</strong> ${order.contact}</p>
               <p><strong>Instruction:</strong> ${order.instruction}</p>
@@ -913,11 +964,11 @@ allMergedOrders : any = []
 
               <tr>
                 <td>Baguette Tüte</td>
-                <td>${order. bagu_bag}</td>
+                <td>${order.bagu_bag}</td>
               </tr>
               <tr>
                 <td>Zusätzliche Tüte</td>
-                <td>${order. zusätzliche_tüte}</td>
+                <td>${order.zusätzliche_tüte}</td>
               </tr>
               </table>
               <hr>
@@ -933,35 +984,35 @@ allMergedOrders : any = []
 
               
             `,
-            icon: "info",
-            confirmButtonText: "Close",
-            didOpen: () => {
-              
-              const bagSelect = document.getElementById("bag-select") as HTMLSelectElement;
-              if (bagSelect) {
-                bagSelect.addEventListener("change", (event: Event) => {
-                  const selectedBag = (event.target as HTMLSelectElement).value;
-        
+              icon: "info",
+              confirmButtonText: "Close",
+              didOpen: () => {
 
-                  this.adminService.updateSubcriptionOrderBag(order_id, { bag: selectedBag }).subscribe(
-                    (response: any) => {
-                      Swal.fire("Success", "Bag updated successfully!", "success");
-                    },
-                    (error) => {
-                      Swal.fire("Error", "Failed to update bag. Please try again.", "error");
-                      console.error("Error updating bag:", error);
-                    }
-                  );
-                });
-              }
-            },
+                const bagSelect = document.getElementById("bag-select") as HTMLSelectElement;
+                if (bagSelect) {
+                  bagSelect.addEventListener("change", (event: Event) => {
+                    const selectedBag = (event.target as HTMLSelectElement).value;
+
+
+                    this.adminService.updateSubcriptionOrderBag(order_id, { bag: selectedBag }).subscribe(
+                      (response: any) => {
+                        Swal.fire("Success", "Bag updated successfully!", "success");
+                      },
+                      (error) => {
+                        Swal.fire("Error", "Failed to update bag. Please try again.", "error");
+                        console.error("Error updating bag:", error);
+                      }
+                    );
+                  });
+                }
+              },
+            });
           });
         } else {
           Swal.fire("Error", "Order not found!", "error");
         }
-        
       })
-      .catch((error) => {
+      .catch((error: any) => {
         console.error("Error fetching order details:", error);
         Swal.fire("Error", "Failed to fetch order details. Please try again later.", "error");
       });
