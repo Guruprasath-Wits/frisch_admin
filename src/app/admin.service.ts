@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
 import { url } from './config';
-import { HttpHeaders, HttpClient, HttpParams  } from '@angular/common/http';
-import {Observable} from 'rxjs';
+import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
-newurl : any
-  apiUrl : any 
-  labelUrl : any
+  newurl: any
+  apiUrl: any
+  labelUrl: any
 
-  httpOptions = {headers: new HttpHeaders({ 'Content-Type': 'application/json' })};
-  constructor(private  http: HttpClient) {
-    this.newurl =url
+  httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+  constructor(private http: HttpClient) {
+    this.newurl = url
     this.apiUrl = `${this.newurl}/production/pdf`;
     this.labelUrl = `${this.newurl}/label/excel`;
-   }
+  }
 
 
   // private apiUrl = 'http://localhost:4001/production/pdf';
@@ -27,7 +27,7 @@ newurl : any
 
   // private labelUrl = 'https://api.frischfuersie.de/label/excel';
 
-  
+
 
 
   public login(data: any): Observable<any> {
@@ -42,35 +42,35 @@ newurl : any
     return this.http.put<any>(`${url}/impressum/update/${userId}`, imprintData);
   }
 
-  public updateProfile(id:string,data: any): Observable<any> {
+  public updateProfile(id: string, data: any): Observable<any> {
     return this.http.put<any>(`${url}/admin/update/${id}`, data);
   }
 
   // Create a new sample order
-public createSampleOrder(sampleOrder: any): Observable<any> {
-  return this.http.post(`${url}/sampleOrder/create`, sampleOrder);
-}
+  public createSampleOrder(sampleOrder: any): Observable<any> {
+    return this.http.post(`${url}/sampleOrder/create`, sampleOrder);
+  }
 
-// Update an existing sample order
-public updateSampleOrder(sampleOrder: any): Observable<any> {
-  return this.http.put(`${url}/sampleOrder/update/${sampleOrder.id}`, sampleOrder);
-}
-public uploadProductImage(data: FormData): Observable<any> {
-  return this.http.post(`${url}/sampleOrder/upload-image`, data);
-}
+  // Update an existing sample order
+  public updateSampleOrder(sampleOrder: any): Observable<any> {
+    return this.http.put(`${url}/sampleOrder/update/${sampleOrder.id}`, sampleOrder);
+  }
+  public uploadProductImage(data: FormData): Observable<any> {
+    return this.http.post(`${url}/sampleOrder/upload-image`, data);
+  }
 
 
-// Delete a sample order
-public deleteSampleOrder(sampleOrderId: number): Observable<any> {
-  return this.http.post(`${url}/sampleOrder/delete/${sampleOrderId}`,{});
-}
+  // Delete a sample order
+  public deleteSampleOrder(sampleOrderId: number): Observable<any> {
+    return this.http.post(`${url}/sampleOrder/delete/${sampleOrderId}`, {});
+  }
 
   public createImprint(data: any): Observable<any> {
     return this.http.post<any>(`${url}/impressum/create`, data);
   }
 
-  public getCategory(data:any) : Observable<any>{
-    return this.http.get<any>(`${url}/category/read`,data)
+  public getCategory(data: any): Observable<any> {
+    return this.http.get<any>(`${url}/category/read`, data)
   }
 
   public getCategoryPro(): Observable<any> {
@@ -80,327 +80,355 @@ public deleteSampleOrder(sampleOrderId: number): Observable<any> {
   public getCategoryById(id: number): Observable<any> {
     return this.http.get<any>(`${url}/category/read/${id}`);
   }
-  
 
-  public addCategory(data: FormData) : Observable<any>{
-    return this.http.post<any>(`${url}/category/create`,data)
+
+  public addCategory(data: FormData): Observable<any> {
+    return this.http.post<any>(`${url}/category/create`, data)
   }
 
   public removeCategory(id: number): Observable<any> {
     return this.http.post<any>(`${url}/category/delete/${id}`, {});
-}
-
-public updateCategory(id: number, category: any): Observable<any> {
-  
-  return this.http.put<any>(`${url}/category/update/${id}`, category);
-}
-
-public getProducts(): Observable<any> {
-  return this.http.get(`${url}/product/read`);
-}
-
-// Fetch sample orders
-public getSampleOrders(): Observable<any> {
-  return this.http.get(`${url}/sampleOrder/read`);
-}
-
-// Create a new sample order
-// public createSampleOrder(sampleOrder: any): Observable<any> {
-//   return this.http.post(`${url}/sampleOrder/create`, sampleOrder);
-// }
-
-// Update an existing sample order
-// public updateSampleOrder(sampleOrder: any): Observable<any> {
-//   return this.http.put(`${url}/sampleOrder/update/${sampleOrder.id}`, sampleOrder);
-// }
-
-// Delete a sample order
-// public deleteSampleOrder(sampleOrderId: number): Observable<any> {
-//   return this.http.post(`${url}/sampleOrder/delete/${sampleOrderId}`,{});
-// }
-
-public getArea() : Observable<any>{
-  return this.http.get(`${url}/deliveryArea/read`)
-}
-
+  }
+
+  public updateCategory(id: number, category: any): Observable<any> {
 
-public createAera(aera: any): Observable<any> {
-  return this.http.post(`${url}/deliveryArea/create`, aera);
-}
+    return this.http.put<any>(`${url}/category/update/${id}`, category);
+  }
 
-// Update an existing sample order
-public updateAera(aeraId: any): Observable<any> {
-  return this.http.put(`${url}/deliveryArea/update/${aeraId.id}`, aeraId);
-}
+  public getProducts(): Observable<any> {
+    return this.http.get(`${url}/product/read`);
+  }
 
-// Delete a sample order
-public deleteAera(aeraIdId: number): Observable<any> {
-  return this.http.post(`${url}/deliveryArea/delete/${aeraIdId}`,{});
-}
-
-public getAdvantages(): Observable<any> {
-  return this.http.get<any>(`${url}/userAdv/read`);
-}
-
-public createAdvantages(data: any): Observable<any> {
-  return this.http.post<any>(`${url}/userAdv/create`, data);
-}
-
-public updateAdvantages(data: any): Observable<any> {
-  return this.http.put<any>(`${url}/userAdv/update/${data.id}`, data);
-}
-
-public deleteAdvantages(id: number): Observable<any> {
-  return this.http.post<any>(`${url}/userAdv/delete/${id}`,{});
-}
-
-public getJobs(): Observable<any> {
-  return this.http.get<any>(`${url}/jobs/read`);
-}
-
-public createJobs(data: any): Observable<any> {
-  return this.http.post<any>(`${url}/jobs/create`, data);
-}
-
-public updateJobs(data: any): Observable<any> {
-  return this.http.put<any>(`${url}/jobs/update/${data.id}`, data);
-}
-
-public deleteJobs(id: number): Observable<any> {
-  return this.http.post<any>(`${url}/jobs/delete/${id}`,{});
-}
-
-public getFaqs(): Observable<any> {
-  return this.http.get<any>(`${url}/faq/read`);
-}
-
-public createFaq(data: any): Observable<any> {
-  return this.http.post<any>(`${url}/faq/create`, data);
-}
-
-public updateFaq(data: any): Observable<any> {
-  return this.http.put<any>(`${url}/faq/update/${data.id}`, data);
-}
-
-public deleteFaq(id: number): Observable<any> {
-  return this.http.post<any>(`${url}/faq/delete/${id}`,{});
-}
-
-public getRole(): Observable<any> {
-  return this.http.get<any>(`${url}/role/read`);
-}
+  // Fetch sample orders
+  public getSampleOrders(): Observable<any> {
+    return this.http.get(`${url}/sampleOrder/read`);
+  }
 
-public createRole(data: any): Observable<any> {
-  return this.http.post<any>(`${url}/role/create`, data);
-}
+  // Create a new sample order
+  // public createSampleOrder(sampleOrder: any): Observable<any> {
+  //   return this.http.post(`${url}/sampleOrder/create`, sampleOrder);
+  // }
 
-public updateRole(data: any): Observable<any> {
-  return this.http.put<any>(`${url}/role/update/${data.id}`, data);
-}
+  // Update an existing sample order
+  // public updateSampleOrder(sampleOrder: any): Observable<any> {
+  //   return this.http.put(`${url}/sampleOrder/update/${sampleOrder.id}`, sampleOrder);
+  // }
+
+  // Delete a sample order
+  // public deleteSampleOrder(sampleOrderId: number): Observable<any> {
+  //   return this.http.post(`${url}/sampleOrder/delete/${sampleOrderId}`,{});
+  // }
 
-public deleteRole(id: number): Observable<any> {
-  return this.http.post<any>(`${url}/role/delete/${id}`,{});
-}
+  public getArea(): Observable<any> {
+    return this.http.get(`${url}/deliveryArea/read`)
+  }
 
-public createSetting(data: any): Observable<any> {
-  return this.http.post<any>(`${url}/setting/create`, data);
-}
 
-public loadUsers(): Observable<any> {
-  return this.http.get<any>(`${url}/users/read`);
-}
+  public createAera(aera: any): Observable<any> {
+    return this.http.post(`${url}/deliveryArea/create`, aera);
+  }
 
-public updateUser(userId: number, userData: any): Observable<any> {
-  return this.http.put<any>(`${url}/users/update/${userId}`, userData);
-}
+  // Update an existing sample order
+  public updateAera(aeraId: any): Observable<any> {
+    return this.http.put(`${url}/deliveryArea/update/${aeraId.id}`, aeraId);
+  }
 
-public updateUserStatus(userId: number, status: number): Observable<any> {
-  return this.http.put<any>(`${url}/users/status/${userId}`, { status });
-}
+  // Delete a sample order
+  public deleteAera(aeraIdId: number): Observable<any> {
+    return this.http.post(`${url}/deliveryArea/delete/${aeraIdId}`, {});
+  }
 
+  public getAdvantages(): Observable<any> {
+    return this.http.get<any>(`${url}/userAdv/read`);
+  }
 
-public getUserById(userId: number): Observable<any> {
-  return this.http.get<any>(`${url}/users/read/${userId}`);
-}
+  public createAdvantages(data: any): Observable<any> {
+    return this.http.post<any>(`${url}/userAdv/create`, data);
+  }
 
-public createUser(createUser: any): Observable<any> {
-  return this.http.post(`${url}/users/register`, createUser);
-}
+  public updateAdvantages(data: any): Observable<any> {
+    return this.http.put<any>(`${url}/userAdv/update/${data.id}`, data);
+  }
 
-public deleteUser(id: number): Observable<any> {
-  return this.http.post<any>(`${url}/users/delete/${id}`,{});
-}
+  public deleteAdvantages(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/userAdv/delete/${id}`, {});
+  }
 
-public removeProduct(id: number): Observable<any> {
-  return this.http.post<any>(`${url}/product/delete/${id}`,{});
-}
+  public getJobs(): Observable<any> {
+    return this.http.get<any>(`${url}/jobs/read`);
+  }
 
-public fetchProducts(): Observable<any> {
-  return this.http.get<any>(`${url}/product/read`);
-}
+  public createJobs(data: any): Observable<any> {
+    return this.http.post<any>(`${url}/jobs/create`, data);
+  }
 
-public updateProduct(userId: string, userData: any): Observable<any> {
-  return this.http.put<any>(`${url}/product/update/${userId}`, userData);
-}
+  public updateJobs(data: any): Observable<any> {
+    return this.http.put<any>(`${url}/jobs/update/${data.id}`, data);
+  }
 
-public getProductById(userId: string): Observable<any> {
-  return this.http.get<any>(`${url}/product/read/${userId}`);
-}
+  public deleteJobs(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/jobs/delete/${id}`, {});
+  }
 
-public createProduct(createProduct: any): Observable<any> {
-  return this.http.post(`${url}/product/create`, createProduct);
-}
+  public getFaqs(): Observable<any> {
+    return this.http.get<any>(`${url}/faq/read`);
+  }
 
-public loadSettings(): Observable<any> {
-  return this.http.get<any>(`${url}/setting/read/1`);
-}
+  public createFaq(data: any): Observable<any> {
+    return this.http.post<any>(`${url}/faq/create`, data);
+  }
 
-public updateSetting(userId: string, settingData: any): Observable<any> {
-  return this.http.put<any>(`${url}/setting/update/${userId}`, settingData);
-}
+  public updateFaq(data: any): Observable<any> {
+    return this.http.put<any>(`${url}/faq/update/${data.id}`, data);
+  }
 
-public getNotification(): Observable<any> {
-  return this.http.get<any>(`${url}/notifications/read`);
-}
+  public deleteFaq(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/faq/delete/${id}`, {});
+  }
 
-public updateStatus(notifiId: number, statusData: any): Observable<any> {
-  return this.http.put<any>(`${url}/notifications/update/${notifiId}`, statusData);
-}
+  public getRole(): Observable<any> {
+    return this.http.get<any>(`${url}/role/read`);
+  }
 
-public loadOrders(): Observable<any> {
-  return this.http.get<any>(`${url}/orders/read`);
-}
+  public createRole(data: any): Observable<any> {
+    return this.http.post<any>(`${url}/role/create`, data);
+  }
 
-public loadSubsOrders(): Observable<any> {
-  return this.http.get<any>(`${url}/subscribe-orders/read`);
-}
+  public updateRole(data: any): Observable<any> {
+    return this.http.put<any>(`${url}/role/update/${data.id}`, data);
+  }
 
-public deliverycompleteAll(): Observable<any> {
-  return this.http.get<any>(`${url}/orders/deliverycompleteAll`);
-}
+  public deleteRole(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/role/delete/${id}`, {});
+  }
 
-public driverPerform(): Observable<any> {
-  return this.http.get<any>(`${url}/orders/driverperformanceRead`);
-}
+  public createSetting(data: any): Observable<any> {
+    return this.http.post<any>(`${url}/setting/create`, data);
+  }
 
-public createDriverPerformance(createDriverPerformance: any): Observable<any> {
-  return this.http.post(`${url}/orders/driverperformance`, createDriverPerformance);
-}
+  public loadUsers(): Observable<any> {
+    return this.http.get<any>(`${url}/users/read`);
+  }
 
+  public updateUser(userId: number, userData: any): Observable<any> {
+    return this.http.put<any>(`${url}/users/update/${userId}`, userData);
+  }
 
+  public updateUserStatus(userId: number, status: number): Observable<any> {
+    return this.http.put<any>(`${url}/users/status/${userId}`, { status });
+  }
 
-public deleteOrder(id: number): Observable<any> {
-  return this.http.post<any>(`${url}/orders/delete/${id}`,{});
-}
 
-public updateOrders(orderId: number, orderData: any): Observable<any> {
-  return this.http.put<any>(`${url}/orders/update/${orderId}`, orderData);
-}
+  public getUserById(userId: number): Observable<any> {
+    return this.http.get<any>(`${url}/users/read/${userId}`);
+  }
 
-public updateSubOrders(orderId: number, orderData: any): Observable<any> {
+  public createUser(createUser: any): Observable<any> {
+    return this.http.post(`${url}/users/register`, createUser);
+  }
 
-  return this.http.post<any>(`${url}/orders/subcreate/`, orderData);
-}
+  public deleteUser(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/users/delete/${id}`, {});
+  }
 
-public updateSubscriptionOrders (orderId: number, orderData: any): Observable<any>  {
-  return this.http.put<any>(`${url}/subscribe-orders/update/${orderId}`, orderData);
-}
+  public removeProduct(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/product/delete/${id}`, {});
+  }
 
-public assignOrdersToDriver(orderData: { driverId: number; orderIds: number[] }): Observable<any> {
-  return this.http.put<any>(`${url}/orders/assignDriver`, orderData);
-}
+  public fetchProducts(): Observable<any> {
+    return this.http.get<any>(`${url}/product/read`);
+  }
 
-public storeProcessedOrders(orders: any[]): Observable<any> {
-  return this.http.post(`${url}/orders/storeProcessedOrders`, { orders });
-}
+  public updateProduct(userId: string, userData: any): Observable<any> {
+    return this.http.put<any>(`${url}/product/update/${userId}`, userData);
+  }
 
-public getOrder(order: any): Observable<any> {
-  return this.http.post(`${url}/orders/OrderDetailsByDriver`, order);
-}
+  public getProductById(userId: string): Observable<any> {
+    return this.http.get<any>(`${url}/product/read/${userId}`);
+  }
 
+  public createProduct(createProduct: any): Observable<any> {
+    return this.http.post(`${url}/product/create`, createProduct);
+  }
 
-public assignOrdersToDrivers(orderData: { driverId: number; orderIds: number[] }): Observable<any> {
-  return this.http.put<any>(`${url}/subscribe-orders/assignDriver`, orderData);
-}
+  public loadSettings(): Observable<any> {
+    return this.http.get<any>(`${url}/setting/read/1`);
+  }
 
-public loadDetailsOrder(orderId: any): Observable<any> {
-  return this.http.get<any>(`${url}/orders/orderDetails/${orderId}`, {});
-}
+  public updateSetting(userId: string, settingData: any): Observable<any> {
+    return this.http.put<any>(`${url}/setting/update/${userId}`, settingData);
+  }
 
-public loadDetailsSubscriptionOrder(orderId: any): Observable<any> {
-  return this.http.get<any>(`${url}/subscribe-orders/orderDetails/${orderId}`, {});
-}
+  public getNotification(): Observable<any> {
+    return this.http.get<any>(`${url}/notifications/read`);
+  }
 
+  public updateStatus(notifiId: number, statusData: any): Observable<any> {
+    return this.http.put<any>(`${url}/notifications/update/${notifiId}`, statusData);
+  }
 
-public updateOrderBag(orderId: number, orderData: any): Observable<any> {
-  return this.http.put<any>(`${url}/orders/bagUpdate/${orderId}`, orderData);
-}
+  public loadOrders(): Observable<any> {
+    return this.http.get<any>(`${url}/orders/read`);
+  }
 
-public updateSubcriptionOrderBag(orderId: number, orderData: any): Observable<any> {
-  return this.http.put<any>(`${url}/subscribe-orders/bagUpdate/${orderId}`, orderData);
-}
+  public loadSubsOrders(): Observable<any> {
+    return this.http.get<any>(`${url}/subscribe-orders/read`);
+  }
 
+  public deliverycompleteAll(): Observable<any> {
+    return this.http.get<any>(`${url}/orders/deliverycompleteAll`);
+  }
 
-public loadContactUs(): Observable<any> {
-  return this.http.get<any>(`${url}/contactUS/read`);
-}
+  public driverPerform(): Observable<any> {
+    return this.http.get<any>(`${url}/orders/driverperformanceRead`);
+  }
 
-public removecontactUS(id: number): Observable<any> {
-  return this.http.post<any>(`${url}/contactUS/delete/${id}`,{});
-}
+  public createDriverPerformance(createDriverPerformance: any): Observable<any> {
+    return this.http.post(`${url}/orders/driverperformance`, createDriverPerformance);
+  }
 
-public savePermissions(perData: any): Observable<any> {
-  return this.http.post(`${url}/admin/permissions`, perData);
-}
 
-public deletePermission(id: number): Observable<any> {
-  return this.http.post<any>(`${url}/admin/permissions/delete/${id}`,{});
-}
 
-public loadPermissions(): Observable<any> {
-  return this.http.get<any>(`${url}/admin/permissions/read`);
-}
+  public deleteOrder(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/orders/delete/${id}`, {});
+  }
 
-public loadPermissionsById(perId:any): Observable<any> {
-  return this.http.get<any>(`${url}/admin/permissions/readPermissionId/${perId}`);
-}
+  public updateOrders(orderId: number, orderData: any): Observable<any> {
+    return this.http.put<any>(`${url}/orders/update/${orderId}`, orderData);
+  }
 
-public updatePermissions(perId: number, perData: any): Observable<any> {
-  return this.http.put<any>(`${url}/admin/permissions/update/${perId}`, perData);
-}
+  public updateSubOrders(orderId: number, orderData: any): Observable<any> {
 
-public getSubscription(year: number, month: number): Observable<any> {
-  return this.http.get<any>(`${url}/subscription/transactions?month=${month}&year=${year}`);
-}
+    return this.http.post<any>(`${url}/orders/subcreate/`, orderData);
+  }
 
-public getSubscriptionMonth(): Observable<any> {
-  return this.http.get<any>(`${url}/subscription/billing-months`);
-}
+  public updateSubscriptionOrders(orderId: number, orderData: any): Observable<any> {
+    return this.http.put<any>(`${url}/subscribe-orders/update/${orderId}`, orderData);
+  }
 
-// public getPages():Observable<any>{
-//   return this.http.get(`${url}/admin/permissions/read`);
-// }
+  public assignOrdersToDriver(orderData: { driverId: number; orderIds: number[] }): Observable<any> {
+    return this.http.put<any>(`${url}/orders/assignDriver`, orderData);
+  }
 
-public getLabelReport(data: any): Observable<Blob> {
-  return this.http.post(this.labelUrl, data, {
-    responseType: 'blob'
-  });
-}
+  public storeProcessedOrders(orders: any[]): Observable<any> {
+    return this.http.post(`${url}/orders/storeProcessedOrders`, { orders });
+  }
 
-// public getLabelReport(data:any): Observable<Blob> {
-//   const params = new HttpParams().set('data', JSON.stringify(data));
-//   return this.http.get(this.labelUrl, { responseType: 'blob', params });
-// }
+  public getOrder(order: any): Observable<any> {
+    return this.http.post(`${url}/orders/OrderDetailsByDriver`, order);
+  }
 
 
+  public assignOrdersToDrivers(orderData: { driverId: number; orderIds: number[] }): Observable<any> {
+    return this.http.put<any>(`${url}/subscribe-orders/assignDriver`, orderData);
+  }
 
+  public loadDetailsOrder(orderId: any): Observable<any> {
+    return this.http.get<any>(`${url}/orders/orderDetails/${orderId}`, {});
+  }
 
+  public loadDetailsSubscriptionOrder(orderId: any): Observable<any> {
+    return this.http.get<any>(`${url}/subscribe-orders/orderDetails/${orderId}`, {});
+  }
 
-public getLabels(date: string, category: string): Observable<Blob> {
-  const url = `${this.apiUrl}/?date=${encodeURIComponent(date)}&category=${encodeURIComponent(category)}`;
-  return this.http.get<Blob>(url, { responseType: 'blob' as 'json' });
-}
 
+  public updateOrderBag(orderId: number, orderData: any): Observable<any> {
+    return this.http.put<any>(`${url}/orders/bagUpdate/${orderId}`, orderData);
+  }
 
+  public updateSubcriptionOrderBag(orderId: number, orderData: any): Observable<any> {
+    return this.http.put<any>(`${url}/subscribe-orders/bagUpdate/${orderId}`, orderData);
+  }
 
+
+  public loadContactUs(): Observable<any> {
+    return this.http.get<any>(`${url}/contactUS/read`);
+  }
+
+  public removecontactUS(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/contactUS/delete/${id}`, {});
+  }
+
+  public savePermissions(perData: any): Observable<any> {
+    return this.http.post(`${url}/admin/permissions`, perData);
+  }
+
+  public deletePermission(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/admin/permissions/delete/${id}`, {});
+  }
+
+  public loadPermissions(): Observable<any> {
+    return this.http.get<any>(`${url}/admin/permissions/read`);
+  }
+
+  public loadPermissionsById(perId: any): Observable<any> {
+    return this.http.get<any>(`${url}/admin/permissions/readPermissionId/${perId}`);
+  }
+
+  public updatePermissions(perId: number, perData: any): Observable<any> {
+    return this.http.put<any>(`${url}/admin/permissions/update/${perId}`, perData);
+  }
+
+  public getSubscription(year: number, month: number): Observable<any> {
+    return this.http.get<any>(`${url}/subscription/transactions?month=${month}&year=${year}`);
+  }
+
+  public getSubscriptionMonth(): Observable<any> {
+    return this.http.get<any>(`${url}/subscription/billing-months`);
+  }
+
+  // public getPages():Observable<any>{
+  //   return this.http.get(`${url}/admin/permissions/read`);
+  // }
+
+  public getLabelReport(data: any): Observable<Blob> {
+    return this.http.post(this.labelUrl, data, {
+      responseType: 'blob'
+    });
+  }
+
+  // public getLabelReport(data:any): Observable<Blob> {
+  //   const params = new HttpParams().set('data', JSON.stringify(data));
+  //   return this.http.get(this.labelUrl, { responseType: 'blob', params });
+  // }
+
+
+
+
+
+  public getLabels(date: string, category: string): Observable<Blob> {
+    const url = `${this.apiUrl}/?date=${encodeURIComponent(date)}&category=${encodeURIComponent(category)}`;
+    return this.http.get<Blob>(url, { responseType: 'blob' as 'json' });
+  }
+
+  public getTaxes(): Observable<any> {
+    return this.http.get<any>(`${url}/tax/read`);
+  }
+
+  public createTax(data: any): Observable<any> {
+    return this.http.post<any>(`${url}/tax/create`, data);
+  }
+
+  public updateTax(id: number, data: any): Observable<any> {
+    return this.http.put<any>(`${url}/tax/update/${id}`, data);
+  }
+
+  public deleteTax(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/tax/delete/${id}`, {});
+  }
+  public getBottles(): Observable<any> {
+    return this.http.get<any>(`${url}/bottle/`);
+  }
+
+  public createBottle(data: any): Observable<any> {
+    return this.http.post<any>(`${url}/bottle/`, data);
+  }
+
+  public updateBottle(id: number, data: any): Observable<any> {
+    return this.http.put<any>(`${url}/bottle/${id}`, data);
+  }
+
+  public deleteBottle(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/bottle/delete/${id}`, {});
+  }
 }

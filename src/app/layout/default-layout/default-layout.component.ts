@@ -19,8 +19,8 @@ import {
 } from '@coreui/angular';
 
 import { DefaultFooterComponent, DefaultHeaderComponent } from './';
-import { navItems } from './_nav'; // Import navItems array
-import { AdminService } from 'src/app/admin.service';
+import { navItems as originalNavItems } from './_nav'; // Import navItems as originalNavItems
+import { AdminService } from '../../admin.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -46,14 +46,14 @@ import { AdminService } from 'src/app/admin.service';
   ],
 })
 export class DefaultLayoutComponent implements OnInit {
-  public navItems: INavData[] = navItems; // Original navItems array
+  public navItems: INavData[] = [...originalNavItems]; // Copy original navItems array
   permissions: Record<string, number>[] = []; // Permissions as an array of key-value objects
   allowedNavItems: INavData[] = []; // Filtered navItems based on permissions
   currentUserId: string | null = null;
   roleId: string | null = null; // Current user ID from localStorage
-   // Current user ID from localStorage
+  // Current user ID from localStorage
 
-  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) {}
+  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadCurrentUser();
@@ -97,32 +97,40 @@ export class DefaultLayoutComponent implements OnInit {
   MatchesPermission(): void {
     console.log('Permissions:', this.permissions);
 
-    // Iterate through permissions
+    // Create a set of allowed names based on permissions
+    const allowedNames = new Set<string>();
     for (const obj of this.permissions) {
       if (obj && typeof obj === 'object') {
         for (const key in obj) {
-          if (Object.prototype.hasOwnProperty.call(obj, key)) {
-            // Iterate through navItems
-            for (const navItem of this.navItems) {
-              // Check if the navItem matches the permission key and is allowed
-              if (key === navItem.name && obj[key] === 1) {
-                console.log(`Adding allowed navItem: ${navItem.name}`);
-                this.allowedNavItems.push(navItem);
-              }
-            }
+          if (Object.prototype.hasOwnProperty.call(obj, key) && obj[key] === 1) {
+            allowedNames.add(key);
           }
         }
       }
     }
 
-    // Update navItems with the filtered allowedNavItems
-    this.navItems = this.allowedNavItems;
+    // Explicitly allow essential menu items
+    allowedNames.add('Steuer');
+    allowedNames.add('Flasche');
+    allowedNames.add('Dashboard');
+
+    // Filter from originalNavItems to maintain order and structure
+    this.navItems = originalNavItems.filter(item => {
+      // Always allow titles (headers)
+      if (item.title) return true;
+
+      // Allow if the name is in the allowed list
+      if (item.name && allowedNames.has(item.name)) return true;
+
+      return false;
+    });
+
+    console.log('Final Filtered Nav Items:', this.navItems);
     this.cdr.detectChanges();
-    console.log('Allowed Nav Items:', this.allowedNavItems);
   }
 
   /**
    * Handle scrollbar updates (optional).
    */
-  onScrollbarUpdate($event: any): void {}
+  onScrollbarUpdate($event: any): void { }
 }
