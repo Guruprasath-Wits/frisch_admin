@@ -1,7 +1,4 @@
 import {
-  IconDirective
-} from "./chunk-2HI5SV5X.js";
-import {
   Platform,
   _getEventTarget,
   _getFocusedElementPierceShadowDom,
@@ -11,7 +8,7 @@ import {
   coerceElement,
   coerceNumberProperty,
   normalizePassiveListenerOptions
-} from "./chunk-LEIVDM6N.js";
+} from "./chunk-CUACZESR.js";
 import {
   takeUntilDestroyed,
   toObservable
@@ -37,6 +34,9 @@ import {
   RouterLinkActive,
   RouterModule
 } from "./chunk-PTXV5PZJ.js";
+import {
+  IconDirective
+} from "./chunk-2HI5SV5X.js";
 import "./chunk-3K6KSUIR.js";
 import "./chunk-4OVDJVYG.js";
 import {
