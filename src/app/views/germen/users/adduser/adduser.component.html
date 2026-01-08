@@ -1,180 +1,137 @@
-<style>
-   
-
-  .form-group input,.form-group select,#ingredients,#nutri_inform{
-      width: 300px;
-  }
-</style>
-
 <div class="container mt-4">
   <h3 style="text-align: center; font-weight: bold !important;">Add User Details</h3>
   <div class="add-user-card">
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
-      <div class="d-flex" style="justify-content: space-around;margin-left:-50px;">
-        <!-- First Name -->
-        <div class="form-group mb-3">
+      <!-- Row 1: First Name & Last Name -->
+      <div class="row mb-3">
+        <div class="col-md-6">
           <label for="fname" class="form-label">First Name</label>
-          <input type="text" class="form-control" formControlName="fname" id="fname"  />
-         
-          
+          <input type="text" class="form-control" formControlName="fname" id="fname" />
         </div>
-  
-  
-        <div class="form-group mb-3">
+        <div class="col-md-6">
           <label for="lname" class="form-label">Last Name</label>
           <input type="lname" class="form-control" formControlName="lname" id="lname" />
-         
-        </div>
-  
-        </div>
-      
-      <div class="d-flex" style="justify-content: space-around;margin-left:-50px;">
-
-         <div class="form-group mb-3">
-          <label for="lname" class="form-label">Company Name</label>
-          <input type="lname" class="form-control" formControlName="company_name" id="company_name" />
-         
-        </div>
-      <!-- First Name -->
-      <div class="form-group mb-3">
-        <label for="username" class="form-label">User Name (optional)</label>
-        <input type="text" class="form-control" formControlName="username" id="username" placeholder="automatically fill the fname and lname" />
-       
-      </div>
-
-
-      <!-- Email -->
-     
-
-      </div>
-      <!-- Phone No -->
-
-      <div class="d-flex" style="justify-content: space-around;margin-left:-50px;">
-        
-         <div class="form-group mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control" formControlName="email" id="email" />
-        <div *ngIf="f['email'].touched && f['email'].errors?.['required']" class="text-danger">
-          Email is required
-        </div>
-        <div *ngIf="f['email'].touched && f['email'].errors?.['email']" class="text-danger">
-          Please enter a valid email address
         </div>
       </div>
 
-      <div class="form-group mb-3">
-        <label for="phone" class="form-label">Phone No</label>
-        <input type="number" class="form-control" formControlName="phone" id="phone" />
-        
-      </div>
-
-     
-
-      </div>
-
-      <div class="d-flex" style="justify-content: space-around;margin-left:-50px;">
-
-         <div class="form-group mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input type="text" class="form-control" formControlName="password" id="password" />
-        <div *ngIf="f['password'].invalid && f['password'].touched" class="text-danger">
-          password is required
+      <!-- Row 2: Company Name & User Name -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="company_name" class="form-label">Company Name</label>
+          <input type="text" class="form-control" formControlName="company_name" id="company_name" />
+        </div>
+        <div class="col-md-6">
+          <label for="username" class="form-label">User Name (optional)</label>
+          <input type="text" class="form-control" formControlName="username" id="username"
+            placeholder="automatically fill the fname and lname" />
         </div>
       </div>
 
-      <!-- Address -->
-      
-
-      <div class="form-group mb-3">
-        <label for="role" class="form-label">Role !!!</label>
-        <select class="form-select form-control" formControlName="role" id="role">
-          <option value="" disabled>Select a role</option>
-          <option *ngFor="let role of roles" [value]="role.role_name">
-            {{role.role_name}}
-          </option>
-        </select>
-        <div *ngIf="f['role'].touched && f['role'].errors?.['required']" class="text-danger">
-          Role is required
+      <!-- Row 3: Email & Phone No -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control" formControlName="email" id="email" />
+          <div *ngIf="f['email'].touched && f['email'].errors?.['required']" class="text-danger">
+            Email is required
+          </div>
+          <div *ngIf="f['email'].touched && f['email'].errors?.['email']" class="text-danger">
+            Please enter a valid email address
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label for="phone" class="form-label">Phone No</label>
+          <input type="number" class="form-control" formControlName="phone" id="phone" />
         </div>
       </div>
 
-     
-
-      </div>
-
-      <!-- Zip Code -->
-      
-      <div class="d-flex" style="justify-content: space-around;margin-left:-50px;">
-
-         <div class="form-group mb-3">
-        <label for="zipcode" class="form-label">zipcode</label>
-        <input type="text" class="form-control" formControlName="zipcode" id="zipcode" />
-        
-      </div>
-
-      <!-- Subtown -->
-      <div class="form-group mb-3">
-        <label for="Subtown" class="form-label">City/Area</label>
-        <input type="text" class="form-control" formControlName="Subtown" id="Subtown" />
-        
-      </div>
-
-      <!-- Birthday -->
-      
-
-      </div>
-
-      <div class="d-flex" style="justify-content: space-around;margin-left:-50px;">
-
-     
-        <div class="form-group mb-3">
-        <label for="bday" class="form-label">Date of Birth</label>
-        <input type="text" class="form-control" formControlName="bday" id="bday" />
-        <!-- <div *ngIf="f['bday'].touched && f['bday'].errors?.['required']" class="text-danger">
-          Birthday is required
-        </div> -->
-      </div>
-
-      <!-- IBAN -->
-      <div class="form-group mb-3">
-        <label for="IBAN" class="form-label">IBAN No</label>
-        <input type="text" class="form-control" formControlName="IBAN" id="IBAN" />
-        <!-- <div *ngIf="f['IBAN'].touched && f['IBAN'].errors?.['required']" class="text-danger">
-          IBAN is required
+      <!-- Row 4: Password & Role -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="password" class="form-label">Password</label>
+          <input type="text" class="form-control" formControlName="password" id="password" />
+          <div *ngIf="f['password'].invalid && f['password'].touched" class="text-danger">
+            password is required
+          </div>
         </div>
-        <div *ngIf="f['IBAN'].touched && f['IBAN'].errors?.['pattern']" class="text-danger">
-          Please enter a valid 22-digit IBAN number
-        </div> -->
+        <div class="col-md-6">
+          <label for="role" class="form-label">Role</label>
+          <select class="form-select" formControlName="role" id="role">
+            <option value="" disabled>Select a role</option>
+            <option *ngFor="let role of roles" [value]="role.role_name">
+              {{role.role_name}}
+            </option>
+          </select>
+          <div *ngIf="f['role'].touched && f['role'].errors?.['required']" class="text-danger">
+            Role is required
+          </div>
+        </div>
       </div>
 
-      
-
+      <!-- Row 5: Zipcode & City/Area -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="zipcode" class="form-label">Zipcode</label>
+          <input type="text" class="form-control" formControlName="zipcode" id="zipcode" />
+        </div>
+        <div class="col-md-6">
+          <label for="Subtown" class="form-label">City/Area</label>
+          <input type="text" class="form-control" formControlName="Subtown" id="Subtown" />
+        </div>
       </div>
 
-
-      <div class="d-flex" style="justify-content: space-around; margin-left:-50px;">
-
-        <div class="form-group mb-3">
-        <label for="address" class="form-label">Street </label>
-        <input type="text" class="form-control" formControlName="address" id="address" />
-        
+      <!-- Row 6: Birthday & IBAN -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="bday" class="form-label">Geburtsdatum</label>
+          <mat-form-field appearance="fill" class="w-100">
+            <input matInput [matDatepicker]="picker" formControlName="bday" id="bday">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-md-6">
+          <label for="IBAN" class="form-label">IBAN No</label>
+          <input type="text" class="form-control" formControlName="IBAN" id="IBAN" />
+        </div>
       </div>
 
-
-        <div class="form-group mb-3">
-        <label for="address" class="form-label"> House Number</label>
-        <input type="text" class="form-control" formControlName="street" id="address" />
-        
+      <!-- Row 7: Street & House Number -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="address" class="form-label">Street</label>
+          <input type="text" class="form-control" formControlName="address" id="address" />
+        </div>
+        <div class="col-md-6">
+          <label for="street" class="form-label">House Number</label>
+          <input type="text" class="form-control" formControlName="street" id="street" />
+        </div>
       </div>
 
-        
+      <!-- Row 8: Floor & Lift Availability -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="floor" class="form-label">Etage</label>
+          <input type="text" class="form-control" formControlName="floor" id="floor" />
+        </div>
+        <div class="col-md-6">
+          <label for="lift_availability" class="form-label">Aufzug vorhanden</label>
+          <select class="form-select" formControlName="lift_availability" id="lift_availability">
+            <option value="" disabled selected>Select</option>
+            <option value="Yes">Ja</option>
+            <option value="No">Nein</option>
+          </select>
+        </div>
       </div>
-
-     
 
       <!-- Submit Button -->
-      <button type="submit" style="margin-left: 680px;width: 100px;"  class="btn btn-primary">Add User</button>
+      <div class="row mt-4">
+        <div class="col-12 text-center">
+          <button type="submit" class="btn btn-primary px-5">Add User</button>
+        </div>
+      </div>
+
     </form>
   </div>
 </div>
