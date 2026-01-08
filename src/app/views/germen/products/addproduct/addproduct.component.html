@@ -8,7 +8,9 @@
         <div class="form-group">
           <label for="product_name">Product Name</label>
           <input type="text" id="product_name" formControlName="product_name" placeholder="Enter product name" />
-          <div *ngIf="productForm.get('product_name')?.invalid && (productForm.get('product_name')?.touched || productForm.get('product_name')?.dirty)" class="error">
+          <div
+            *ngIf="productForm.get('product_name')?.invalid && (productForm.get('product_name')?.touched || productForm.get('product_name')?.dirty)"
+            class="error">
             <small *ngIf="productForm.get('product_name')?.errors?.['required']">Product Name is required.</small>
           </div>
         </div>
@@ -30,17 +32,12 @@
             </div>
 
             <div *ngIf="categoryDropdownOpen" class="dropdown-list">
-  <div *ngFor="let category of categories" class="checkbox-item">
-    <input
-      type="checkbox"
-      class="form-check-input"
-      [checked]="isCategorySelected(category.id)"
-      (change)="onCategoryChange(category.id, $event)"
-      id="cat_{{ category.id }}"
-    />
-    <label for="cat_{{ category.id }}" class="form-check-label">{{ category.category_name }}</label>
-  </div>
-</div>
+              <div *ngFor="let category of categories" class="checkbox-item">
+                <input type="checkbox" class="form-check-input" [checked]="isCategorySelected(category.id)"
+                  (change)="onCategoryChange(category.id, $event)" id="cat_{{ category.id }}" />
+                <label for="cat_{{ category.id }}" class="form-check-label">{{ category.category_name }}</label>
+              </div>
+            </div>
 
           </div>
         </div>
@@ -49,6 +46,47 @@
         <div class="form-group">
           <label for="price">Price</label>
           <input type="number" id="price" formControlName="price" placeholder="Enter price (in currency)" />
+        </div>
+      </div>
+
+      <!-- Availability -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Availability</label>
+          <div class="days-container">
+            <div *ngFor="let day of daysList" class="checkbox-item">
+              <input type="checkbox" class="form-check-input" [id]="'day_' + day" [value]="day"
+                [checked]="isDaySelected(day)" (change)="onDayChange(day, $event)">
+              <label class="form-check-label" [for]="'day_' + day">
+                {{ day }}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pfand & Tax -->
+      <div class="form-row">
+        <!-- Pfand -->
+        <div class="form-group">
+          <label for="pfand">Pfand (Bottle Deposit)</label>
+          <select id="pfand" formControlName="pfand">
+            <option value="0.00">0,00€</option>
+            <option value="0.08">0,08€</option>
+            <option value="0.15">0,15€</option>
+            <option value="0.25">0,25€</option>
+            <option value="1.50">1,50€</option>
+          </select>
+        </div>
+
+        <!-- Tax -->
+        <div class="form-group">
+          <label for="tax">VAT (Tax)</label>
+          <select id="tax" formControlName="tax">
+            <option value="0.00">0%</option>
+            <option value="7.00">7%</option>
+            <option value="19.00">19%</option>
+          </select>
         </div>
       </div>
 
@@ -73,7 +111,8 @@
       <div class="form-row">
         <div class="form-group">
           <label for="nutri_inform">Nutritional Information</label>
-          <textarea id="nutri_inform" formControlName="nutri_inform" placeholder="Enter nutritional information per serving"></textarea>
+          <textarea id="nutri_inform" formControlName="nutri_inform"
+            placeholder="Enter nutritional information per serving"></textarea>
         </div>
 
         <div class="form-group">

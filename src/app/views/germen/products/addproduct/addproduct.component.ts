@@ -36,11 +36,14 @@ export class AddproductComponent {
       weight: [null],
       ingredients: [''],
       nutri_inform: [''],
-      status: [false], 
-      product_img: [null]
+      status: [false],
+      product_img: [null],
+      availability: [[]], // Array for selected days
+      pfand: ['0.00'],
+      tax: ['0.00']
     });
 
-    
+
     this.productId = this.route.snapshot.paramMap.get('id') || '';
   }
 
@@ -79,7 +82,10 @@ export class AddproductComponent {
           ingredients: product.ingredients,
           nutri_inform: product.nutri_inform || '',
           status: product.status === 1, // Set to true if product is active
-          product_img: product.product_img
+          product_img: product.product_img,
+          availability: product.availability ? JSON.parse(product.availability) : [],
+          pfand: product.pfand,
+          tax: product.tax
         });
       },
       (error) => {
@@ -88,13 +94,13 @@ export class AddproductComponent {
     );
   }
 
-  
+
 
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length) {
       this.selectedFile = input.files[0];
-  
+
       // Show image preview
       const reader = new FileReader();
       reader.onload = (e: any) => {
@@ -107,47 +113,74 @@ export class AddproductComponent {
   categoryDropdownOpen = false;
 
   toggleCategoryDropdown() {
-  this.categoryDropdownOpen = !this.categoryDropdownOpen;
+    this.categoryDropdownOpen = !this.categoryDropdownOpen;
   }
-  
+
 
 
   onCategoryChange(id: number, event: Event) {
-  const selectedCategories = this.productForm.get('category_id')?.value || [];
-  const input = event.target as HTMLInputElement;
+    const selectedCategories = this.productForm.get('category_id')?.value || [];
+    const input = event.target as HTMLInputElement;
 
-  if (input.checked) {
-    selectedCategories.push(id);
-  } else {
-    const index = selectedCategories.indexOf(id);
-    if (index > -1) {
-      selectedCategories.splice(index, 1);
+    if (input.checked) {
+      selectedCategories.push(id);
+    } else {
+      const index = selectedCategories.indexOf(id);
+      if (index > -1) {
+        selectedCategories.splice(index, 1);
+      }
     }
+
+    this.productForm.get('category_id')?.setValue(selectedCategories);
   }
 
-  this.productForm.get('category_id')?.setValue(selectedCategories);
-}
+  isCategorySelected(id: number): boolean {
+    return this.productForm.get('category_id')?.value.includes(id);
+  }
 
-isCategorySelected(id: number): boolean {
-  return this.productForm.get('category_id')?.value.includes(id);
-}
+  getSelectedCategoryNames(): string {
+    const selectedIds = this.productForm.get('category_id')?.value || [];
+    return this.categories
+      .filter(cat => selectedIds.includes(cat.id))
+      .map(cat => cat.category_name)
+      .join(', ');
+  }
 
-getSelectedCategoryNames(): string {
-  const selectedIds = this.productForm.get('category_id')?.value || [];
-  return this.categories
-    .filter(cat => selectedIds.includes(cat.id))
-    .map(cat => cat.category_name)
-    .join(', ');
-}
 
-  
+  daysList = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+
+  onDayChange(day: string, event: Event) {
+    const input = event.target as HTMLInputElement;
+    const currentDays = this.productForm.get('availability')?.value || [];
+
+    if (input.checked) {
+      if (!currentDays.includes(day)) {
+        currentDays.push(day);
+      }
+    } else {
+      const index = currentDays.indexOf(day);
+      if (index > -1) {
+        currentDays.splice(index, 1);
+      }
+    }
+
+    this.productForm.patchValue({ availability: currentDays });
+  }
+
+  isDaySelected(day: string): boolean {
+    const currentDays = this.productForm.get('availability')?.value || [];
+    return currentDays.includes(day);
+  }
+
+
+
   // Function to remove the image
   removeImage() {
     this.selectedFile = null;
     this.productForm.patchValue({ product_img: null });
   }
-  
-  
+
+
 
   // Submit the form data to update product
   onSubmit() {
@@ -164,13 +197,16 @@ getSelectedCategoryNames(): string {
       formData.append('ingredients', this.productForm.get('ingredients')?.value);
       formData.append('nutri_inform', this.productForm.get('nutri_inform')?.value);
       formData.append('status', this.productForm.get('status')?.value ? '1' : '0');
+      formData.append('availability', JSON.stringify(this.productForm.get('availability')?.value));
+      formData.append('pfand', this.productForm.get('pfand')?.value);
+      formData.append('tax', this.productForm.get('tax')?.value);
 
       if (this.selectedFile) {
         formData.append('product_img', this.selectedFile);
       }
 
-   
-      this.apiService.createProduct( formData).subscribe(
+
+      this.apiService.createProduct(formData).subscribe(
         (response) => {
           console.log('Product Created successfully:', response);
           Swal.fire('Added!', 'Product has been added.', 'success');
@@ -182,7 +218,7 @@ getSelectedCategoryNames(): string {
         }
       );
     } else {
-      
+
       this.productForm.markAllAsTouched();
     }
   }

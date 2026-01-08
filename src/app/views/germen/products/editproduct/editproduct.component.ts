@@ -20,14 +20,14 @@ export class EditproductComponent implements OnInit {
   selectedFile: File | null = null;
   imagePreview: string | null = null; // For previewing selected or existing image
   oldImage: string = ''; // Store old image path
-  newurl : any
+  newurl: any
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private apiService: AdminService,
     private router: Router
   ) {
-    this.newurl =url
+    this.newurl = url
     this.productForm = this.fb.group({
       product_name: ['', Validators.required],
       nick_name: [''],
@@ -38,8 +38,11 @@ export class EditproductComponent implements OnInit {
       weight: [null, Validators.min(0)],
       ingredients: [''],
       nutri_inform: [''],
-      available: [false],
-      product_img: [''] // Store image path or base64
+      status: [false],
+      product_img: [''], // Store image path or base64
+      availability: [[]],
+      pfand: ['0.00'],
+      tax: ['0.00']
     });
 
     this.productId = this.route.snapshot.paramMap.get('id') || '';
@@ -76,15 +79,18 @@ export class EditproductComponent implements OnInit {
           nick_name: product.nickname,
           product_status: product.product_status,
           category_id: Array.isArray(product.category_id)
-    ? product.category_id
-    : String(product.category_id).split(',').map(id => Number(id)),
+            ? product.category_id
+            : String(product.category_id).split(',').map(id => Number(id)),
           description: product.desc || '',
           price: product.price,
           weight: product.weight,
           ingredients: product.ingredients,
           nutri_inform: product.nutri_inform || '',
-          available: product.status === 1,
-          product_img: product.product_img // Store existing image path
+          status: product.status === 1,
+          product_img: product.product_img, // Store existing image path
+          availability: product.availability ? JSON.parse(product.availability) : [],
+          pfand: product.pfand || '0.00',
+          tax: product.tax || '0.00'
         });
 
         // Store old image
@@ -102,48 +108,48 @@ export class EditproductComponent implements OnInit {
     );
   }
 
-onCategoryChange(id: number, event: Event) {
-  const input = event.target as HTMLInputElement;
-  let selectedCategories = this.productForm.get('category_id')?.value || [];
+  onCategoryChange(id: number, event: Event) {
+    const input = event.target as HTMLInputElement;
+    let selectedCategories = this.productForm.get('category_id')?.value || [];
 
-  if (!Array.isArray(selectedCategories)) {
-    selectedCategories = [];
-  }
-
-  if (input.checked) {
-    if (!selectedCategories.includes(id)) {
-      selectedCategories.push(id);
+    if (!Array.isArray(selectedCategories)) {
+      selectedCategories = [];
     }
-  } else {
-    selectedCategories = selectedCategories.filter((catId: any) => catId !== id);
+
+    if (input.checked) {
+      if (!selectedCategories.includes(id)) {
+        selectedCategories.push(id);
+      }
+    } else {
+      selectedCategories = selectedCategories.filter((catId: any) => catId !== id);
+    }
+
+    this.productForm.get('category_id')?.setValue(selectedCategories);
   }
 
-  this.productForm.get('category_id')?.setValue(selectedCategories);
-}
 
 
-
-isCategorySelected(id: number): boolean {
-  const value = this.productForm.get('category_id')?.value;
-  return Array.isArray(value) && value.includes(id);
-}
-
-
-getSelectedCategoryNames(): string {
-  let selectedIds = this.productForm.get('category_id')?.value;
-
-  // Ensure selectedIds is always an array
-  if (!Array.isArray(selectedIds)) {
-    selectedIds = selectedIds != null ? [selectedIds] : [];
+  isCategorySelected(id: number): boolean {
+    const value = this.productForm.get('category_id')?.value;
+    return Array.isArray(value) && value.includes(id);
   }
 
-  return this.categories
-    .filter(cat => selectedIds.includes(cat.id))
-    .map(cat => cat.category_name)
-    .join(', ');
-}
 
-  
+  getSelectedCategoryNames(): string {
+    let selectedIds = this.productForm.get('category_id')?.value;
+
+    // Ensure selectedIds is always an array
+    if (!Array.isArray(selectedIds)) {
+      selectedIds = selectedIds != null ? [selectedIds] : [];
+    }
+
+    return this.categories
+      .filter(cat => selectedIds.includes(cat.id))
+      .map(cat => cat.category_name)
+      .join(', ');
+  }
+
+
 
 
   // Remove selected image
@@ -151,15 +157,42 @@ getSelectedCategoryNames(): string {
     this.selectedFile = null;
     this.imagePreview = null;
     this.productForm.patchValue({ product_img: null });
-  
+
     console.log('After removing image:', this.productForm.value);
   }
 
-   onFileChange(event: Event) {
+  daysList = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+
+  onDayChange(day: string, event: Event) {
+    const input = event.target as HTMLInputElement;
+    const currentDays = this.productForm.get('availability')?.value || [];
+
+    if (input.checked) {
+      if (!currentDays.includes(day)) {
+        currentDays.push(day);
+      }
+    } else {
+      const index = currentDays.indexOf(day);
+      if (index > -1) {
+        currentDays.splice(index, 1);
+      }
+    }
+
+    this.productForm.patchValue({ availability: currentDays });
+  }
+
+  isDaySelected(day: string): boolean {
+    const currentDays = this.productForm.get('availability')?.value || [];
+    return Array.isArray(currentDays) && currentDays.includes(day);
+  }
+
+
+
+  onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length) {
       this.selectedFile = input.files[0];
-  
+
       // Show image preview
       const reader = new FileReader();
       reader.onload = (e: any) => {
@@ -172,10 +205,10 @@ getSelectedCategoryNames(): string {
   categoryDropdownOpen = false;
 
   toggleCategoryDropdown() {
-  this.categoryDropdownOpen = !this.categoryDropdownOpen;
+    this.categoryDropdownOpen = !this.categoryDropdownOpen;
   }
-  
-  
+
+
 
   // Helper function to construct full image URL
   getImageUrl(imagePath: string): string {
@@ -197,19 +230,22 @@ getSelectedCategoryNames(): string {
       formData.append('weight', this.productForm.get('weight')?.value);
       formData.append('ingredients', this.productForm.get('ingredients')?.value);
       formData.append('nutri_inform', this.productForm.get('nutri_inform')?.value);
-      formData.append('available', this.productForm.get('available')?.value ? '1' : '0');
-  
+      formData.append('status', this.productForm.get('status')?.value ? '1' : '0');
+      formData.append('availability', JSON.stringify(this.productForm.get('availability')?.value));
+      formData.append('pfand', this.productForm.get('pfand')?.value);
+      formData.append('tax', this.productForm.get('tax')?.value);
+
       if (this.selectedFile) {
-        formData.append('product_img', this.selectedFile); 
+        formData.append('product_img', this.selectedFile);
       } else if (this.productForm.get('product_img')?.value) {
-        formData.append('product_img', this.productForm.get('product_img')?.value); 
+        formData.append('product_img', this.productForm.get('product_img')?.value);
       } else {
-        formData.append('product_img', ''); 
+        formData.append('product_img', '');
       }
-  
-      
+
+
       console.log('Submitting FormData:', formData);
-  
+
       // Call API to update product
       this.apiService.updateProduct(this.productId, formData).subscribe(
         (response) => {
@@ -226,5 +262,5 @@ getSelectedCategoryNames(): string {
       this.productForm.markAllAsTouched();
     }
   }
-  
+
 }
