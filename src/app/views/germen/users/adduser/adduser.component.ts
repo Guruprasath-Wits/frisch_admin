@@ -1,4 +1,3 @@
-// Component code (adduser.component.ts)
 import { Component, OnInit } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { CommonModule } from '@angular/common';
@@ -6,6 +5,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { AdminService } from 'src/app/admin.service';
 import Swal from 'sweetalert2';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatInputModule } from '@angular/material/input';
 import {
   ContainerComponent,
   RowComponent,
@@ -19,7 +21,7 @@ import {
   InputGroupTextDirective,
   FormControlDirective,
   ButtonDirective,
-  
+
 } from '@coreui/angular';
 
 @Component({
@@ -40,7 +42,10 @@ import {
     InputGroupTextDirective,
     FormControlDirective,
     ButtonDirective,
-    NgStyle
+    NgStyle,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule
   ],
   templateUrl: './adduser.component.html',
   styleUrl: './adduser.component.scss'
@@ -73,11 +78,13 @@ export class AdduserComponent implements OnInit {
       IBAN: ['', []],
       BIC: [''],
       role: ['', Validators.required], // Added required validator
-      password: ['',Validators.required]
+      password: ['', Validators.required],
+      floor: [''],
+      lift_availability: ['']
     });
     // this.loginForm.get('role')?.valueChanges.subscribe((selectedRole) => {
     //   const ibanControl = this.loginForm.get('IBAN');
-  
+
     //   if (selectedRole === 'Customer') {
     //     ibanControl?.setValidators([
     //       Validators.required,
@@ -109,7 +116,7 @@ export class AdduserComponent implements OnInit {
   populateForm() {
     if (this.user) {
       this.loginForm.patchValue({
-        
+
         fname: this.user.fname,
         lname: this.user.lname,
         username: this.user.lname + this.user.fname || '',
