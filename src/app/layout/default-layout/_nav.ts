@@ -22,6 +22,16 @@ export const navItems: INavData[] = [
     url: 'category',
     iconComponent: { name: 'cil-align-left' }
   },
+  {
+    name: 'Steuer',
+    url: 'tax',
+    iconComponent: { name: 'cil-dollar' }
+  },
+  {
+    name: 'Flasche',
+    url: 'bottle',
+    iconComponent: { name: 'cil-description' }
+  },
 
   // {
   //   name: 'Sub-Category',
@@ -77,7 +87,7 @@ export const navItems: INavData[] = [
       }
     ]
   },
-  
+
   // {
   //   name: 'Payment Details',
   //   url: '/buttons',
@@ -88,7 +98,7 @@ export const navItems: INavData[] = [
   //       url: '/buttons/buttons',
   //       icon: 'nav-icon-bullet'
   //     },
-      
+
   //   ]
   // },
   // {
@@ -101,16 +111,16 @@ export const navItems: INavData[] = [
   //       url: '/forms/form-control',
   //       icon: 'nav-icon-bullet'
   //     },
-     
-      
+
+
   //   ]
   // },
- 
+
   // {
   //   name: 'Notifications',
   //   url: '/notifications',
   //   iconComponent: { name: 'cil-bell' },
-  
+
   // },
 
   {
@@ -122,66 +132,66 @@ export const navItems: INavData[] = [
     name: 'Sample_Order',
     url: '/free-trial',
     iconComponent: { name: 'cil-description' },
-  
+
   },
 
   {
     name: 'Our_Delivery_Areas',
     url: '/our-delivery-area',
     iconComponent: { name: 'cil-description' },
-  
+
   },
 
   {
     name: 'User_Advantages',
     url: '/user-advantages',
     iconComponent: { name: 'cil-description' },
-  
+
   },
 
   // {
   //   name: 'Imprint',
   //   url: '/imprint',
   //   iconComponent: { name: 'cil-description' },
-  
+
   // },
 
   {
     name: 'Jobs',
     url: '/jobs',
     iconComponent: { name: 'cil-description' },
-  
+
   },
 
-     {
+  {
     name: 'Subscription_Transactions',
     url: '/subscriptionTransactions',
     iconComponent: { name: 'cil-description' },
-  
+
   },
 
   {
     name: 'FAQ',
     url: '/faq',
     iconComponent: { name: 'cil-description' },
-  
+
   },
 
   {
     name: 'Imprint',
     url: '/imprint',
     iconComponent: { name: 'cil-description' },
-  
+
   },
 
- 
-
-  
- 
 
 
 
- 
+
+
+
+
+
   {
     title: true,
     name: 'Extras'
@@ -191,28 +201,28 @@ export const navItems: INavData[] = [
     name: 'Roles',
     url: '/roles',
     iconComponent: { name: 'cil-lock-locked' },
-  
+
   },
 
   {
     name: 'Permissions',
     url: '/permissions',
     iconComponent: { name: 'cil-lock-locked' },
-  
+
   },
 
   {
     name: 'Users',
     url: '/users',
     iconComponent: { name: 'cil-user' },
-  
+
   },
 
   // {
   //   name: 'Settings',
   //   url: '/settings',
   //   iconComponent: { name: 'cil-settings' },
-  
+
   // },
 
 
@@ -220,9 +230,9 @@ export const navItems: INavData[] = [
   //   name: 'Impressum',
   //   url: '/imprint',
   //   iconComponent: { name: 'cil-settings' },
-  
+
   // },
-  
+
   // {
   //   title: true,
   //   name: 'Links',
