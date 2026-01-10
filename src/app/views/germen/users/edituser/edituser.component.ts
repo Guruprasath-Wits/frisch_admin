@@ -4,13 +4,22 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { AdminService } from 'src/app/admin.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-edituser',
   templateUrl: './edituser.component.html',
   styleUrls: ['./edituser.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule]
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule
+  ]
 })
 export class EdituserComponent implements OnInit {
   loginForm: FormGroup;
@@ -41,11 +50,13 @@ export class EdituserComponent implements OnInit {
       IBAN: ['', []],
       BIC: [''],
       role: ['', Validators.required], // Added required validator
-      password: ['',Validators.required]
+      password: ['', Validators.required],
+      floor: [''],
+      lift_availability: ['']
     });
     // this.loginForm.get('role')?.valueChanges.subscribe((selectedRole) => {
     //   const ibanControl = this.loginForm.get('IBAN');
-  
+
     //   if (selectedRole === 'Customer') {
     //     ibanControl?.setValidators([
     //       Validators.required,
@@ -81,12 +92,12 @@ export class EdituserComponent implements OnInit {
     });
   }
 
-  
+
   fetchUserDetails() {
     this.adminService.getUserById(this.userId).subscribe(
       (response) => {
-        this.user = response.user; 
-        this.populateForm();  
+        this.user = response.user;
+        this.populateForm();
       },
       (error) => {
         console.error('Error fetching user details:', error);
@@ -97,7 +108,7 @@ export class EdituserComponent implements OnInit {
   populateForm() {
     if (this.user) {
       this.loginForm.patchValue({
-        
+
         lname: this.user.lname || '',
         fname: this.user.fname || '',
         username: this.user.lname + this.user.fname || '',
@@ -112,12 +123,14 @@ export class EdituserComponent implements OnInit {
         acchold: this.user.acc_no || '',
         IBAN: this.user.ban_no || '',
         BIC: this.user.bc_no || '',
-        role: this.user.role || ''
+        role: this.user.role || '',
+        floor: this.user.floor || '',
+        lift_availability: this.user.lift_availability || ''
       });
     }
   }
 
-  
+
   onSubmit() {
     this.loginForm.markAllAsTouched();
     if (this.loginForm.valid) {
