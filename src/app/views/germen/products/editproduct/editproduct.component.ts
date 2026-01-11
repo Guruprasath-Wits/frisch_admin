@@ -17,6 +17,8 @@ export class EditproductComponent implements OnInit {
   productForm: FormGroup;
   productId: string;
   categories: any[] = [];
+  taxes: any[] = [];
+  bottles: any[] = [];
   selectedFile: File | null = null;
   imagePreview: string | null = null; // For previewing selected or existing image
   oldImage: string = ''; // Store old image path
@@ -50,6 +52,8 @@ export class EditproductComponent implements OnInit {
 
   ngOnInit() {
     this.loadCategories();
+    this.loadTaxes();
+    this.loadBottles();
     if (this.productId) {
       this.loadProductData(this.productId);
     }
@@ -63,6 +67,28 @@ export class EditproductComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching categories:', error);
+      }
+    );
+  }
+
+  loadTaxes() {
+    this.apiService.getTaxes().subscribe(
+      (response) => {
+        this.taxes = response.tax;
+      },
+      (error) => {
+        console.error('Error fetching taxes:', error);
+      }
+    );
+  }
+
+  loadBottles() {
+    this.apiService.getBottles().subscribe(
+      (response) => {
+        this.bottles = response.bottle;
+      },
+      (error) => {
+        console.error('Error fetching bottles:', error);
       }
     );
   }
