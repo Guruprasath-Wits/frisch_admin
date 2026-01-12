@@ -17,6 +17,8 @@ export class AddproductComponent {
   productForm: FormGroup;
   productId: string;
   categories: any[] = []; // Store categories fetched from API
+  taxes: any[] = [];
+  bottles: any[] = [];
   selectedFile: File | null = null; // Store selected file for image upload
 
   constructor(
@@ -49,6 +51,8 @@ export class AddproductComponent {
 
   ngOnInit() {
     this.loadCategories(); // Load categories from API
+    this.loadTaxes();
+    this.loadBottles();
     if (this.productId) {
       this.loadProductData(this.productId); // Load product data if editing
     }
@@ -62,6 +66,28 @@ export class AddproductComponent {
       },
       (error) => {
         console.error('Error fetching categories:', error);
+      }
+    );
+  }
+
+  loadTaxes() {
+    this.apiService.getTaxes().subscribe(
+      (response) => {
+        this.taxes = response.tax;
+      },
+      (error) => {
+        console.error('Error fetching taxes:', error);
+      }
+    );
+  }
+
+  loadBottles() {
+    this.apiService.getBottles().subscribe(
+      (response) => {
+        this.bottles = response.bottle;
+      },
+      (error) => {
+        console.error('Error fetching bottles:', error);
       }
     );
   }

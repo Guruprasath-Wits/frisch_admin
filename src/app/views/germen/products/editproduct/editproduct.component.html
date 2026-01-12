@@ -72,10 +72,9 @@
           <label for="pfand">Pfand (Bottle Deposit)</label>
           <select id="pfand" formControlName="pfand">
             <option value="0.00">0,00€</option>
-            <option value="0.08">0,08€</option>
-            <option value="0.15">0,15€</option>
-            <option value="0.25">0,25€</option>
-            <option value="1.50">1,50€</option>
+            <option *ngFor="let bottle of bottles" [value]="bottle.deposit">
+              {{ bottle.bottle_name }} ({{ bottle.deposit }}€)
+            </option>
           </select>
         </div>
 
@@ -84,8 +83,9 @@
           <label for="tax">VAT (Tax)</label>
           <select id="tax" formControlName="tax">
             <option value="0.00">0%</option>
-            <option value="7.00">7%</option>
-            <option value="19.00">19%</option>
+            <option *ngFor="let tax of taxes" [value]="tax.tax_value">
+              {{ tax.tax_name }} ({{ tax.tax_value }}%)
+            </option>
           </select>
         </div>
       </div>
