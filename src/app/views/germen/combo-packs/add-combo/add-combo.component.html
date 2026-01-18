@@ -1,0 +1,93 @@
+<div class="container mt-4">
+    <h3>Add Combo Pack</h3>
+    <div class="add-user-card">
+        <form [formGroup]="comboForm" (ngSubmit)="onSubmit()">
+
+            <!-- Name -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="product_name">Combo Name</label>
+                    <input type="text" id="product_name" formControlName="product_name"
+                        placeholder="Enter combo name" />
+                    <div *ngIf="comboForm.get('product_name')?.invalid && comboForm.get('product_name')?.touched"
+                        class="error">
+                        <small>Name is required.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Select Products -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Select Products</label>
+                    <div class="dropdown-box">
+                        <div class="form-control" (click)="toggleComboDropdown()" style="cursor: pointer;">
+                            {{ getSelectedComboProductNames() }}
+                        </div>
+
+                        <div *ngIf="comboDropdownOpen" class="dropdown-list">
+                            <div *ngFor="let product of products" class="checkbox-item">
+                                <input type="checkbox" class="form-check-input"
+                                    [checked]="isComboProductSelected(product.id)"
+                                    (change)="onComboProductChange(product.id, $event)" id="prod_{{ product.id }}" />
+                                <label for="prod_{{ product.id }}" class="form-check-label">
+                                    {{ product.product_name }} - €{{ product.price }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-muted" *ngIf="totalValue > 0">
+                        <strong>Total Value of Products: €{{ totalValue | number:'1.2-2' }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price & Discount -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="discount">Discount Percentage (%)</label>
+                    <input type="number" id="discount" formControlName="discount" placeholder="Enter discount %" min="0"
+                        max="100" />
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Final Price</label>
+                    <input type="number" id="price" formControlName="price" placeholder="Enter price" />
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="desc">Description</label>
+                    <textarea id="desc" formControlName="desc" placeholder="Enter description"></textarea>
+                </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="image">Upload Image</label>
+                    <input type="file" id="image" (change)="onFileChange($event)" />
+                    <div *ngIf="comboForm.get('product_img')?.value" class="image-preview">
+                        <img [src]="comboForm.get('product_img')?.value" class="preview-img" />
+                        <button type="button" class="btn btn-danger btn-sm" (click)="removeImage()">Remove</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <div class="checkbox-item" style="margin-top: 10px;">
+                        <input type="checkbox" id="status" class="form-check-input" formControlName="status">
+                        <label for="status" class="form-check-label" style="margin-left: 10px;">Active</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-warning" style="width: 200px;">Create Combo Pack</button>
+        </form>
+    </div>
+</div>

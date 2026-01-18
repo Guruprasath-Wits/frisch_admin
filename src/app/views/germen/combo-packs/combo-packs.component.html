@@ -1,0 +1,55 @@
+<div class="container mt-4">
+    <div class="filter-card p-4 mb-4">
+        <div class="row d-flex">
+            <h3 class="col-md-10 mb-3" style="width: 650px; font-weight: bold !important;">Combo Packs</h3>
+            <button type="button" class="btn btn-warning mb-3" style="width: 200px;float: right;"
+                [routerLink]="['add']">Add Combo Pack</button>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <input type="text" class="form-control" placeholder="Search by combo name or products..."
+                    [(ngModel)]="searchTerm">
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card p-3">
+        <table class="table table-hover productlist-table cursor-pointer">
+            <thead class="table-header">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Products</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let product of filteredCombos; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ getProductNames(product.product_ids) }}</td>
+                    <td>{{ product.price | currency:'EUR' }}</td>
+                    <td>
+                        <span [class]="product.status === 1 ? 'badge bg-success' : 'badge bg-danger'">
+                            {{ product.status === 1 ? 'Active' : 'Inactive' }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-warning btn-sm me-2" [routerLink]="['edit', product.id]">
+                            <i class="fa-solid fa-pen-to-square" style="padding-left: 3px;"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" (click)="deleteProduct(product.id)">
+                            <i class="fa-solid fa-trash" style="padding-left: 3px;"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="filteredCombos.length === 0">
+                    <td colspan="6" class="text-center">No combo packs found.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

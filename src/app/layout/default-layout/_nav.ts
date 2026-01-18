@@ -43,6 +43,11 @@ export const navItems: INavData[] = [
     url: 'products',
     iconComponent: { name: 'cil-pencil' }
   },
+  {
+    name: 'Combo Packs',
+    url: 'combo-packs',
+    iconComponent: { name: 'cil-layers' }
+  },
 
 
   {

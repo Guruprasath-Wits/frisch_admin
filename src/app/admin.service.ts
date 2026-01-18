@@ -431,4 +431,25 @@ export class AdminService {
   public deleteBottle(id: number): Observable<any> {
     return this.http.post<any>(`${url}/bottle/delete/${id}`, {});
   }
+
+  // Combo Pack Methods
+  public getCombos(): Observable<any> {
+    return this.http.get<any>(`${url}/combo/`);
+  }
+
+  public getComboById(id: number): Observable<any> {
+    return this.http.get<any>(`${url}/combo/${id}`);
+  }
+
+  public createCombo(data: FormData): Observable<any> {
+    return this.http.post<any>(`${url}/combo/`, data);
+  }
+
+  public updateCombo(id: number, data: FormData): Observable<any> {
+    return this.http.put<any>(`${url}/combo/${id}`, data);
+  }
+
+  public deleteCombo(id: number): Observable<any> {
+    return this.http.delete<any>(`${url}/combo/${id}`);
+  }
 }
