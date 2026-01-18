@@ -113,6 +113,7 @@ export class DefaultLayoutComponent implements OnInit {
     allowedNames.add('Steuer');
     allowedNames.add('Flasche');
     allowedNames.add('Dashboard');
+    allowedNames.add('Combo Packs');
 
     // Filter from originalNavItems to maintain order and structure
     this.navItems = originalNavItems.filter(item => {
