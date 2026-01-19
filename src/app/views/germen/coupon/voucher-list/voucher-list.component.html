@@ -1,0 +1,43 @@
+<div class="container-fluid">
+  <div class="header-card mb-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="title">Voucher List</h2>
+      <button class="btn add-btn" (click)="navigateToAddVoucher()">Add Voucher</button>
+    </div>
+    <div class="search-container">
+      <input type="text" class="form-control search-input" placeholder="Search by Voucher Type"
+        [(ngModel)]="searchTerm">
+    </div>
+  </div>
+
+  <div class="list-card">
+    <table class="table custom-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Voucher Type</th>
+          <th>Voucher Description</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let voucher of filteredVouchers; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ voucher.type }}</td>
+          <td>{{ voucher.description }}</td>
+          <td class="text-center">
+            <button class="btn btn-action edit-btn me-2" (click)="onEdit(voucher)">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button class="btn btn-action delete-btn" (click)="onDelete(voucher.id)">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredVouchers.length === 0">
+          <td colspan="4" class="text-center">No vouchers found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
