@@ -2,22 +2,26 @@ import { Routes } from '@angular/router';
 import { DefaultLayoutComponent } from './layout';
 import { EdituserComponent } from './views/germen/users/edituser/edituser.component';
 import { AdduserComponent } from './views/germen/users/adduser/adduser.component';
-import {NotificationListComponent} from './views/germen/notification-list/notification-list.component'
-import { FaqComponent} from './views/germen/pages/faq/faq.component'
-import {DeliveryAreasComponent} from './views/germen/pages/delivery-areas/delivery-areas.component'
-import {FreeTrialComponent} from './views/germen/pages/free-trial/free-trial.component'
-import {JobsComponent} from './views/germen/pages/jobs/jobs.component'
-import {ImprintComponent} from './views/germen/pages/imprint/imprint.component'
-import {UserAdvantagesComponent} from './views/germen/pages/user-advantages/user-advantages.component'
-import {SettingsComponent} from './views/germen/settings/settings.component'
+import { NotificationListComponent } from './views/germen/notification-list/notification-list.component'
+import { FaqComponent } from './views/germen/pages/faq/faq.component'
+import { DeliveryAreasComponent } from './views/germen/pages/delivery-areas/delivery-areas.component'
+import { FreeTrialComponent } from './views/germen/pages/free-trial/free-trial.component'
+import { JobsComponent } from './views/germen/pages/jobs/jobs.component'
+import { ImprintComponent } from './views/germen/pages/imprint/imprint.component'
+import { UserAdvantagesComponent } from './views/germen/pages/user-advantages/user-advantages.component'
+import { SettingsComponent } from './views/germen/settings/settings.component'
 import { OrderProcessingComponent } from './views/germen/orders/order-processing/order-processing.component';
-import {OrderAssignedComponent} from './views/germen/orders/order-assigned/order-assigned.component'
-import {ContactUsComponent} from './views/germen/pages/contact-us/contact-us.component';
+import { OrderAssignedComponent } from './views/germen/orders/order-assigned/order-assigned.component'
+import { ContactUsComponent } from './views/germen/pages/contact-us/contact-us.component';
 import { AuthGuard } from './auth.guard';
-import {PermissionComponent} from './views/germen/permission/permission.component';
-import {DriverPerformComponent} from './views/germen/orders/driver-perform/driver-perform.component'
-import {CompleteOrdersComponent} from './views/germen/orders/complete-orders/complete-orders.component'
+import { PermissionComponent } from './views/germen/permission/permission.component';
+import { DriverPerformComponent } from './views/germen/orders/driver-perform/driver-perform.component'
+import { CompleteOrdersComponent } from './views/germen/orders/complete-orders/complete-orders.component'
 import { SubscritionTransactionComponent } from './views/germen/subscrition-transaction/subscrition-transaction.component';
+import { VoucherListComponent } from './views/germen/coupon/voucher-list/voucher-list.component';
+import { AddVoucherComponent } from './views/germen/coupon/add-voucher/add-voucher.component';
+import { CouponListComponent } from './views/germen/coupon/coupon-list/coupon-list.component';
+import { AddCouponComponent } from './views/germen/coupon/add-coupon/add-coupon.component';
 
 
 
@@ -34,7 +38,7 @@ export const routes: Routes = [
       title: 'Home'
     },
     children: [
-    
+
       {
         path: 'users',
         loadChildren: () => import('./views/germen/users/routes').then((m) => m.routes),
@@ -49,7 +53,7 @@ export const routes: Routes = [
         path: 'products',
         loadChildren: () => import('./views/germen/products/routes').then((m) => m.routes),
         canActivate: [AuthGuard],
-        title:'Products'
+        title: 'Products'
       },
       {
         path: 'roles',
@@ -59,116 +63,135 @@ export const routes: Routes = [
       {
         path: 'orders/orders',
         loadChildren: () => import('./views/germen/orders/route').then((m) => m.routes),
-        title:'OrdersList',
+        title: 'OrdersList',
+        canActivate: [AuthGuard],
+      },
+
+      {
+        path: 'coupon-management/voucher-type',
+        component: VoucherListComponent,
+        title: 'Voucher Type',
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'coupon-management/manage-vouchers',
+        component: CouponListComponent,
+        title: 'Manage Vouchers',
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'coupon-management/add-coupon',
+        component: AddCouponComponent,
+        title: 'Add Coupon',
         canActivate: [AuthGuard],
       },
 
       {
         path: 'contactUs',
-        component:ContactUsComponent,
-        title:'ProcessingOrders',
+        component: ContactUsComponent,
+        title: 'ProcessingOrders',
         canActivate: [AuthGuard],
       },
 
-            {
+      {
         path: 'subscriptionTransactions',
-        component:SubscritionTransactionComponent,
-        title:'Subscription_Transactions',
+        component: SubscritionTransactionComponent,
+        title: 'Subscription_Transactions',
         canActivate: [AuthGuard],
       },
 
       {
         path: 'permissions',
-        component:PermissionComponent,
-        title:'Permissions',
+        component: PermissionComponent,
+        title: 'Permissions',
         canActivate: [AuthGuard],
       },
       {
         path: 'orders/processingOrders',
-        component:OrderProcessingComponent,
-        title:'ProcessingOrders',
+        component: OrderProcessingComponent,
+        title: 'ProcessingOrders',
         canActivate: [AuthGuard],
       },
       {
         path: 'orders/assignOrders',
-        component:OrderAssignedComponent,
-        title:'AssignedOrders',
+        component: OrderAssignedComponent,
+        title: 'AssignedOrders',
         canActivate: [AuthGuard],
       },
       {
         path: 'orders/completeOrders',
-        component:CompleteOrdersComponent,
-        title:'CompleteOrders',
+        component: CompleteOrdersComponent,
+        title: 'CompleteOrders',
         canActivate: [AuthGuard],
       },
       {
         path: 'orders/driverPerform',
-        component:DriverPerformComponent,
-        title:'Driver Perform',
+        component: DriverPerformComponent,
+        title: 'Driver Perform',
         canActivate: [AuthGuard],
       },
       {
         path: 'notifications',
-        component:NotificationListComponent,
-        title:'Notifications',
+        component: NotificationListComponent,
+        title: 'Notifications',
         canActivate: [AuthGuard],
       },
 
       {
         path: 'faq',
-        component:FaqComponent,
-        title:'FAQ',
+        component: FaqComponent,
+        title: 'FAQ',
         canActivate: [AuthGuard],
       },
 
       {
         path: 'our-delivery-area',
-        component:DeliveryAreasComponent,
-        title:'Our Delivery Area',
+        component: DeliveryAreasComponent,
+        title: 'Our Delivery Area',
         canActivate: [AuthGuard],
       },
 
       {
         path: 'free-trial',
-        component:FreeTrialComponent,
-        title:'Free Trial',
+        component: FreeTrialComponent,
+        title: 'Free Trial',
         canActivate: [AuthGuard],
       },
 
       {
         path: 'jobs',
-        component:JobsComponent,
-        title:'Jobs',
+        component: JobsComponent,
+        title: 'Jobs',
         canActivate: [AuthGuard],
       },
 
       {
         path: 'user-advantages',
-        component:UserAdvantagesComponent,
-        title:'User Advantages',
+        component: UserAdvantagesComponent,
+        title: 'User Advantages',
         canActivate: [AuthGuard],
       },
 
       {
         path: 'imprint',
-        component:ImprintComponent,
-        title:'Imprint',
+        component: ImprintComponent,
+        title: 'Imprint',
         canActivate: [AuthGuard],
       },
 
       {
         path: 'dashboard',
-        component:SettingsComponent,
-        title:'Settings',
+        component: SettingsComponent,
+        title: 'Settings',
         canActivate: [AuthGuard],
       },
 
-        {
+      {
         path: 'theme',
         loadChildren: () => import('./views/theme/routes').then((m) => m.routes),
         canActivate: [AuthGuard],
       },
-      
+
       {
         path: 'theme',
         loadChildren: () => import('./views/theme/routes').then((m) => m.routes),
