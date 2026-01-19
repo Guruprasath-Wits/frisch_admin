@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { AdminService } from '../../../admin.service';
+import { AdminService } from 'src/app/admin.service';
 import { CommonModule } from '@angular/common';
 
 interface Role {
@@ -20,9 +20,9 @@ interface Role {
 export class PermissionComponent implements OnInit {
   roleForm: FormGroup;
   pages: string[] = [
-    'Category', 'Product', 'Customer_Enquiry', 'Coupon Management', 'OrderList', 'Sample_Order',
+    'Category', 'Product', 'Customer_Enquiry', 'OrderList', 'Sample_Order',
     'Our_Delivery_Areas', 'User_Advantages', 'Jobs', 'FAQ', 'Roles',
-    'Permissions', 'Users', 'Settings', 'Imprint', 'Subscription_Transactions'
+    'Permissions', 'Users', 'Settings', 'Imprint',  'Subscription_Transactions'
   ];
   allocatedAccess: { [key: string]: number } = {};
   roles: Role[] = [];
@@ -64,7 +64,7 @@ export class PermissionComponent implements OnInit {
           Swal.fire('Error!', 'Failed to load roles.', 'error');
         }
       },
-      error: (error: any) => Swal.fire('Error!', 'Failed to load roles.', 'error'),
+      error: (error) => Swal.fire('Error!', 'Failed to load roles.', 'error'),
     });
   }
 
@@ -163,10 +163,10 @@ export class PermissionComponent implements OnInit {
             if (response.status) {
               // Successfully deleted, filter out the deleted role
               this.permissions = this.permissions.filter((p) => p.id !== roleId);
-
+  
               // Recalculate pagination after deletion
               this.calculateTotalPages();
-
+  
               // Show success message after deletion
               Swal.fire('Deleted!', 'Role has been deleted successfully.', 'success');
             } else {
