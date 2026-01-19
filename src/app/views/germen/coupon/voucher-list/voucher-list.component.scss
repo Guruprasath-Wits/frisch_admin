@@ -1,0 +1,98 @@
+.header-card, .list-card {
+  background-color: #fff;
+  border: 1.5px solid #e1b12c;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  color: #333;
+  font-weight: 700;
+  margin: 0;
+}
+
+.add-btn {
+  background-color: #e1b12c;
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #d39e00;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(225, 177, 44, 0.3);
+  }
+}
+
+.search-input {
+  max-width: 300px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 16px;
+
+  &:focus {
+    border-color: #e1b12c;
+    box-shadow: 0 0 0 0.2rem rgba(225, 177, 44, 0.15);
+  }
+}
+
+.custom-table {
+  margin: 0;
+
+  thead th {
+    border-top: none;
+    border-bottom: 2px solid #e1b12c;
+    color: #333;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    padding: 16px;
+  }
+
+  tbody td {
+    padding: 16px;
+    vertical-align: middle;
+    color: #555;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.btn-action {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  &.edit-btn {
+    background-color: #e1b12c;
+    color: #fff;
+    &:hover {
+      background-color: #d39e00;
+    }
+  }
+
+  &.delete-btn {
+    background-color: #e84118;
+    color: #fff;
+    &:hover {
+      background-color: #c23616;
+    }
+  }
+}

@@ -1,0 +1,34 @@
+<div class="container-fluid">
+    <div class="form-card mb-4 mt-4">
+        <h2 class="title mb-4">{{ isEditMode ? 'Edit Voucher' : 'Add Voucher' }}</h2>
+
+        <form [formGroup]="voucherForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+                <label for="type" class="form-label">Voucher Type</label>
+                <input type="text" id="type" formControlName="type" class="form-control"
+                    placeholder="Enter voucher type">
+                <div *ngIf="voucherForm.get('type')?.touched && voucherForm.get('type')?.invalid"
+                    class="text-danger mt-1">
+                    Voucher type is required.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Voucher Description</label>
+                <textarea id="description" formControlName="description" class="form-control" rows="3"
+                    placeholder="Enter voucher description"></textarea>
+                <div *ngIf="voucherForm.get('description')?.touched && voucherForm.get('description')?.invalid"
+                    class="text-danger mt-1">
+                    Voucher description is required.
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn submit-btn" [disabled]="voucherForm.invalid">
+                    {{ isEditMode ? 'Update Voucher' : 'Save Voucher' }}
+                </button>
+                <button type="button" class="btn cancel-btn" (click)="onCancel()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
