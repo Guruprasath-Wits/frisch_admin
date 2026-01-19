@@ -20,7 +20,7 @@ import {
 
 import { DefaultFooterComponent, DefaultHeaderComponent } from './';
 import { navItems } from './_nav'; // Import navItems array
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../admin.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -51,9 +51,9 @@ export class DefaultLayoutComponent implements OnInit {
   allowedNavItems: INavData[] = []; // Filtered navItems based on permissions
   currentUserId: string | null = null;
   roleId: string | null = null; // Current user ID from localStorage
-   // Current user ID from localStorage
+  // Current user ID from localStorage
 
-  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) {}
+  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadCurrentUser();
@@ -96,22 +96,36 @@ export class DefaultLayoutComponent implements OnInit {
    */
   MatchesPermission(): void {
     console.log('Permissions:', this.permissions);
+    this.allowedNavItems = []; // Reset allowed items for matching
 
     // Iterate through permissions
     for (const obj of this.permissions) {
       if (obj && typeof obj === 'object') {
         for (const key in obj) {
           if (Object.prototype.hasOwnProperty.call(obj, key)) {
-            // Iterate through navItems
             for (const navItem of this.navItems) {
               // Check if the navItem matches the permission key and is allowed
               if (key === navItem.name && obj[key] === 1) {
                 console.log(`Adding allowed navItem: ${navItem.name}`);
-                this.allowedNavItems.push(navItem);
+                if (!this.allowedNavItems.includes(navItem)) {
+                  this.allowedNavItems.push(navItem);
+                }
               }
             }
           }
         }
+      }
+    }
+
+    // Ensure 'Coupon Management' is added if it exists in navItems
+    const couponManagement = navItems.find(item => item.name === 'Coupon Management');
+    if (couponManagement && !this.allowedNavItems.includes(couponManagement)) {
+      // Find the correct index to insert (after Customer_Enquiry)
+      const customerEnquiryIndex = this.allowedNavItems.findIndex(item => item.name === 'Customer_Enquiry');
+      if (customerEnquiryIndex !== -1) {
+        this.allowedNavItems.splice(customerEnquiryIndex + 1, 0, couponManagement);
+      } else {
+        this.allowedNavItems.push(couponManagement);
       }
     }
 
@@ -124,5 +138,5 @@ export class DefaultLayoutComponent implements OnInit {
   /**
    * Handle scrollbar updates (optional).
    */
-  onScrollbarUpdate($event: any): void {}
+  onScrollbarUpdate($event: any): void { }
 }
