@@ -132,3 +132,14 @@
 .pagination-controls span {
     margin: 0 10px;
 }
+
+/* Custom Toggle Switch Color */
+.form-check-input:checked {
+    background-color: #e1b12c;
+    border-color: #e1b12c;
+}
+
+.form-check-input:focus {
+    border-color: #e1b12c;
+    box-shadow: 0 0 0 0.25rem rgba(225, 177, 44, 0.25);
+}
