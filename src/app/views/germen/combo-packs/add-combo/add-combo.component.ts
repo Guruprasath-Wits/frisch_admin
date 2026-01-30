@@ -137,7 +137,7 @@ export class AddComboComponent implements OnInit {
             formData.append('name', this.comboForm.get('product_name')?.value);
             formData.append('price', this.comboForm.get('price')?.value);
             formData.append('description', this.comboForm.get('desc')?.value);
-            formData.append('status', this.comboForm.get('status')?.value ? '1' : '0');
+            formData.append('status', '1');
             formData.append('product_ids', JSON.stringify(this.comboForm.get('combo_products')?.value));
             formData.append('discount_percentage', this.comboForm.get('discount')?.value || 0);
 
