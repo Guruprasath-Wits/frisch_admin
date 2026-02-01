@@ -15,6 +15,8 @@ import Swal from 'sweetalert2';
 export class AddComboComponent implements OnInit {
     comboForm: FormGroup;
     products: any[] = [];
+    taxes: any[] = [];
+    bottles: any[] = [];
     selectedFile: File | null = null;
     comboDropdownOpen = false;
     totalValue: number = 0;
@@ -32,12 +34,45 @@ export class AddComboComponent implements OnInit {
             status: [true],
             product_img: [null],
             combo_products: [[]],
-            product_type: ['combo']
+            product_type: ['combo'],
+            nutritional_info: [''],
+            ingredients: [''],
+            availability: [[]],
+            vat: [0],
+            pfand: [0],
+            nickname: ['']
         });
+    }
+
+    daysList = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+
+    onDayChange(day: string, event: Event) {
+        const input = event.target as HTMLInputElement;
+        const currentDays = this.comboForm.get('availability')?.value || [];
+
+        if (input.checked) {
+            if (!currentDays.includes(day)) {
+                currentDays.push(day);
+            }
+        } else {
+            const index = currentDays.indexOf(day);
+            if (index > -1) {
+                currentDays.splice(index, 1);
+            }
+        }
+
+        this.comboForm.patchValue({ availability: currentDays });
+    }
+
+    isDaySelected(day: string): boolean {
+        const currentDays = this.comboForm.get('availability')?.value || [];
+        return currentDays.includes(day);
     }
 
     ngOnInit() {
         this.loadProducts();
+        this.loadTaxes();
+        this.loadBottles();
 
         // Listen for changes in discount to update price
         this.comboForm.get('discount')?.valueChanges.subscribe(val => {
@@ -52,6 +87,28 @@ export class AddComboComponent implements OnInit {
             },
             (error) => {
                 console.error('Error fetching products:', error);
+            }
+        );
+    }
+
+    loadTaxes() {
+        this.apiService.getTaxes().subscribe(
+            (response) => {
+                this.taxes = response.tax;
+            },
+            (error) => {
+                console.error('Error fetching taxes:', error);
+            }
+        );
+    }
+
+    loadBottles() {
+        this.apiService.getBottles().subscribe(
+            (response) => {
+                this.bottles = response.bottle;
+            },
+            (error) => {
+                console.error('Error fetching bottles:', error);
             }
         );
     }
@@ -140,6 +197,12 @@ export class AddComboComponent implements OnInit {
             formData.append('status', '1');
             formData.append('product_ids', JSON.stringify(this.comboForm.get('combo_products')?.value));
             formData.append('discount_percentage', this.comboForm.get('discount')?.value || 0);
+            formData.append('nutritional_info', this.comboForm.get('nutritional_info')?.value);
+            formData.append('ingredients', this.comboForm.get('ingredients')?.value);
+            formData.append('availability', JSON.stringify(this.comboForm.get('availability')?.value));
+            formData.append('vat', this.comboForm.get('vat')?.value || 0);
+            formData.append('pfand', this.comboForm.get('pfand')?.value || 0);
+            formData.append('nickname', this.comboForm.get('nickname')?.value);
 
             if (this.selectedFile) {
                 formData.append('image', this.selectedFile);
