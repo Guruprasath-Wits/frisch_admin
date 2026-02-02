@@ -16,6 +16,8 @@ import Swal from 'sweetalert2';
 export class EditComboComponent implements OnInit {
     comboForm: FormGroup;
     products: any[] = [];
+    taxes: any[] = [];
+    bottles: any[] = [];
     selectedFile: File | null = null;
     comboDropdownOpen = false;
     productId: string = '';
@@ -37,13 +39,46 @@ export class EditComboComponent implements OnInit {
             status: [true],
             product_img: [null],
             combo_products: [[]],
-            product_type: ['combo']
+            product_type: ['combo'],
+            nutritional_info: [''],
+            ingredients: [''],
+            availability: [[]],
+            vat: [0],
+            pfand: [0],
+            nickname: ['']
         });
+    }
+
+    daysList = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+
+    onDayChange(day: string, event: Event) {
+        const input = event.target as HTMLInputElement;
+        const currentDays = this.comboForm.get('availability')?.value || [];
+
+        if (input.checked) {
+            if (!currentDays.includes(day)) {
+                currentDays.push(day);
+            }
+        } else {
+            const index = currentDays.indexOf(day);
+            if (index > -1) {
+                currentDays.splice(index, 1);
+            }
+        }
+
+        this.comboForm.patchValue({ availability: currentDays });
+    }
+
+    isDaySelected(day: string): boolean {
+        const currentDays = this.comboForm.get('availability')?.value || [];
+        return currentDays.includes(day);
     }
 
     ngOnInit() {
         this.productId = this.route.snapshot.paramMap.get('id') || '';
         this.loadProducts();
+        this.loadTaxes();
+        this.loadBottles();
 
         // Listen for changes in discount to update price
         this.comboForm.get('discount')?.valueChanges.subscribe(val => {
@@ -65,6 +100,30 @@ export class EditComboComponent implements OnInit {
         );
     }
 
+
+
+    loadTaxes() {
+        this.apiService.getTaxes().subscribe(
+            (response) => {
+                this.taxes = response.tax;
+            },
+            (error) => {
+                console.error('Error fetching taxes:', error);
+            }
+        );
+    }
+
+    loadBottles() {
+        this.apiService.getBottles().subscribe(
+            (response) => {
+                this.bottles = response.bottle;
+            },
+            (error) => {
+                console.error('Error fetching bottles:', error);
+            }
+        );
+    }
+
     loadProductData(id: string) {
         this.apiService.getComboById(Number(id)).subscribe(
             (response) => {
@@ -76,7 +135,13 @@ export class EditComboComponent implements OnInit {
                     status: combo.status === 1,
                     product_img: combo.image,
                     combo_products: combo.product_ids ? (typeof combo.product_ids === 'string' ? JSON.parse(combo.product_ids) : combo.product_ids) : [],
-                    discount: combo.discount_percentage || 0
+                    discount: combo.discount_percentage || 0,
+                    nutritional_info: combo.nutritional_info || '',
+                    ingredients: combo.ingredients || '',
+                    availability: combo.availability ? JSON.parse(combo.availability) : [],
+                    vat: combo.vat || 0,
+                    pfand: combo.pfand || 0,
+                    nickname: combo.nickname || ''
                 });
 
                 // Calculate total
@@ -166,7 +231,11 @@ export class EditComboComponent implements OnInit {
 
     getImageUrl(imagePath: string): string {
         const baseUrl = this.newurl;
-        return imagePath && imagePath.startsWith('http') ? imagePath : `${baseUrl}${imagePath}`;
+        if (!imagePath) return '';
+        if (imagePath.startsWith('data:') || imagePath.startsWith('http')) {
+            return imagePath;
+        }
+        return `${baseUrl}${imagePath}`;
     }
 
     onSubmit() {
@@ -175,9 +244,15 @@ export class EditComboComponent implements OnInit {
             formData.append('name', this.comboForm.get('product_name')?.value);
             formData.append('price', this.comboForm.get('price')?.value);
             formData.append('description', this.comboForm.get('desc')?.value);
-            formData.append('status', this.comboForm.get('status')?.value ? '1' : '0');
+            formData.append('status', '1');
             formData.append('product_ids', JSON.stringify(this.comboForm.get('combo_products')?.value));
             formData.append('discount_percentage', this.comboForm.get('discount')?.value || 0);
+            formData.append('nutritional_info', this.comboForm.get('nutritional_info')?.value);
+            formData.append('ingredients', this.comboForm.get('ingredients')?.value);
+            formData.append('availability', JSON.stringify(this.comboForm.get('availability')?.value));
+            formData.append('vat', this.comboForm.get('vat')?.value || 0);
+            formData.append('pfand', this.comboForm.get('pfand')?.value || 0);
+            formData.append('nickname', this.comboForm.get('nickname')?.value);
 
             if (this.selectedFile) {
                 formData.append('image', this.selectedFile);

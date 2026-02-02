@@ -14,6 +14,11 @@
                         <small>Name is required.</small>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label for="nickname">Nickname</label>
+                    <input type="text" id="nickname" formControlName="nickname" placeholder="Enter nickname" />
+                </div>
             </div>
 
             <!-- Select Products -->
@@ -42,7 +47,7 @@
                 </div>
             </div>
 
-            <!-- Price & Discount -->
+            <!-- Price & Discount & VAT & Pfand -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="discount">Discount Percentage (%)</label>
@@ -56,11 +61,64 @@
                 </div>
             </div>
 
-            <!-- Description -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="vat">VAT (%)</label>
+                    <select id="tax" formControlName="vat" class="form-control">
+                        <option *ngFor="let tax of taxes" [value]="tax.tax_value">
+                            {{ tax.tax_name }} ({{ tax.tax_value }}%)
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pfand">Pfand (Bottle Deposit) (€)</label>
+                    <select id="pfand" formControlName="pfand" class="form-control">
+                        <option *ngFor="let bottle of bottles" [value]="bottle.deposit">
+                            {{ bottle.bottle_name }} ({{ bottle.deposit }}€)
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Availability</label>
+                    <div class="days-container" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <div *ngFor="let day of daysList" class="checkbox-item"
+                            style="display: flex; align-items: center; gap: 5px;">
+                            <input type="checkbox" class="form-check-input" [id]="'day_' + day" [value]="day"
+                                [checked]="isDaySelected(day)" (change)="onDayChange(day, $event)">
+                            <label class="form-check-label" [for]="'day_' + day">
+                                {{ day }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Description, Nutritional Info, Ingredients -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="desc">Description</label>
                     <textarea id="desc" formControlName="desc" placeholder="Enter description"></textarea>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nutritional_info">Nutritional Information</label>
+                    <textarea id="nutritional_info" formControlName="nutritional_info"
+                        placeholder="Enter nutritional info"></textarea>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="ingredients">Ingredients</label>
+                    <textarea id="ingredients" formControlName="ingredients" placeholder="Enter ingredients"></textarea>
                 </div>
             </div>
 
@@ -76,16 +134,7 @@
                 </div>
             </div>
 
-            <!-- Status -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="status">Status</label>
-                    <div class="checkbox-item" style="margin-top: 10px;">
-                        <input type="checkbox" id="status" class="form-check-input" formControlName="status">
-                        <label for="status" class="form-check-label" style="margin-left: 10px;">Active</label>
-                    </div>
-                </div>
-            </div>
+
 
             <button type="submit" class="btn btn-warning" style="width: 200px;">Update Combo Pack</button>
         </form>
