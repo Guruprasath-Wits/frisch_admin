@@ -44,6 +44,11 @@ export const navItems: INavData[] = [
     iconComponent: { name: 'cil-pencil' }
   },
   {
+    name: 'Fehlende Produkte',
+    url: 'missing-products',
+    iconComponent: { name: 'cil-magnifying-glass' }
+  },
+  {
     name: 'Combo Packs',
     url: 'combo-packs',
     iconComponent: { name: 'cil-layers' }

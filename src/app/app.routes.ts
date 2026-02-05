@@ -62,6 +62,12 @@ export const routes: Routes = [
         title: 'Products'
       },
       {
+        path: 'missing-products',
+        loadChildren: () => import('./views/germen/missing-products/routes').then((m) => m.routes),
+        canActivate: [AuthGuard],
+        title: 'Missing Products'
+      },
+      {
         path: 'combo-packs',
         loadChildren: () => import('./views/germen/combo-packs/routes').then((m) => m.routes),
         canActivate: [AuthGuard],

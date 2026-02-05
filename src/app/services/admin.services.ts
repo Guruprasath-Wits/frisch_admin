@@ -194,7 +194,7 @@ export class adminService {
 
   updateTransactionStatus(transactionId: string, status: string, courierName: string, courierId: number, courierPhone: number): Observable<any> {
     return this.http.put<any>(
-      `${url}/transaction_datails/update-transaction-status/${transactionId}`, 
+      `${url}/transaction_datails/update-transaction-status/${transactionId}`,
       { status, courierName, courierId, courierPhone }
     ).pipe(
       catchError(this.handleError)
@@ -202,6 +202,12 @@ export class adminService {
   }
 
   /* Error Handling */
+  getMissingProducts(): Observable<any> {
+    return this.http.get<any>(`${url}/missingProduct`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: any): Observable<never> {
     console.error("API Error:", error);
     return throwError(error);

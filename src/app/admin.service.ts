@@ -452,4 +452,12 @@ export class AdminService {
   public deleteCombo(id: number): Observable<any> {
     return this.http.delete<any>(`${url}/combo/${id}`);
   }
+
+  public getMissingProducts(): Observable<any> {
+    return this.http.get<any>(`${url}/missingProduct`);
+  }
+
+  public markMissingProductAsRead(id: number): Observable<any> {
+    return this.http.put<any>(`${url}/missingProduct/read/${id}`, {});
+  }
 }
