@@ -201,6 +201,70 @@ export class adminService {
     );
   }
 
+  /* Coupon (User Coupon) Operations */
+  getCouponsList(params?: any): Observable<any> {
+    const httpParams = new HttpParams({ fromObject: params });
+    return this.http.get<any>(`${url}/coupon/read`, { params: httpParams }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getCouponsById(id: number): Observable<any> {
+    return this.http.get<any>(`${url}/coupon/read/${id}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  addCoupon(data: any): Observable<any> {
+    return this.http.post<any>(`${url}/coupon/create`, data).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  updateCoupon(data: any, id: number): Observable<any> {
+    return this.http.put<any>(`${url}/coupon/update/${id}`, data).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  removeCoupon(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/coupon/delete/${id}`, {}).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /* Coupon Type (Voucher) Operations */
+  getCoupons(params?: any): Observable<any> {
+    const httpParams = new HttpParams({ fromObject: params });
+    return this.http.get<any>(`${url}/coupontype/read`, { params: httpParams }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getCouponById(id: number): Observable<any> {
+    return this.http.get<any>(`${url}/coupontype/read/${id}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  addCoupons(data: any): Observable<any> {
+    return this.http.post<any>(`${url}/coupontype/create`, data).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  updateCoupons(data: any, id: number): Observable<any> {
+    return this.http.put<any>(`${url}/coupontype/update/${id}`, data).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  removeCoupons(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/coupontype/delete/${id}`, {}).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   /* Error Handling */
   getMissingProducts(): Observable<any> {
     return this.http.get<any>(`${url}/missingProduct`).pipe(

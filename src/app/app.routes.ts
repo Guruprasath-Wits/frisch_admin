@@ -18,7 +18,10 @@ import { PermissionComponent } from './views/germen/permission/permission.compon
 import { DriverPerformComponent } from './views/germen/orders/driver-perform/driver-perform.component'
 import { CompleteOrdersComponent } from './views/germen/orders/complete-orders/complete-orders.component'
 import { SubscritionTransactionComponent } from './views/germen/subscrition-transaction/subscrition-transaction.component';
-
+import { VoucherListComponent } from './views/germen/coupon/voucher-list/voucher-list.component';
+import { AddVoucherComponent } from './views/germen/coupon/add-voucher/add-voucher.component';
+import { CouponListComponent } from './views/germen/coupon/coupon-list/coupon-list.component';
+import { AddCouponComponent } from './views/germen/coupon/add-coupon/add-coupon.component';
 
 
 export const routes: Routes = [
@@ -84,6 +87,26 @@ export const routes: Routes = [
         title: 'OrdersList',
         canActivate: [AuthGuard],
       },
+
+       {
+        path: 'coupon-management/voucher-type',
+        component: VoucherListComponent,
+        title: 'Voucher Type',
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'coupon-management/manage-vouchers',
+        component: CouponListComponent,
+        title: 'Manage Vouchers',
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'coupon-management/add-coupon',
+        component: AddCouponComponent,
+        title: 'Add Coupon',
+        canActivate: [AuthGuard],
+      },
+
 
       {
         path: 'contactUs',

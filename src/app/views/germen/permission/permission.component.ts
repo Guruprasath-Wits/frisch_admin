@@ -20,7 +20,7 @@ interface Role {
 export class PermissionComponent implements OnInit {
   roleForm: FormGroup;
   pages: string[] = [
-    'Category', 'Product', 'Customer_Enquiry', 'OrderList', 'Sample_Order',
+    'Category', 'Product', 'Customer_Enquiry', 'Coupon Management', 'OrderList', 'Sample_Order',
     'Our_Delivery_Areas', 'User_Advantages', 'Jobs', 'FAQ', 'Roles',
     'Permissions', 'Users', 'Settings', 'Imprint',  'Subscription_Transactions'
   ];

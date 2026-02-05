@@ -65,6 +65,26 @@ export const navItems: INavData[] = [
     url: 'contactUs',
     iconComponent: { name: 'cil-user' }
   },
+
+   {
+    name: 'Coupon Management',
+    url: '/coupon-management',
+    iconComponent: { name: 'cil-puzzle' },
+    children: [
+      {
+        name: 'Voucher Type',
+        url: '/coupon-management/voucher-type',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Gutscheine verwalten',
+        url: '/coupon-management/manage-vouchers',
+        icon: 'nav-icon-bullet'
+      }
+    ]
+  },
+
+
   {
     name: 'OrderList',
     url: '/orders',

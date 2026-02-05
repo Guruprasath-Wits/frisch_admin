@@ -1,0 +1,128 @@
+.container-fluid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    /* Centers vertically within the viewport */
+    padding: 20px;
+}
+
+.form-card {
+    background-color: #f0f7ff;
+    border: 1px solid #c2d9ff;
+    border-radius: 8px;
+    padding: 32px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 1400px;
+}
+
+.form-title {
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+
+.form-subtitle {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+}
+
+.form-label {
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-control,
+.form-select {
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    padding: 14px 20px;
+    font-size: 1.1rem;
+    height: 55px;
+    background-color: #fff;
+    transition: all 0.2s ease;
+
+    &:focus {
+        border-color: #5d5fef;
+        box-shadow: 0 0 0 0.2rem rgba(93, 95, 239, 0.1);
+    }
+
+    &.dropdown-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+        color: #495057;
+
+        &::after {
+            margin-left: auto;
+        }
+    }
+}
+
+.form-check {
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background 0.2s;
+
+    &:hover {
+        background-color: #f8f9fa;
+    }
+
+    .form-check-label {
+        font-weight: 500;
+        color: #333;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .form-check-input {
+        cursor: pointer;
+        width: 1.2rem;
+        height: 1.2rem;
+        margin-top: 0.15rem;
+
+        &:checked {
+            background-color: #5d5fef;
+            border-color: #5d5fef;
+        }
+    }
+}
+
+.submit-btn {
+    background-color: #5d5fef;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    transition: all 0.3s ease;
+
+    &:hover:not(:disabled) {
+        background-color: #4a4cd9;
+    }
+
+    &:disabled {
+        background-color: #a0a0ff;
+        cursor: not-allowed;
+    }
+}
+
+.cancel-btn {
+    background-color: #e2e2e2;
+    color: #333;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: #d0d0d0;
+    }
+}
