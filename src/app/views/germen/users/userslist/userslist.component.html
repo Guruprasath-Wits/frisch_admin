@@ -1,84 +1,147 @@
-<div class="container mt-4">
-  <div class="filter-card p-4 mb-4">
-    <div class="row d-flex">
-      <h3 class="col-md-10 mb-3" style="width: 650px; font-weight: bold !important;">User List</h3>
-      <button type="submit" class="btn btn-warning mb-3" style="width: 150px;float: right;" (click)="addUser()">Add
-        User</button>
-    </div>
-    <div class="row">
-      <div class="col-md-4 mb-3">
-        <input type="text" class="form-control filter-input" placeholder="Search by Username"
-          [(ngModel)]="searchTerm" />
+<div class="container-fluid users-container fade-in">
+  <div class="row justify-content-center">
+    <div class="col-12">
+      <!-- User List Card -->
+      <div class="premium-card">
+        <!-- Header with Gradient and Add User Button -->
+        <div class="card-header-custom">
+          <div class="header-actions">
+            <div>
+              <h4 class="card-title">{{ 'USER.LIST_TITLE' | translate }}</h4>
+              <p class="card-subtitle mb-0">{{ 'USER.SUBTITLE' | translate }}</p>
+            </div>
+            <button class="btn-add-premium" (click)="addUser()">
+              <i class="fas fa-user-plus"></i>
+              <span>{{ 'USER.ADD_BTN' | translate }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="filter-group-custom">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" class="form-control-custom" [placeholder]="'USER.SEARCH_USERNAME' | translate"
+                  [(ngModel)]="searchTerm" />
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="filter-group-custom">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="email" class="form-control-custom" [placeholder]="'USER.SEARCH_EMAIL' | translate"
+                  [(ngModel)]="searchEmail" />
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="filter-group-custom">
+                <i class="fas fa-phone input-icon"></i>
+                <input type="text" class="form-control-custom" [placeholder]="'USER.SEARCH_PHONE' | translate"
+                  [(ngModel)]="searchPhone" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="card-body p-0">
+          <div class="table-responsive custom-table-wrapper">
+            <table class="table custom-table mb-0">
+              <thead>
+                <tr>
+                  <th width="80">{{ 'COMMON.SNO' | translate }}</th>
+                  <th class="text-start">{{ 'USER.INFO_COL' | translate }}</th>
+                  <th>{{ 'USER.CONTACT_COL' | translate }}</th>
+                  <th>{{ 'USER.LOCATION_COL' | translate }}</th>
+                  <th>{{ 'USER.META_COL' | translate }}</th>
+                  <th>{{ 'USER.ROLE_COL' | translate }}</th>
+                  <th width="120">{{ 'USER.STATUS_COL' | translate }}</th>
+                  <th width="120">{{ 'USER.ACTIONS_COL' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let user of filteredUsers | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+                  <td>
+                    <span class="id-badge">{{ i + 1 + (page - 1) * itemsPerPage }}</span>
+                  </td>
+                  <td>
+                    <div class="user-main-info">
+                      <span class="username-text text-truncate">{{ user.username }}</span>
+                      <span class="email-sub text-truncate">{{ user.email }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="contact-box">
+                      <div class="phone-text fw-bold small">{{ user.phoneNo }}</div>
+                      <div class="iban-text text-muted x-small" style="font-size: 0.7rem;" title="IBAN">
+                        {{ user.ban_no || ('USER.NO_IBAN' | translate) }}
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="address-text"
+                      [title]="user.street + ' ' + user.address + ', ' + user.zipCode + ' ' + user.ort">
+                      {{ user.street }} {{ user.address }}, {{ user.zipCode }} {{ user.ort }}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="meta-box small">
+                      <div class="dob text-muted" title="Date of Birth">
+                        <i class="fas fa-birthday-cake me-1 opacity-50"></i>{{ user.bday || 'N/A' }}
+                      </div>
+                      <div class="subtown text-muted" title="Area">
+                        <i class="fas fa-map-marker-alt me-1 opacity-50"></i>{{ user.subtown || 'N/A' }}
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="role-badge">{{ user.role }}</span>
+                  </td>
+                  <td>
+                    <button class="status-toggle" (click)="toggleUser(user)"
+                      [title]="(user.status === '1' ? 'USER.DEACTIVATE_TOOLTIP' : 'USER.ACTIVATE_TOOLTIP') | translate">
+                      <i [ngClass]="user.status === '1' ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"></i>
+                    </button>
+                  </td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="btn-action btn-edit" (click)="editUser(user)"
+                        [title]="'USER.EDIT_TOOLTIP' | translate">
+                        <i class="fas fa-pencil-alt"></i>
+                      </button>
+                      <button class="btn-action btn-delete" (click)="deleteUser(user.id)"
+                        [title]="'USER.DELETE_TOOLTIP' | translate">
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="filteredUsers.length === 0">
+                  <td colspan="8" class="text-center py-5">
+                    <div class="empty-state">
+                      <i class="fas fa-users-slash mb-3 opacity-25" style="font-size: 3rem;"></i>
+                      <p class="text-muted">{{ 'USER.EMPTY' | translate }}</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pagination Section -->
+        <div class="pagination-wrapper" *ngIf="totalPages > 1">
+          <button class="page-btn" (click)="previousPage()" [disabled]="page === 1">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span class="page-info">{{ 'COMMON.PAGE_INFO' | translate:{current: page, total: totalPages} }}</span>
+          <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
       </div>
-      <div class="col-md-4 mb-3">
-        <input type="email" class="form-control filter-input" placeholder="Search by Email" [(ngModel)]="searchEmail" />
-      </div>
-      <div class="col-md-4 mb-3">
-        <input type="text" class="form-control filter-input" placeholder="Search by Phone No"
-          [(ngModel)]="searchPhone" />
-      </div>
     </div>
-  </div>
-
-  <!-- Table with Pagination -->
-  <div class="table-card p-3">
-    <div class="table-responsive">
-      <table class="table table-hover table-bordered text-center align-middle">
-        <thead class="table-header bg-warning text-dark">
-          <tr>
-            <th scope="col">S.No</th>
-            <th scope="col">Username</th>
-            <th scope="col">Email</th>
-            <th scope="col">Phone No</th>
-            <th scope="col">Address</th>
-            <th scope="col">Zip Code</th>
-            <th scope="col">City/Area</th>
-            <th scope="col">Date of Birth</th>
-            <th scope="col">IBAN</th>
-            <th scope="col">Role</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let user of filteredUsers | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
-            <td>{{ i + 1 + (page - 1) * itemsPerPage }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.phoneNo }}</td>
-            <td>{{ user.street }} {{ user.address }}, {{ user.zipCode }}, {{ user.ort}}</td>
-            <td>{{ user.zipCode }}</td>
-            <td>{{ user.subtown }}</td>
-            <td>{{ user.bday }}</td>
-            <td>{{ user.ban_no }}</td>
-            <td>{{ user.role }}</td>
-            <td>
-              <button class="btn btn-warning btn-sm me-2" (click)="editUser(user)">
-                <i class="fa-solid fa-pen-to-square"></i>
-              </button>
-              <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id)">
-                <i class="fa-solid fa-trash"></i>
-              </button>&nbsp;
-             <button class="toggle-btn" (click)="toggleUser(user)">
-  <i
-    [ngClass]="user.status === '1' ? 'fa-solid fa-toggle-on text-success' : 'fa-solid fa-toggle-off text-muted'"
-    style="cursor: pointer; font-size: 24px;"
-  ></i>
-</button>
-
-
-
-
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="pagination-controls">
-    <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
-    <span>Page {{ page }} of {{ totalPages }}</span>
-    <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
   </div>
 </div>

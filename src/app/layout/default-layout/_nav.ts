@@ -20,7 +20,7 @@ export const navItems: INavData[] = [
   {
     name: 'Category',
     url: 'category',
-    iconComponent: { name: 'cil-align-left' }
+    iconComponent: { name: 'cil-grid' }
   },
   {
     name: 'Steuer',
@@ -63,23 +63,23 @@ export const navItems: INavData[] = [
   {
     name: 'Customer_Enquiry',
     url: 'contactUs',
-    iconComponent: { name: 'cil-user' }
+    iconComponent: { name: 'cil-envelope-closed' }
   },
 
-   {
+  {
     name: 'Coupon Management',
     url: '/coupon-management',
-    iconComponent: { name: 'cil-puzzle' },
+    iconComponent: { name: 'cil-tags' },
     children: [
       {
-        name: 'Voucher Type',
+        name: 'Voucher List',
         url: '/coupon-management/voucher-type',
-        icon: 'nav-icon-bullet'
+        iconComponent: { name: 'cil-list' }
       },
       {
-        name: 'Gutscheine verwalten',
+        name: 'Coupon List',
         url: '/coupon-management/manage-vouchers',
-        icon: 'nav-icon-bullet'
+        iconComponent: { name: 'cil-spreadsheet' }
       }
     ]
   },
@@ -88,32 +88,32 @@ export const navItems: INavData[] = [
   {
     name: 'OrderList',
     url: '/orders',
-    iconComponent: { name: 'cil-puzzle' },
+    iconComponent: { name: 'cil-cart' },
     children: [
       {
         name: 'Received Order',
         url: '/orders/orders',
-        icon: 'nav-icon-bullet'
+        iconComponent: { name: 'cil-inbox' }
       },
       {
         name: 'Processing',
         url: '/orders/processingOrders',
-        icon: 'nav-icon-bullet'
+        iconComponent: { name: 'cil-task' }
       },
       {
         name: 'Assigned',
         url: '/orders/assignOrders',
-        icon: 'nav-icon-bullet'
+        iconComponent: { name: 'cil-user-follow' }
       },
       {
         name: 'Completed',
         url: '/orders/completeOrders',
-        icon: 'nav-icon-bullet'
+        iconComponent: { name: 'cil-check' }
       },
       {
         name: 'Driver Performance',
         url: '/orders/driverPerform',
-        icon: 'nav-icon-bullet'
+        iconComponent: { name: 'cil-speedometer' }
       }
     ]
   },
@@ -161,21 +161,21 @@ export const navItems: INavData[] = [
   {
     name: 'Sample_Order',
     url: '/free-trial',
-    iconComponent: { name: 'cil-description' },
+    iconComponent: { name: 'cil-basket' },
 
   },
 
   {
     name: 'Our_Delivery_Areas',
     url: '/our-delivery-area',
-    iconComponent: { name: 'cil-description' },
+    iconComponent: { name: 'cil-location-pin' },
 
   },
 
   {
     name: 'User_Advantages',
     url: '/user-advantages',
-    iconComponent: { name: 'cil-description' },
+    iconComponent: { name: 'cil-star' },
 
   },
 
@@ -189,21 +189,21 @@ export const navItems: INavData[] = [
   {
     name: 'Jobs',
     url: '/jobs',
-    iconComponent: { name: 'cil-description' },
+    iconComponent: { name: 'cil-people' },
 
   },
 
   {
-    name: 'Subscription_Transactions',
+    name: 'Transactions',
     url: '/subscriptionTransactions',
-    iconComponent: { name: 'cil-description' },
+    iconComponent: { name: 'cil-chart' },
 
   },
 
   {
     name: 'FAQ',
     url: '/faq',
-    iconComponent: { name: 'cil-description' },
+    iconComponent: { name: 'cil-comment-square' },
 
   },
 
@@ -248,12 +248,11 @@ export const navItems: INavData[] = [
 
   },
 
-  // {
-  //   name: 'Settings',
-  //   url: '/settings',
-  //   iconComponent: { name: 'cil-settings' },
-
-  // },
+  {
+    name: 'Settings',
+    url: '/settings',
+    iconComponent: { name: 'cil-settings' },
+  },
 
 
   // {

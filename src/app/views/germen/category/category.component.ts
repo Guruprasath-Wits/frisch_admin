@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../../admin.service';
 import Swal from 'sweetalert2';
-import { file_url } from 'src/app/config';
+import { file_url } from '../../../config';
 import { CommonModule } from '@angular/common';
 
 interface Category {
@@ -14,6 +14,8 @@ interface Category {
   category_img?: string;
 }
 
+import { TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-category',
   templateUrl: './category.component.html',
@@ -21,7 +23,8 @@ interface Category {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    CommonModule
+    CommonModule,
+    TranslateModule
   ]
 })
 export class CategoryComponent implements OnInit {
@@ -61,10 +64,12 @@ export class CategoryComponent implements OnInit {
     this.adminService.getCategory({}).subscribe(
       (response: any) => {
         if (response.status) {
+          console.log('Raw category response:', response.category);
           this.categories = response.category.map((cat: any) => ({
             ...cat,
             category_img: `${cat.category_img}`
           }));
+          console.log('Processed categories:', this.categories);
           this.totalPages = Math.ceil(this.categories.length / this.itemsPerPage);
         } else {
           console.error('Failed to fetch categories:', response.message);
@@ -90,7 +95,7 @@ export class CategoryComponent implements OnInit {
 
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    
+
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
@@ -112,8 +117,8 @@ export class CategoryComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if(!this.categoryForm.value.category_name || !this.categoryForm.value.category_type){
-      Swal.fire('Error','Fill the required field', 'error')
+    if (!this.categoryForm.value.category_name || !this.categoryForm.value.category_type) {
+      Swal.fire('Error', 'Fill the required field', 'error')
       return
     }
     const formData = new FormData();
@@ -130,7 +135,7 @@ export class CategoryComponent implements OnInit {
     }
 
     if (this.isEditMode && this.currentCategory?.id) {
-      
+
       this.adminService.updateCategory(this.currentCategory.id, formData).subscribe(
         response => {
           Swal.fire('Updated!', 'Category has been updated.', 'success');
@@ -142,7 +147,7 @@ export class CategoryComponent implements OnInit {
         }
       );
     } else {
-      
+
       this.adminService.addCategory(formData).subscribe(
         response => {
           Swal.fire('Added!', 'Category has been added.', 'success');
@@ -155,24 +160,24 @@ export class CategoryComponent implements OnInit {
       );
     }
   }
-  
+
 
   onEdit(category: Category): void {
     this.isEditMode = true;
     this.currentCategory = category;
-  
+
     // Extract the relative path for the category image
     const imagePath = category.category_img?.replace(/^http:\/\/[^\/]+\/uploads\//, 'uploads/') || null;
-  
+
     this.categoryForm.patchValue({
       category_name: category.category_name,
       category_type: category.category_type,
       category_desc: category.category_desc,
       image_file: null // Reset the file input field
     });
-  
+
     this.imagePreview = imagePath; // Use the relative path for the preview
-  
+
     // Listen for new file uploads and update the preview dynamically
     this.categoryForm.get('image_file')?.valueChanges.subscribe((file: File | null) => {
       if (file) {
@@ -186,8 +191,8 @@ export class CategoryComponent implements OnInit {
       }
     });
   }
-  
-  
+
+
 
   onDelete(id?: number): void {
     if (id === undefined) {
@@ -207,7 +212,7 @@ export class CategoryComponent implements OnInit {
       if (result.isConfirmed) {
         this.adminService.removeCategory(id).subscribe(
           response => {
-            this.categories = this.categories.filter((f) => f.id !== id); 
+            this.categories = this.categories.filter((f) => f.id !== id);
             Swal.fire('Deleted!', 'Category has been deleted.', 'success');
             // this.getCategories();
           },
@@ -238,5 +243,33 @@ export class CategoryComponent implements OnInit {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     return this.categories.slice(startIndex, endIndex);
+  }
+  getImageUrl(img: string | undefined): string {
+    if (!img) {
+      return 'assets/images/placeholder.jpg';
+    }
+
+    // If already a full URL, return as is
+    if (img.startsWith('http://') || img.startsWith('https://')) {
+      return img;
+    }
+
+    // Build the full URL - ensure no double slashes
+    let baseUrl = this.file;
+    let imagePath = img;
+
+    // Remove trailing slash from base URL if present
+    if (baseUrl.endsWith('/')) {
+      baseUrl = baseUrl.slice(0, -1);
+    }
+
+    // Ensure image path starts with /
+    if (!imagePath.startsWith('/')) {
+      imagePath = '/' + imagePath;
+    }
+
+    const fullUrl = `${baseUrl}${imagePath}`;
+    console.log('Image URL:', fullUrl, 'from', img);
+    return fullUrl;
   }
 }

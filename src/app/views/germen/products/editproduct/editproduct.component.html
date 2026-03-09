@@ -1,147 +1,226 @@
-<div class="container mt-4">
-  <h3>Add Product Details</h3>
-  <div class="add-user-card">
-    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
-
-      <!-- Product Name & Nick Name -->
-      <div class="form-row">
-        <div class="form-group">
-          <label for="product_name">Product Name</label>
-          <input type="text" id="product_name" formControlName="product_name" placeholder="Enter product name" />
-          <div
-            *ngIf="productForm.get('product_name')?.invalid && (productForm.get('product_name')?.touched || productForm.get('product_name')?.dirty)"
-            class="error">
-            <small *ngIf="productForm.get('product_name')?.errors?.['required']">Product Name is required.</small>
-          </div>
+<div class="container-fluid product-form-container fade-in">
+  <div class="row justify-content-center">
+    <div class="col-12">
+      <div class="card form-card">
+        <!-- Premium Header with Gradient -->
+        <div class="card-header-custom text-center">
+          <h4 class="card-title">Edit Product Details</h4>
+          <p class="card-subtitle">Produktinformationen bearbeiten</p>
         </div>
 
-        <div class="form-group">
-          <label for="nick_name">Nick Name</label>
-          <input type="text" id="nick_name" formControlName="nick_name" placeholder="Enter Nick name" />
-        </div>
-      </div>
+        <div class="card-body p-4 p-md-5">
+          <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
 
-      <!-- Category & Price -->
-      <div class="form-row">
-        <!-- Category -->
-        <div class="form-group">
-          <label for="category">Category</label>
-          <div class="dropdown-box">
-            <div class="form-control" (click)="toggleCategoryDropdown()" style="cursor: pointer;">
-              {{ getSelectedCategoryNames() || 'Select Categories' }}
-            </div>
+            <!-- Section: Basic Information -->
+            <div class="form-section mb-5">
+              <div class="section-header">
+                <i class="fas fa-info-circle"></i>
+                <h5>Allgemeine Informationen</h5>
+              </div>
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">Product Name</label>
+                    <div class="input-group-custom">
+                      <i class="fas fa-tag input-icon"></i>
+                      <input type="text" formControlName="product_name" class="form-control-custom"
+                        placeholder="Enter product name" />
+                    </div>
+                    <div
+                      *ngIf="productForm.get('product_name')?.invalid && (productForm.get('product_name')?.touched || productForm.get('product_name')?.dirty)"
+                      class="text-danger small mt-1">
+                      Product Name is required.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">Nick Name</label>
+                    <div class="input-group-custom">
+                      <i class="fas fa-at input-icon"></i>
+                      <input type="text" formControlName="nick_name" class="form-control-custom"
+                        placeholder="Enter Nick name" />
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">Category</label>
+                    <div class="dropdown-box">
+                      <div class="input-group-custom" (click)="toggleCategoryDropdown()">
+                        <i class="fas fa-layer-group input-icon"></i>
+                        <div class="form-control-custom d-flex align-items-center cursor-pointer"
+                          style="min-height: 48px;">
+                          {{ getSelectedCategoryNames() || 'Select Categories' }}
+                        </div>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                      </div>
 
-            <div *ngIf="categoryDropdownOpen" class="dropdown-list">
-              <div *ngFor="let category of categories" class="checkbox-item">
-                <input type="checkbox" class="form-check-input" [checked]="isCategorySelected(category.id)"
-                  (change)="onCategoryChange(category.id, $event)" id="cat_{{ category.id }}" />
-                <label for="cat_{{ category.id }}" class="form-check-label">{{ category.category_name }}</label>
+                      <div *ngIf="categoryDropdownOpen" class="dropdown-list-premium">
+                        <div *ngFor="let category of categories" class="checkbox-item-premium">
+                          <input type="checkbox" [checked]="isCategorySelected(category.id)"
+                            (change)="onCategoryChange(category.id, $event)" id="cat_{{ category.id }}" />
+                          <label for="cat_{{ category.id }}">{{ category.category_name }}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">Product Status</label>
+                    <div class="input-group-custom">
+                      <i class="fas fa-toggle-on input-icon"></i>
+                      <select formControlName="product_status" class="form-control-custom select-custom">
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="Enable">Enable</option>
+                        <option value="Disable">Disable</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-          </div>
-        </div>
-
-        <!-- Price -->
-        <div class="form-group">
-          <label for="price">Price</label>
-          <input type="number" id="price" formControlName="price" placeholder="Enter price (in currency)" />
-        </div>
-      </div>
-
-      <!-- Availability -->
-      <div class="form-row">
-        <div class="form-group">
-          <label>Availability</label>
-          <div class="days-container">
-            <div *ngFor="let day of daysList" class="checkbox-item">
-              <input type="checkbox" class="form-check-input" [id]="'day_' + day" [value]="day"
-                [checked]="isDaySelected(day)" (change)="onDayChange(day, $event)">
-              <label class="form-check-label" [for]="'day_' + day">
-                {{ day }}
-              </label>
+            <!-- Section: Pricing & Availability -->
+            <div class="form-section mb-5">
+              <div class="section-header">
+                <i class="fas fa-euro-sign"></i>
+                <h5>Preis & Verfügbarkeit</h5>
+              </div>
+              <div class="row g-4">
+                <div class="col-md-4">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">Price (€)</label>
+                    <div class="input-group-custom">
+                      <i class="fas fa-coins input-icon"></i>
+                      <input type="number" formControlName="price" class="form-control-custom" placeholder="0.00"
+                        step="0.01" />
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">Pfand (Bottle Deposit)</label>
+                    <div class="input-group-custom">
+                      <i class="fas fa-wine-bottle input-icon"></i>
+                      <select formControlName="pfand" class="form-control-custom select-custom">
+                        <option value="0.00">0,00€ (Kein Pfand)</option>
+                        <option *ngFor="let bottle of bottles" [value]="bottle.deposit">
+                          {{ bottle.bottle_name }} ({{ bottle.deposit }}€)
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">VAT (Tax)</label>
+                    <div class="input-group-custom">
+                      <i class="fas fa-percentage input-icon"></i>
+                      <select formControlName="tax" class="form-control-custom select-custom">
+                        <option value="0.00">0% (Keine Steuer)</option>
+                        <option *ngFor="let tax of taxes" [value]="tax.tax_value">
+                          {{ tax.tax_name }} ({{ tax.tax_value }}%)
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">Availability</label>
+                    <div class="days-container-premium">
+                      <div *ngFor="let day of daysList" class="day-chip">
+                        <input type="checkbox" [id]="'day_edit_' + day" [checked]="isDaySelected(day)"
+                          (change)="onDayChange(day, $event)">
+                        <label [for]="'day_edit_' + day">{{ day }}</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+
+            <!-- Section: Content & Media -->
+            <div class="form-section mb-5">
+              <div class="section-header">
+                <i class="fas fa-file-alt"></i>
+                <h5>Inhalt & Medien</h5>
+              </div>
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">Weight / Size / ml</label>
+                    <div class="input-group-custom">
+                      <i class="fas fa-weight-hanging input-icon"></i>
+                      <input type="number" formControlName="weight" class="form-control-custom"
+                        placeholder="e.g. 500" />
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">Upload Image</label>
+                    <div class="image-upload-wrapper">
+                      <label for="image_file_edit" class="upload-area">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Click to update image</span>
+                        <input type="file" id="image_file_edit" (change)="onFileChange($event)" class="d-none" />
+                      </label>
+                      <div *ngIf="productForm.get('product_img')?.value" class="image-preview-premium">
+                        <img [src]="getImageUrl(productForm.get('product_img')?.value)" />
+                        <button type="button" class="btn-remove-img" (click)="removeImage()">
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">Nutritional Information</label>
+                    <div class="textarea-group-custom">
+                      <textarea formControlName="nutri_inform" class="form-control-custom px-3"
+                        placeholder="Enter nutritional information..."></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">Ingredients</label>
+                    <div class="textarea-group-custom">
+                      <textarea formControlName="ingredients" class="form-control-custom px-3"
+                        placeholder="List ingredients..."></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">Description</label>
+                    <div class="textarea-group-custom">
+                      <textarea formControlName="desc" class="form-control-custom px-3"
+                        placeholder="Enter product description..." rows="3"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit & Cancel Buttons -->
+            <div class="form-actions d-flex justify-content-center gap-3 mt-5">
+              <button type="button" class="btn-cancel-premium" [routerLink]="['/products']"
+                [queryParams]="{ page: currentPage }">
+                <i class="fas fa-times me-2"></i> Cancel
+              </button>
+              <button type="submit" class="btn-submit-premium" [disabled]="productForm.invalid">
+                <i class="fas fa-save me-2"></i> Update Product
+              </button>
+            </div>
+
+          </form>
         </div>
       </div>
-
-      <!-- Pfand & Tax -->
-      <div class="form-row">
-        <!-- Pfand -->
-        <div class="form-group">
-          <label for="pfand">Pfand (Bottle Deposit)</label>
-          <select id="pfand" formControlName="pfand">
-            <option value="0.00">0,00€</option>
-            <option *ngFor="let bottle of bottles" [value]="bottle.deposit">
-              {{ bottle.bottle_name }} ({{ bottle.deposit }}€)
-            </option>
-          </select>
-        </div>
-
-        <!-- Tax -->
-        <div class="form-group">
-          <label for="tax">VAT (Tax)</label>
-          <select id="tax" formControlName="tax">
-            <option value="0.00">0%</option>
-            <option *ngFor="let tax of taxes" [value]="tax.tax_value">
-              {{ tax.tax_name }} ({{ tax.tax_value }}%)
-            </option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Weight & Image Upload -->
-      <div class="form-row">
-        <div class="form-group">
-          <label for="weight">Weight/Size/ml</label>
-          <input type="number" id="weight" formControlName="weight" />
-        </div>
-
-        <div class="form-group">
-          <label for="image_file">Upload Image</label>
-          <input type="file" id="image_file" (change)="onFileChange($event)" />
-          <div *ngIf="productForm.get('product_img')?.value" class="image-preview">
-            <img [src]="getImageUrl(productForm.get('product_img')?.value)" class="preview-img" />
-            <button type="button" class="btn btn-danger btn-sm" (click)="removeImage()">Remove</button>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Nutritional Info & Ingredients -->
-      <div class="form-row">
-        <div class="form-group">
-          <label for="nutri_inform">Nutritional Information</label>
-          <textarea id="nutri_inform" formControlName="nutri_inform"
-            placeholder="Enter nutritional information per serving"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="ingredients">Ingredients</label>
-          <textarea id="ingredients" formControlName="ingredients" placeholder="List ingredients"></textarea>
-        </div>
-      </div>
-
-      <!-- Description & Status -->
-      <div class="form-row">
-        <div class="form-group">
-          <label for="desc">Description</label>
-          <textarea id="desc" formControlName="desc" placeholder="Enter a brief desc of the product"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="product_status">Product Status</label>
-          <select id="product_status" formControlName="product_status">
-            <option value="" disabled selected>Select Category</option>
-            <option value="Enable">Enable</option>
-            <option value="Disable">Disable</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Submit Button -->
-      <button type="submit" class="btn btn-warning">Submit</button>
-
-    </form>
+    </div>
   </div>
 </div>

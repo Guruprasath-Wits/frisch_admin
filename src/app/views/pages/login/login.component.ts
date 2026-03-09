@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NgStyle, CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';  
-import { 
-  ContainerComponent, RowComponent, ColComponent, CardGroupComponent, 
-  TextColorDirective, CardComponent, CardBodyComponent, FormDirective, 
-  InputGroupComponent, InputGroupTextDirective, FormControlDirective, ButtonDirective 
+import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import {
+  ContainerComponent, RowComponent, ColComponent, CardGroupComponent,
+  TextColorDirective, CardComponent, CardBodyComponent, FormDirective,
+  InputGroupComponent, InputGroupTextDirective, FormControlDirective, ButtonDirective
 } from '@coreui/angular';
 import { AdminService } from '../../../admin.service';
 import Swal from 'sweetalert2';
@@ -18,8 +18,8 @@ import { HttpClientModule } from '@angular/common/http';
   standalone: true,
   imports: [
     ReactiveFormsModule, CommonModule,
-    ContainerComponent, RowComponent, ColComponent, CardGroupComponent, 
-    TextColorDirective, CardComponent, CardBodyComponent, FormDirective, 
+    ContainerComponent, RowComponent, ColComponent, CardGroupComponent,
+    TextColorDirective, CardComponent, CardBodyComponent, FormDirective,
     InputGroupComponent, InputGroupTextDirective, FormControlDirective, ButtonDirective, NgStyle, HttpClientModule
   ]
 })
@@ -54,9 +54,9 @@ export class LoginComponent implements OnInit {
 
     console.log('Form Values:', this.loginForm.value);
 
-    
 
-    
+
+
     this._adminService.login(this.loginForm.value).subscribe(
       (resData: any) => {
         this.resData = resData;
@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit {
         if (this.resData.status) {
           localStorage.setItem('authToken', resData.token);
           localStorage.setItem('roleId', String(this.resData.user.role_id));
-      localStorage.setItem('currentUser', String(this.resData.user.id));
+          localStorage.setItem('currentUser', String(this.resData.user.id));
           this.loadComponent();
         } else {
           Swal.fire('Failed');
@@ -87,12 +87,24 @@ export class LoginComponent implements OnInit {
   }
 
   loadComponent() {
-    if(this.resData.token){
-      Swal.fire('Login Sucessfully')
-    this.router.navigate(['/dashboard']);
-  }
-  else{
-    Swal.fire('Failed')
-  }
+    if (this.resData.token) {
+      Swal.fire({
+        title: 'Login Successfully',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        customClass: {
+          popup: 'swal-narrow-alert'
+        }
+      });
+      this.router.navigate(['/dashboard']);
+    }
+    else {
+      Swal.fire({
+        title: 'Failed',
+        text: 'Login failed. Please check your credentials.',
+        icon: 'error',
+        confirmButtonText: 'Try Again'
+      });
+    }
   }
 }

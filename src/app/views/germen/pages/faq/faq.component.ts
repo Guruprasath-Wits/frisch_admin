@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../../../admin.service';
 import { CommonModule } from '@angular/common';
 import { map } from 'rxjs/operators';
 import Swal from 'sweetalert2';
@@ -46,12 +46,12 @@ export class FaqComponent implements OnInit {
     this.totalPages = Math.ceil(this.faqs.length / this.itemsPerPage);
   }
 
-  loadFaqs():void{
+  loadFaqs(): void {
 
     this.faqService.getFaqs().subscribe(
       (response) => {
         if (response.status) {
-          this.faqs = response.faq; 
+          this.faqs = response.faq;
           this.calculateTotalPages();
         } else {
           console.error('Failed to fetch faq');
@@ -153,7 +153,7 @@ export class FaqComponent implements OnInit {
       this.page++;
     }
   }
-  
+
   previousPage(): void {
     if (this.page > 1) {
       this.page--;

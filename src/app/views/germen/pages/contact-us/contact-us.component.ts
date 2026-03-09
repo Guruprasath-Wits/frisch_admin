@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Router } from '@angular/router';
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../../../admin.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,12 +15,12 @@ import Swal from 'sweetalert2';
 })
 export class ContactUsComponent implements OnInit {
 
-  page: number = 1; 
+  page: number = 1;
   itemsPerPage: number = 5;
   contactUs: any[] = [];
-  filteredcontactUs: any[] = []; 
+  filteredcontactUs: any[] = [];
 
-  constructor(private router: Router, private contactUservice: AdminService) {}
+  constructor(private router: Router, private contactUservice: AdminService) { }
 
   ngOnInit(): void {
     this.loadContactUs();
@@ -65,7 +65,7 @@ export class ContactUsComponent implements OnInit {
               // Remove from both arrays and refresh the filtered data
               this.contactUs = this.contactUs.filter(contact => contact.id !== id);
               this.filteredcontactUs = [...this.contactUs]; // Update the filtered list
-  
+
               Swal.fire('Deleted!', 'Contact has been deleted.', 'success');
             } else {
               Swal.fire('Error', 'Failed to delete contact', 'error');
@@ -78,7 +78,7 @@ export class ContactUsComponent implements OnInit {
       }
     });
   }
-  
+
 
   nextPage() {
     if (this.page < this.totalPages) {

@@ -1,137 +1,211 @@
-<div class="container mt-4">
-    <div class="filter-card p-4 mb-4">
-        <div class="row d-flex">
-            <h3 class="col-md-10 mb-3" style="font-weight: bold !important;">Order List</h3>
-        </div>
-        <div class="row">
-            <!-- <div class="col-md-3 mb-3">
-                <input type="text" class="form-control filter-input" placeholder="Search by Product" [(ngModel)]="searchTerm" />
-            </div> -->
-            <div class="col-md-3 mb-3">
-                <input type="email" class="form-control filter-input" placeholder="Search by Address" [(ngModel)]="searchEmail" />
+<div class="container-fluid order-container fade-in">
+    <div class="premium-card">
+        <!-- Premium Header -->
+        <div class="card-header-premium">
+            <div class="header-content">
+                <h2 class="card-title">{{ 'ORDER.LIST_TITLE' | translate }}</h2>
+                <div class="header-badge">
+                    {{ (showSubscriptionOrders ? 'ORDER.SUB_TITLE' : 'ORDER.DIRECT_TITLE') | translate }}
+                </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <input type="text" class="form-control filter-input" placeholder="Search by Contact" [(ngModel)]="searchPhone" />
-            </div>
-            <div class="col-md-3 mb-3">
-                <input type="text" class="form-control filter-input" placeholder="Search by Order ID" [(ngModel)]="searchOrderId" />
-            </div>
-            <div class="col-md-3 mb-3">
-                <input type="text" class="form-control filter-input" placeholder="Search by Status" [(ngModel)]="searchStatus" />
-            </div>
-            <div class="col-md-3 mb-3">
-                <input type="date" class="form-control filter-input" placeholder="Search by Date" [(ngModel)]="searchDate" />
-            </div>
-
-            <div class="col-md-3 mb-3">
-                <input type="text" class="form-control filter-input" placeholder="Search by Price" [(ngModel)]="searchPrice" />
-            </div>
-
-            <div class="col-md-3" >
-                <button (click)="SubscripOrders()" class="btn btn-warning">Subscriptions</button>
+            <div class="header-actions">
+                <button (click)="SubscripOrders()" class="btn-subscription" [class.active]="showSubscriptionOrders">
+                    <i class="fas" [ngClass]="showSubscriptionOrders ? 'fa-list' : 'fa-calendar-alt'"></i>
+                    {{ (showSubscriptionOrders ? 'ORDER.SHOW_DIRECT' : 'ORDER.MANAGE_SUB') | translate }}
+                </button>
             </div>
         </div>
 
-        
-    </div>
+        <!-- Filter Strip -->
+        <div class="filter-strip">
+            <div class="search-grid">
+                <div class="search-box-premium">
+                    <i class="fas fa-map-marker-alt input-icon"></i>
+                    <input type="text" class="form-control-premium" [placeholder]="'ORDER.SEARCH_ADDRESS' | translate"
+                        [(ngModel)]="searchEmail" />
+                </div>
+                <div class="search-box-premium">
+                    <i class="fas fa-phone-alt input-icon"></i>
+                    <input type="text" class="form-control-premium" [placeholder]="'ORDER.SEARCH_CONTACT' | translate"
+                        [(ngModel)]="searchPhone" />
+                </div>
+                <div class="search-box-premium">
+                    <i class="fas fa-hashtag input-icon"></i>
+                    <input type="text" class="form-control-premium" [placeholder]="'ORDER.SEARCH_ORDER_ID' | translate"
+                        [(ngModel)]="searchOrderId" />
+                </div>
+                <div class="search-box-premium">
+                    <i class="fas fa-info-circle input-icon"></i>
+                    <input type="text" class="form-control-premium" [placeholder]="'ORDER.SEARCH_STATUS' | translate"
+                        [(ngModel)]="searchStatus" />
+                </div>
+                <div class="search-box-premium">
+                    <i class="fas fa-calendar-day input-icon"></i>
+                    <input type="date" class="form-control-premium" [(ngModel)]="searchDate" />
+                </div>
+                <div class="search-box-premium">
+                    <i class="fas fa-euro-sign input-icon"></i>
+                    <input type="text" class="form-control-premium" [placeholder]="'ORDER.SEARCH_PRICE' | translate"
+                        [(ngModel)]="searchPrice" />
+                </div>
+            </div>
+        </div>
 
-    <!-- Table with Pagination -->
-    <div class="table-card p-3">
-        <table class="table table-hover cursor-pointer">
-            <thead class="table-header">
-                <tr>
-                    <th>S.No</th>
-                    <th>Order ID</th>
-                    <!-- <th>Product</th> -->
-                    <!-- <th>Quantity</th> -->
-                    <th>Price</th>
-                    <th>Delivery Date</th>
-                    <th>Address</th>
-                    <th>Zipcode</th>
-                    <th>Place</th>
-                    <th>Contact</th>
-                    <th>Instruction</th>
-                    <th *ngIf="!showSubscriptionOrders">Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            
-            <tbody *ngIf="!showSubscriptionOrders">
-                <tr *ngFor="let order of filteredOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+        <!-- Table Section -->
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table custom-table mb-0">
+                    <thead>
+                        <tr>
+                            <th width="60" class="text-center">{{ 'COMMON.SNO' | translate }}</th>
+                            <th>{{ 'ORDER.DETAILS_COL' | translate }}</th>
+                            <th>{{ 'ORDER.PRICING_COL' | translate }}</th>
+                            <th>{{ 'ORDER.DELIVERY_COL' | translate }}</th>
+                            <th>{{ 'ORDER.LOCATION_COL' | translate }}</th>
+                            <th>{{ 'ORDER.CONTACT_COL' | translate }}</th>
+                            <th>{{ 'ORDER.NOTES_COL' | translate }}</th>
+                            <th *ngIf="!showSubscriptionOrders">{{ 'ORDER.STATUS_COL' | translate }}</th>
+                            <th class="text-center">{{ 'ORDER.ACTIONS_COL' | translate }}</th>
+                        </tr>
+                    </thead>
 
-                <!-- <tr *ngFor="let order of filteredOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index" 
-                    [ngClass]="{'d-none': !(order.status.toLowerCase() === 'pending' || order.status.toLowerCase() === 'cancelling')}"> -->
-                    <td>{{ i + 1 + (page - 1) * itemsPerPage }}</td>
-                    <td>{{ order.order_id }}</td>
-                    <!-- <td>{{ order.product }}</td> -->
-                    <!-- <td>{{ order.quantity }}</td> -->
-                    <td>{{ order.price }}</td>
-                    <td>{{ order.delivery_date | date }}</td>
-                        <td>{{ order.address }}</td>
-                     <!-- <td>{{ order.address }}, {{ order.zipcode }}, {{ order.ort }}</td> -->
-                    <td>{{ order.zipcode }}</td>
-                    <td>{{ order.ort }}</td>
-                    <td>{{ order.contact }}</td>
-                    <td>{{ order.instruction }}</td>
-                    <td>{{ order.status }}</td>
-                    <td>
-                        <button (click)="updateOrderStatus(order, 'processing')" class="btn btn-warning btn-sm ml-2" style="margin-right: 5px;">
-                            <i class="fa-solid fa-check"></i>
-                        </button>
-                        
-                        <button (click)="updateOrderStatus(order, 'cancelling')" class="btn btn-danger btn-sm ml-2">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
+                    <!-- Standard Orders -->
+                    <tbody *ngIf="!showSubscriptionOrders">
+                        <tr
+                            *ngFor="let order of filteredOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+                            <td class="text-center">
+                                <span class="fw-bold text-muted">{{ i + 1 + (page - 1) * itemsPerPage }}</span>
+                            </td>
+                            <td>
+                                <span class="order-id-badge">#{{ order.order_id }}</span>
+                            </td>
+                            <td>
+                                <span class="price-text">€{{ order.price }}</span>
+                            </td>
+                            <td>
+                                <div class="date-text">
+                                    <i class="far fa-calendar-alt"></i>
+                                    {{ order.delivery_date | date:'dd MMM yyyy' }}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="address-text" [title]="order.address">
+                                    <strong>{{ order.ort }}</strong> ({{ order.zipcode }})<br>
+                                    {{ order.address }}
+                                </div>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-dark">{{ order.contact }}</span>
+                            </td>
+                            <td>
+                                <div class="address-text" style="font-style: italic;">
+                                    {{ order.instruction || '-' }}
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-badge" [ngClass]="order.status.toLowerCase()">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center">
+                                    <button (click)="updateOrderStatus(order, 'processing')"
+                                        class="btn-action-premium approve"
+                                        [title]="'ORDER.APPROVE_TOOLTIP' | translate">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button (click)="updateOrderStatus(order, 'cancelling')"
+                                        class="btn-action-premium cancel" [title]="'ORDER.CANCEL_TOOLTIP' | translate">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <button (click)="viewOrder(order.order_id)" class="btn-action-premium view"
+                                        [title]="'ORDER.VIEW_TOOLTIP' | translate">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
 
-                        <button (click)="viewOrder(order.order_id)" class="btn btn-primary btn-sm ml-2">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
+                    <!-- Subscription Orders -->
+                    <tbody *ngIf="showSubscriptionOrders">
+                        <tr
+                            *ngFor="let order of subscriptionOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+                            <td class="text-center">
+                                <span class="fw-bold text-muted">{{ i + 1 + (page - 1) * itemsPerPage }}</span>
+                            </td>
+                            <td>
+                                <span class="order-id-badge">#{{ order.order_id }}</span>
+                            </td>
+                            <td>
+                                <span class="price-text">€{{ order.price }}</span>
+                            </td>
+                            <td>
+                                <div class="date-text">
+                                    <i class="far fa-calendar-alt"></i>
+                                    {{ order.delivery_date | date:'dd MMM yyyy' }}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="address-text">
+                                    <strong>{{ order.ort }}</strong> ({{ order.zipcode }})<br>
+                                    {{ order.address }}
+                                </div>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-dark">{{ order.contact }}</span>
+                            </td>
+                            <td>
+                                <div class="address-text" style="font-style: italic;">
+                                    {{ order.instruction || '-' }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center">
+                                    <button (click)="updateSubscriptionOrderStatus(order, 'processing')"
+                                        class="btn-action-premium approve" title="Approve">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button (click)="updateSubscriptionOrderStatus(order, 'cancelling')"
+                                        class="btn-action-premium cancel" title="Cancel">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <button (click)="viewSubOrders(order.order_id)" class="btn-action-premium view"
+                                        title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
 
-            <tbody *ngIf="showSubscriptionOrders">
-                <!-- <tr *ngFor="let order of subscriptionOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index" 
-                    [ngClass]="{'d-none': !(order.status.toLowerCase() === 'pending' || order.status.toLowerCase() === 'cancelling')}"> -->
-                    <tr *ngFor="let order of subscriptionOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+                    <!-- Empty State -->
+                    <tbody
+                        *ngIf="(!showSubscriptionOrders && filteredOrders.length === 0) || (showSubscriptionOrders && subscriptionOrders.length === 0)">
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <div class="opacity-25 py-4">
+                                    <i class="fas fa-box-open mb-3" style="font-size: 4rem;"></i>
+                                    <h4 class="fw-bold">{{ 'ORDER.EMPTY' | translate }}</h4>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-                    <td>{{ i + 1 + (page - 1) * itemsPerPage }}</td>
-                    <td>{{ order.order_id }}</td>
-                    <!-- <td>{{ order.product }}</td> -->
-                    <!-- <td>{{ order.quantity }}</td> -->
-                    <td>{{ order.price }}</td>
-                    <td>{{ order.delivery_date | date }}</td>
-                    <td>{{ order.address }}, {{ order.zipcode }}, {{ order.ort }}</td>
-                    <td>{{ order.zipcode }}</td>
-                    <td>{{ order.ort }}</td>
-                    <td>{{ order.contact }}</td>
-                    <td>{{ order.instruction }}</td>
-                    <!-- <td>{{ order.status }}</td> -->
-                    <td>
-                        <button (click)="updateSubscriptionOrderStatus(order, 'processing')" class="btn btn-warning btn-sm ml-2" style="margin-right: 5px;">
-                            <i class="fa-solid fa-check"></i>
-                        </button>
-                        
-                        <!-- <button (click)="updateOrderStatus(order, 'cancelling')" class="btn btn-danger btn-sm ml-2"> -->
-                        <button (click)="updateSubscriptionOrderStatus(order, 'cancelling')" class="btn btn-danger btn-sm ml-2">
-
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-
-                        <button (click)="viewSubOrders(order.order_id)" class="btn btn-primary btn-sm ml-2">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-       
-            
-        </table>
-
-        <div class="pagination-controls">
-            <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
-            <span>Page {{ page }} of {{ totalPages }}</span>
-            <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+        <!-- Pagination -->
+        <div class="card-footer p-0 border-0">
+            <div class="pagination-premium">
+                <button class="page-btn" (click)="previousPage()" [disabled]="page === 1">
+                    <i class="fas fa-chevron-left me-2"></i> {{ 'ORDER.PREVIOUS' | translate }}
+                </button>
+                <span class="page-info">{{ 'COMMON.PAGE_INFO' | translate:{current: page, total: totalPages} }}</span>
+                <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">
+                    {{ 'ORDER.NEXT' | translate }} <i class="fas fa-chevron-right ms-2"></i>
+                </button>
+            </div>
         </div>
     </div>
 </div>

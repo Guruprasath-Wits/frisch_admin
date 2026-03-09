@@ -1,126 +1,197 @@
-<div class="container mt-4">
-    <div class="filter-card p-4 mb-4">
-        <div class="row">
-            <h3 class="col-md-10 mb-3" style="font-weight: bold !important;">Order Processing</h3>
+<div class="order-container"
+    style="padding: 20px; background-color: transparent ; min-height: 100vh; width: 100%; max-width: 100%; animation: fadeIn 0.6s ease-out;">
+    <div class="premium-card">
+        <div class="card-header-premium">
+            <div class="header-content">
+                <h1 class="card-title">Order Processing</h1>
+                <p class="mb-0 text-dark opacity-75">Assign orders to drivers and calculate routes</p>
+            </div>
+            <!-- <div class="header-actions">
+              
+                <button class="btn-subscription" [class.active]="showSubscriptionOrders" (click)="SubscripOrders()">
+                    <i class="fas" [class.fa-sync]="!showSubscriptionOrders"
+                        [class.fa-calendar-alt]="showSubscriptionOrders"></i>
+                    {{ showSubscriptionOrders ? 'Manage Direct Orders' : 'Manage Subscriptions' }}
+                </button>
+            </div> -->
         </div>
-        <div class="row">
-            <div class="col-md-3 mb-3">
-                <input type="text" class="form-control filter-input" placeholder="Enter Postal Code"
-                    [(ngModel)]="searchZipcode" />
+
+        <div class="filter-strip">
+            <div class="search-grid">
+                <div class="search-box-premium">
+                    <i class="fas fa-map-marker-alt input-icon"></i>
+                    <input type="text" class="form-control-premium" placeholder="Enter Postal Code..."
+                        [(ngModel)]="searchZipcode">
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;"></th>
+                        <th>S.No</th>
+                        <th>Order ID</th>
+                        <th>Price</th>
+                        <th>Delivery Date</th>
+                        <th>Address</th>
+                        <th>Contact</th>
+                        <th>Instruction</th>
+                        <th>Status</th>
+                        <th class="text-center" *ngIf="!showSubscriptionOrders">Distance</th>
+                        <th class="text-center" *ngIf="!showSubscriptionOrders">Time</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="!showSubscriptionOrders">
+                    <tr
+                        *ngFor="let order of filteredOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+                        <td>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" [id]="'order-' + ( (page - 1) * itemsPerPage + i )"
+                                    [(ngModel)]="order.selected">
+                                <label [for]="'order-' + ( (page - 1) * itemsPerPage + i )"></label>
+                            </div>
+                        </td>
+                        <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
+                        <td><span class="order-id-badge">{{ order.order_id }}</span></td>
+                        <td><span class="price-text">€.{{ order.price }}</span></td>
+                        <td>
+                            <div class="date-text">
+                                <i class="far fa-calendar-alt"></i>
+                                {{ order.delivery_date | date:'mediumDate' }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="address-text">{{ order.address }}</div>
+                        </td>
+                        <td>{{ order.contact }}</td>
+                        <td>
+                            <div class="instruction-text" [title]="order.instruction">{{ order.instruction }}</div>
+                        </td>
+                        <td>
+                            <span class="status-badge" [ngClass]="order.status.toLowerCase()">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="metric-badge distance" *ngIf="order.selected && order.distanceKm">
+                                {{ order.distanceKm }} km
+                            </span>
+                            <span *ngIf="!(order.selected && order.distanceKm)">-</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="metric-badge time" *ngIf="order.selected && order.estimatedTimeInMinutes">
+                                {{ order.estimatedTimeInMinutes }} min
+                            </span>
+                            <span *ngIf="!(order.selected && order.estimatedTimeInMinutes)">-</span>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tbody *ngIf="showSubscriptionOrders">
+                    <tr
+                        *ngFor="let order of subscriptionOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+                        <td>
+                            <div class="custom-checkbox">
+                                <input type="checkbox" [id]="'sub-' + ( (page - 1) * itemsPerPage + i )"
+                                    [(ngModel)]="order.selected">
+                                <label [for]="'sub-' + ( (page - 1) * itemsPerPage + i )"></label>
+                            </div>
+                        </td>
+                        <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
+                        <td><span class="order-id-badge">{{ order.order_id }}</span></td>
+                        <td><span class="price-text">€.{{ order.price }}</span></td>
+                        <td>
+                            <div class="date-text">
+                                <i class="far fa-calendar-alt"></i>
+                                {{ order.delivery_date | date:'mediumDate' }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="address-text">{{ order.address }}</div>
+                        </td>
+                        <td>{{ order.contact }}</td>
+                        <td>
+                            <div class="instruction-text" [title]="order.instruction">{{ order.instruction }}</div>
+                        </td>
+                        <td>
+                            <span class="status-badge processing">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="processing-footer">
+            <div class="footer-stats" *ngIf="totalEstimatedTime > 0">
+                <div class="stat-item">
+                    <i class="fas fa-shipping-fast"></i>
+                    <div class="stat-content">
+                        <label>Total Delivery Time</label>
+                        <span>{{ totalEstimatedTime }} mins</span>
+                    </div>
+                </div>
             </div>
 
+            <div class="assignment-box">
+                <div class="driver-select-group">
+                    <label>Select Driver</label>
+                    <div class="custom-select-premium" [class.open]="isDriverDropdownOpen">
+                        <div class="select-trigger" (click)="toggleDriverDropdown()">
+                            <i class="fas fa-user-tie trigger-icon"></i>
+                            <span class="selected-value">{{ getSelectedDriverName() }}</span>
+                            <i class="fas fa-chevron-down arrow-icon"></i>
+                        </div>
 
-        </div>
-    </div>
+                        <div class="select-options-container" *ngIf="isDriverDropdownOpen">
+                            <div class="option-item" *ngFor="let driver of drivers" (click)="selectDriverOption(driver)"
+                                [class.selected]="selectedDriver === driver.id">
+                                <div class="option-content">
+                                    <div class="driver-info">
+                                        <span class="driver-name">{{ driver.username }}</span>
+                                        <span class="driver-role">Available for Delivery</span>
+                                    </div>
+                                    <i class="fas fa-check check-icon" *ngIf="selectedDriver === driver.id"></i>
+                                </div>
+                            </div>
+                            <div class="no-options" *ngIf="drivers.length === 0">
+                                No drivers found
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <div class="table-card p-3">
-        <table class="table table-hover">
-            <thead class="table-header">
-                <tr>
-                    <th></th>
-                    <th>S.No</th>
-                    <th>Order ID</th>
-                    <th>Price</th>
-                    <th>Delivery Date</th>
-                    <th>Address</th>
-                    <th>Contact</th>
-                    <th>Instruction</th>
-                    <th>Status</th>
-                    <th>Distance</th>
-                    <th>Time</th>
-                </tr>
-            </thead>
-            <tbody *ngIf="!showSubscriptionOrders">
-                <tr
-                    *ngFor="let order of filteredOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
-                    <td>
-                        <input type="checkbox" [(ngModel)]="order.selected" />
+                <div class="action-buttons-group">
+                    <button class="btn-premium calculate" (click)="calculateRouteThroughOrders()">
+                        <i class="fas fa-calculator"></i> Distance time calculation
+                    </button>
 
-                        <!-- (change)="checkTotalTimeLimit(order, $event)" -->
-                    </td>
-                    <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
-                    <td>{{ order.order_id }}</td>
-                    <td>€.{{ order.price }}</td>
-                    <td>{{ order.delivery_date | date }}</td>
-                     <td>{{ order.address }}</td>
-                    <!-- <td>{{ order.address }}, {{ order.zipcode }}, {{ order.ort }}</td> -->
-                    <td>{{ order.contact }}</td>
-                    <td>{{ order.instruction }}</td>
-                    <td>{{ order.status }}</td>
-                    <td style="text-align: center;">{{ order.selected && order.distanceKm ? order.distanceKm + ' km' :
-                        '0' }}</td>
-                    <td style="text-align: center;">{{ order.selected && order.estimatedTimeInMinutes ?
-                        order.estimatedTimeInMinutes + ' min' : '0' }}</td>
+                    <button *ngIf="showSubscriptionOrders" class="btn-premium assign"
+                        (click)="assignOrdersToDriverss()">
+                        <i class="fas fa-user-plus"></i> Assign Orders
+                    </button>
 
-
-                </tr>
-            </tbody>
-
-
-
-
-            <tbody *ngIf="showSubscriptionOrders">
-
-                <tr
-                    *ngFor="let order of subscriptionOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
-
-                    <td>
-                        <input type="checkbox" [(ngModel)]="order.selected" />
-                    </td>
-                    <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
-                    <td>{{ order.order_id }}</td>
-
-                    <td>€.{{ order.price }}</td>
-                    <td>{{ order.delivery_date | date }}</td>
-                    <td>{{ order.address }}</td>
-                    <td>{{ order.contact }}</td>
-                    <td>{{ order.instruction }}</td>
-                    <td>{{ order.status }}</td>
-                </tr>
-            </tbody>
-
-
-        </table>
-
-
-        <div *ngIf="totalEstimatedTime > 0" class="alert alert-info mt-6 estimated-time-box">
-            <strong>Total Estimated Delivery Time:</strong> {{ totalEstimatedTime }} mins
+                    <button *ngIf="!showSubscriptionOrders" class="btn-premium assign" (click)="assignOrdersToDrivers()"
+                        [disabled]="!assignEnabled">
+                        <i class="fas fa-user-plus"></i> Assign Orders
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div class="pagination-controls">
-            <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
-            <span>Page {{ page }} of {{ totalPages }}</span>
-            <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
-        </div>
-
-        <div class="mt-3 form-group">
-            <label class="form-label">Select Driver</label>
-            <select class="form-control" [(ngModel)]="selectedDriver" required style="width: 50%;">
-                <option value="" disabled>Select a Driver</option>
-                <ng-container *ngFor="let driver of drivers">
-                    <option *ngIf="driver.role?.toLowerCase() === 'driver'" [value]="driver.id">
-                        {{ driver.username }}
-                    </option>
-
-                </ng-container>
-            </select>
-            <button *ngIf="showSubscriptionOrders" class="btn btn-warning mt-2" (click)="assignOrdersToDriverss()">
-                Assign Orders
+        <div class="pagination-premium">
+            <button class="page-btn" (click)="previousPage()" [disabled]="page === 1">
+                <i class="fas fa-chevron-left"></i> Previous
             </button>
-
-            <button class="btn btn-warning mt-2" (click)="calculateRouteThroughOrders()">
-                Distance time calculation
-            </button> &nbsp;
-
-
-
-            <button *ngIf="!showSubscriptionOrders" class="btn btn-warning mt-2" (click)="assignOrdersToDrivers()"
-                [disabled]="!assignEnabled">
-                Assign Orders
+            <div class="page-info">
+                Page <span>{{ page }}</span> of <span>{{ totalPages }}</span>
+            </div>
+            <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">
+                Next <i class="fas fa-chevron-right"></i>
             </button>
-
         </div>
-
-
     </div>
 </div>

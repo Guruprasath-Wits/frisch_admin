@@ -1,86 +1,159 @@
-<div class="container mt-4">
-  <div class="filter-card p-4 mb-4">
-    <div class="row d-flex">
-      <h3 class="col-md-10 mb-3" style="width: 100%; font-weight: bold !important;">Fehlende Produktanfragen</h3>
-    </div>
-    <div class="row">
-      <div class="col-md-4 mb-3">
-        <input type="text" class="form-control filter-input" placeholder="Suche nach Name, E-Mail oder Telefon"
-          [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" />
+<div class="container-fluid missing-products-container fade-in">
+  <div class="row g-4">
+    <!-- Main Content Column -->
+    <div class="col-12">
+      <div class="card list-card">
+        <!-- Premium Header with Gradient -->
+        <div class="card-header-custom text-center">
+          <div>
+            <h4 class="card-title">Fehlende Produktanfragen</h4>
+            <p class="card-subtitle">Gesamt Anfragen: {{ filteredProducts.length }}</p>
+          </div>
+        </div>
+
+        <div class="card-body p-4">
+          <!-- Filters Section -->
+          <div class="filters-wrapper mb-4">
+            <div class="row align-items-end g-3">
+              <div class="col-md-5">
+                <label class="form-label-custom">Suche</label>
+                <div class="input-group-custom">
+                  <i class="fas fa-search input-icon"></i>
+                  <input type="text" class="form-control-custom" placeholder="Name, E-Mail oder Telefon..."
+                    [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" />
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label-custom">Status</label>
+                <div class="input-group-custom">
+                  <i class="fas fa-filter input-icon"></i>
+                  <select class="form-control-custom ps-5" [(ngModel)]="selectedStatus"
+                    (ngModelChange)="filterProducts()">
+                    <option value="All">Alle</option>
+                    <option value="Read">Gelesen</option>
+                    <option value="Un-Read">Ungelesen</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label-custom">Datum</label>
+                <div class="input-group-custom">
+                  <i class="fas fa-calendar-alt input-icon"></i>
+                  <input type="date" class="form-control-custom" [(ngModel)]="selectedDate"
+                    (change)="filterProducts()" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table Section -->
+          <div class="table-responsive">
+            <table class="table custom-table mb-0">
+              <thead>
+                <tr>
+                  <th class="text-center" width="5%">ID</th>
+                  <th width="20%">Name</th>
+                  <th width="25%">E-Mail / Mobil</th>
+                  <th width="30%">Nachricht</th>
+                  <th width="15%">Datum</th>
+                  <th class="text-end" width="5%">Aktion</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let product of filteredProducts | paginate: { itemsPerPage: itemsPerPage, currentPage: page } let i = index">
+                  <td class="text-center">{{ i + 1 + (page - 1) * itemsPerPage }}</td>
+                  <td>
+                    <h6 class="fw-bold mb-0">{{ product.first_name }} {{ product.last_name }}</h6>
+                  </td>
+                  <td>
+                    <div class="d-flex flex-column">
+                      <span class="text-dark small"><i class="fas fa-envelope me-1 text-muted"></i> {{ product.email
+                        }}</span>
+                      <span class="text-muted small"><i class="fas fa-phone me-1 text-muted"></i> {{
+                        product.mobile_number }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <p class="mb-0 text-truncate" style="max-width: 250px;" [title]="product.message">
+                      {{ product.message }}
+                    </p>
+                  </td>
+                  <td>
+                    <span class="badge-date">{{ product.created_at | date:'shortDate' }}</span>
+                  </td>
+                  <td class="text-end">
+                    <button class="btn-action" [ngClass]="product.is_read ? 'btn-view-read' : 'btn-view-unread'"
+                      (click)="openDetails(product)" [title]="product.is_read ? 'Gesehen' : 'Neu ansehen'">
+                      <i class="fas" [ngClass]="product.is_read ? 'fa-check' : 'fa-eye'"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="filteredProducts.length === 0">
+                  <td colspan="6" class="text-center py-5">
+                    <div class="empty-state">
+                      <i class="fas fa-inbox mb-3"></i>
+                      <p class="text-muted">Keine fehlenden Produktanfragen gefunden.</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pagination Section -->
+        <div class="card-footer-custom" *ngIf="totalPages > 1">
+          <div class="pagination-wrapper">
+            <button class="page-btn" (click)="previousPage()" [disabled]="page === 1">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <span class="page-info">Seite {{ page }} von {{ totalPages }}</span>
+            <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="col-md-4 mb-3 d-flex justify-content-end align-items-center ms-auto">
-        <select class="form-control filter-input me-2" [(ngModel)]="selectedStatus" (ngModelChange)="filterProducts()"
-          style="width: auto;">
-          <option value="All">Alle</option>
-          <option value="Read">Gelesen</option>
-          <option value="Un-Read">Ungelesen</option>
-        </select>
-        <input type="date" class="form-control filter-input" [(ngModel)]="selectedDate" (change)="filterProducts()" />
-      </div>
     </div>
   </div>
 
-  <!-- Table with Pagination -->
-  <div class="table-card p-3">
-    <table class="table table-hover productlist-table cursor-pointer">
-      <thead class="table-header">
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>E-Mail</th>
-          <th>Mobil</th>
-          <th>Nachricht</th>
-          <th>Datum</th>
-          <th>Aktion</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let product of filteredProducts | paginate: { itemsPerPage: itemsPerPage, currentPage: page } let i = index">
-          <td>{{ i + 1 + (page - 1) * itemsPerPage }}</td>
-          <td>{{ product.first_name }} {{ product.last_name }}</td>
-          <td>{{ product.email }}</td>
-          <td>{{ product.mobile_number }}</td>
-          <td>{{ product.message }}</td>
-          <td>{{ product.created_at | date:'medium' }}</td>
-          <td>
-            <i class="fa fa-eye cursor-pointer"
-              [ngClass]="{'text-danger': !product.is_read, 'text-success': product.is_read}"
-              (click)="openDetails(product)">
-            </i>
-          </td>
-        </tr>
-        <tr *ngIf="filteredProducts.length === 0">
-          <td colspan="7" class="text-center">Keine fehlenden Produktanfragen gefunden.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="pagination-controls" *ngIf="totalPages > 1">
-    <button (click)="previousPage()" [disabled]="page === 1">Zurück</button>
-    <span>Seite {{ page }} von {{ totalPages }}</span>
-    <button (click)="nextPage()" [disabled]="page === totalPages">Weiter</button>
-  </div>
-
-  <!-- Popup Modal -->
+  <!-- Premium Popup Modal -->
   <div class="popup-box" *ngIf="showPopup">
     <div class="popup-content">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="modal-title" style="color: #e1b12c; font-weight: 500;">Kundendetails</h3>
-        <button type="button" class="btn-close" (click)="closePopup()"></button>
+      <div class="modal-header-custom">
+        <h4 class="modal-title">Kundendetails</h4>
+        <button type="button" class="btn-close-custom" (click)="closePopup()">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
 
-      <div *ngIf="selectedProduct">
-        <p><strong>Name:</strong> {{ selectedProduct.first_name }} {{ selectedProduct.last_name }}</p>
-        <p><strong>E-Mail:</strong> {{ selectedProduct.email }}</p>
-        <p><strong>Mobil:</strong> {{ selectedProduct.mobile_number }}</p>
-        <p><strong>Nachricht:</strong></p>
-        <p class="border p-2 rounded bg-light">{{ selectedProduct.message }}</p>
+      <div class="modal-body-custom" *ngIf="selectedProduct">
+        <div class="detail-item">
+          <label>Name</label>
+          <p>{{ selectedProduct.first_name }} {{ selectedProduct.last_name }}</p>
+        </div>
+        <div class="detail-item">
+          <label>E-Mail</label>
+          <p>{{ selectedProduct.email }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Mobil</label>
+          <p>{{ selectedProduct.mobile_number }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Nachricht</label>
+          <div class="message-box">{{ selectedProduct.message }}</div>
+        </div>
       </div>
 
-      <div class="text-end mt-3">
-        <button type="button" class="close-btn" (click)="markAsRead()">Gelesen</button>
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-mark-read" (click)="markAsRead()" *ngIf="!selectedProduct?.is_read">
+          Als gelesen markieren
+        </button>
+        <button type="button" class="btn-close-modal" (click)="closePopup()">
+          Schließen
+        </button>
       </div>
     </div>
   </div>

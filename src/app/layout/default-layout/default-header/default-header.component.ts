@@ -31,11 +31,13 @@ import {
 
 import { IconDirective } from '@coreui/icons-angular';
 
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-default-header',
   templateUrl: './default-header.component.html',
   standalone: true,
-  imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavItemComponent, NavLinkDirective, RouterLink, RouterLinkActive, NgTemplateOutlet, BreadcrumbRouterComponent, ThemeDirective, DropdownComponent, DropdownToggleDirective, TextColorDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, BadgeComponent, DropdownDividerDirective, ProgressBarDirective, ProgressComponent, NgStyle]
+  imports: [TranslateModule, ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavItemComponent, NavLinkDirective, RouterLink, RouterLinkActive, NgTemplateOutlet, BreadcrumbRouterComponent, ThemeDirective, DropdownComponent, DropdownToggleDirective, TextColorDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, BadgeComponent, DropdownDividerDirective, ProgressBarDirective, ProgressComponent, NgStyle]
 })
 export class DefaultHeaderComponent extends HeaderComponent {
 
@@ -43,6 +45,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
   readonly colorMode = this.#colorModeService.colorMode;
 
   currentUserId: any | null = null;
+  currentLang: string = 'de';
 
   readonly colorModes = [
     { name: 'light', text: 'Light', icon: 'cilSun' },
@@ -55,8 +58,16 @@ export class DefaultHeaderComponent extends HeaderComponent {
     return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
   });
 
-  constructor(private router : Router, private adminService : AdminService) {
+  constructor(private router: Router, private adminService: AdminService, private translate: TranslateService) {
     super();
+    this.currentLang = localStorage.getItem('lang') || 'de';
+    this.translate.use(this.currentLang);
+  }
+
+  switchLanguage(lang: string) {
+    this.translate.use(lang);
+    this.currentLang = lang;
+    localStorage.setItem('lang', lang);
   }
 
   sidebarId = input('sidebar1');
@@ -145,31 +156,41 @@ export class DefaultHeaderComponent extends HeaderComponent {
   }
 
   profile(): void {
+    const title = this.translate.instant('PROFILE.TITLE');
+    const emailLabel = this.translate.instant('PROFILE.EMAIL');
+    const passLabel = this.translate.instant('PROFILE.PASSWORD');
+    const placeholders = {
+      email: this.translate.instant('PROFILE.EMAIL_PLACEHOLDER'),
+      pass: this.translate.instant('PROFILE.PASS_PLACEHOLDER')
+    };
+    const saveBtn = this.translate.instant('PROFILE.SAVE');
+    const validationMsg = this.translate.instant('PROFILE.VALIDATION');
+
     // Show the SweetAlert modal with form
     Swal.fire({
-      title: 'Update Profile',
+      title: title,
       html: `
         <form id="profileForm">
           <div>
-            <label for="email">Email:</label>
-            <input style="width:250px;height:30px;" type="email" id="email" class="swal2-input" placeholder="Enter your email" required />
+            <label for="email">${emailLabel}:</label>
+            <input style="width:250px;height:30px;" type="email" id="email" class="swal2-input" placeholder="${placeholders.email}" required />
           </div>
           <div>
-            <label for="password">Password:</label>
-            <input style="width:250px;height:30px" type="password" id="password" class="swal2-input" placeholder="Enter your password" required />
+            <label for="password">${passLabel}:</label>
+            <input style="width:250px;height:30px" type="password" id="password" class="swal2-input" placeholder="${placeholders.pass}" required />
           </div>
         </form>
       `,
       focusConfirm: false,
       showCancelButton: true,
-      confirmButtonText: 'Save',
+      confirmButtonText: saveBtn,
       preConfirm: () => {
         const email = (document.getElementById('email') as HTMLInputElement)?.value;
         const password = (document.getElementById('password') as HTMLInputElement)?.value;
-  
+
         // Validate the form inputs
         if (!email || !password) {
-          Swal.showValidationMessage('Please fill out all fields.');
+          Swal.showValidationMessage(validationMsg);
           return null;
         }
         return { email, password };
@@ -180,18 +201,18 @@ export class DefaultHeaderComponent extends HeaderComponent {
 
         this.currentUserId = localStorage.getItem('currentUser');
 
-        const data={
-          email:email,
-          password:password
+        const data = {
+          email: email,
+          password: password
         }
-  
+
         // Call the API to save the data
-        this.adminService.updateProfile(this.currentUserId,data).subscribe({
-          next: (response) => {
-            Swal.fire('Success', 'Profile updated successfully!', 'success');
+        this.adminService.updateProfile(this.currentUserId, data).subscribe({
+          next: () => {
+            Swal.fire(this.translate.instant('ALERT.SUCCESS'), this.translate.instant('ALERT.UPDATE_SUCCESS'), 'success');
           },
-          error: (error) => {
-            Swal.fire('Error', 'Failed to update profile.', 'error');
+          error: () => {
+            Swal.fire(this.translate.instant('ALERT.ERROR'), this.translate.instant('ALERT.UPDATE_ERROR'), 'error');
           },
         });
       }

@@ -1,230 +1,148 @@
-
-<app-widgets-dropdown />
-
-<style>
-    .form-label {
-        font-weight: bold !important;
-    }
-
-    .form-group .form-control {
-        width: 100% !important;
-    }
-</style>
-
-
-
-<div class="container mt-2">
-    <!-- <h3 class="mb-4 text-center">Settings</h3> -->
-    <div class="card p-4 shadow">
+<div class="container">
+    <div class="settings-card">
         <form [formGroup]="settingForm" (ngSubmit)="onSubmit()">
-            
-            <!-- Row 1: Company Name & Email -->
-            <div class="row">
+
+            <div class="row g-4 mb-4">
                 <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="company_name" class="form-label">Company Name</label>
-                        <input type="text" id="company_name" formControlName="company_name" class="form-control" placeholder="Enter setting name" />
-                        <div *ngIf="settingForm.get('company_name')?.invalid && (settingForm.get('company_name')?.touched || settingForm.get('company_name')?.dirty)" class="text-danger small">
-                            <small *ngIf="settingForm.get('company_name')?.errors?.['required']">Company Name is required.</small>
-                        </div>
+                    <label for="company_name" class="form-label">{{ 'SETTINGS.COMPANY_NAME' | translate }}</label>
+                    <input type="text" id="company_name" formControlName="company_name" class="form-control"
+                        [placeholder]="'SETTINGS.COMPANY_PLACEHOLDER' | translate" />
+                    <div *ngIf="settingForm.get('company_name')?.invalid && (settingForm.get('company_name')?.touched || settingForm.get('company_name')?.dirty)"
+                        class="text-danger small mt-2">
+                        <small *ngIf="settingForm.get('company_name')?.errors?.['required']">{{ 'SETTINGS.COMPANY_NAME'
+                            | translate }} {{ 'SETTINGS.REQUIRED' | translate }}</small>
                     </div>
                 </div>
 
                 <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="breaking_news" class="form-label">Breaking News</label>
-                        <input type="text" id="breaking_news" formControlName="breaking_news" class="form-control" placeholder="Enter New Value" />
-                        <div *ngIf="settingForm.get('breaking_news')?.invalid && (settingForm.get('breaking_news')?.touched || settingForm.get('breaking_news')?.dirty)" class="text-danger small">
-                            <small *ngIf="settingForm.get('breaking_news')?.errors?.['required']">This field is required.</small>
-                        </div>
+                    <label for="breaking_news" class="form-label">{{ 'SETTINGS.BREAKING_NEWS' | translate }}</label>
+                    <input type="text" id="breaking_news" formControlName="breaking_news" class="form-control"
+                        [placeholder]="'SETTINGS.NEWS_PLACEHOLDER' | translate" />
+                    <div *ngIf="settingForm.get('breaking_news')?.invalid && (settingForm.get('breaking_news')?.touched || settingForm.get('breaking_news')?.dirty)"
+                        class="text-danger small mt-2">
+                        <small *ngIf="settingForm.get('breaking_news')?.errors?.['required']">{{
+                            'SETTINGS.FIELD_REQUIRED' | translate }}</small>
                     </div>
                 </div>
-                <!-- <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" formControlName="email" class="form-control" placeholder="Enter email" />
-                        <div *ngIf="settingForm.get('email')?.invalid && (settingForm.get('email')?.touched || settingForm.get('email')?.dirty)" class="text-danger small">
-                            <small *ngIf="settingForm.get('email')?.errors?.['required']">Email is required.</small>
-                        </div>
-                    </div>
-                </div> -->
             </div>
 
-            <!-- Row 2: Contact No & Address -->
-            <div class="row">
-                <div class="col-md-6">
-                    <!-- <div class="form-group mb-3">
-                        <label for="contact_no" class="form-label">Contact No</label>
-                        <input type="number" id="contact_no" formControlName="contact_no" class="form-control" placeholder="Enter contact number" />
-                        <div *ngIf="settingForm.get('contact_no')?.invalid && (settingForm.get('contact_no')?.touched || settingForm.get('contact_no')?.dirty)" class="text-danger small">
-                            <small *ngIf="settingForm.get('contact_no')?.errors?.['required']">Contact No is required.</small>
-                        </div>
-                    </div> -->
-                </div>
-                <!-- <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="address" class="form-label">Address</label>
-                        <textarea id="address" formControlName="address" class="form-control" placeholder="Enter address"></textarea>
-                    </div>
-                </div> -->
-            </div>
-
-            <!-- Row 3: Description & Logo Upload -->
-            <div class="row">
+            <div class="row g-4 mb-4">
                 <!-- Logo Upload -->
                 <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="logo_img" class="form-label">Upload Logo Image</label>
-                        <input type="file" id="logo_img" (change)="onFileChange($event, 'logo_img')" class="form-control" />
-                        <div *ngIf="logoPreview">
-                            <img [src]="logoPreview" alt="Logo Preview" class="img-fluid mt-2" style="max-height: 100px;" />
-                            <button type="button" class="btn btn-danger btn-sm mt-2" style="margin-left: 50%;" (click)="removeImage('logo_img')">Remove</button>
-                        </div>
-                        <small class="text-danger">**The file types must be jpg/png/jpeg</small>
+                    <label for="logo_img" class="form-label">{{ 'SETTINGS.UPLOAD_LOGO' | translate }}</label>
+                    <input type="file" id="logo_img" (change)="onFileChange($event, 'logo_img')" class="form-control" />
+                    <div *ngIf="logoPreview" class="image-preview-wrapper mt-3">
+                        <img [src]="logoPreview" alt="Logo Preview"
+                            style="max-height: 120px; width: auto; padding: 10px;" />
+                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"
+                            (click)="removeImage('logo_img')">×</button>
                     </div>
+                    <small class="text-muted d-block mt-2">{{ 'SETTINGS.FILE_TYPES' | translate }}</small>
                 </div>
-            
+
                 <!-- Banner Upload -->
-               <div class="form-group mb-3">
-  <label for="banner_img" class="form-label">Upload Banner Images</label>
-  <input
-    type="file"
-    id="banner_img"
-    (change)="onFileChange($event, 'banner_img')"
-    class="form-control"
-    multiple
-  />
-
-  <div class="d-flex flex-wrap mt-2">
-    <div
-      *ngFor="let banner of bannerPreviews; let i = index"
-      class="position-relative me-2 mb-2"
-    >
-      <img
-        [src]="banner"
-        alt="Banner Preview"
-        class="img-fluid rounded"
-        style="max-height: 100px; max-width: 150px; border: 1px solid #ccc;"
-      />
-      <button
-        type="button"
-        class="btn btn-danger btn-sm position-absolute"
-        style="top: 2px; right: 2px;"
-        (click)="removeBanner(i)"
-      >
-        ×
-      </button>
-    </div>
-  </div>
-
-  <small class="text-danger">**Allowed file types: jpg/png/jpeg</small>
-</div>
-
-            </div>
-            
-            <!-- <div class="row">
-              
                 <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="logo_img" class="form-label">Upload Logo Image</label>
-                        <input type="file" id="logo_img" (change)="onFileChange($event, 'logo_img')" class="form-control" />
-                        <small class="text-danger">**The file types must be jpg/png/jpeg</small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label for="banner_img" class="form-label">Upload Banner Image</label>
-                    <input type="file" id="banner_img" (change)="onFileChange($event, 'banner_img')" class="form-control" />
-                <small class="text-danger">**The file types are must be in jpg/png/jpeg</small>
-            </div>
-                </div>
-            </div> -->
-
-            <!-- Row 4: Delivery Fees -->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="weekend_fee" class="form-label">Delivery Fee (Weekend fee)</label>
-                        <input type="number" id="weekend_fee" formControlName="weekend_fee" class="form-control" placeholder="Enter Delivery Fee" />
-                        <div *ngIf="settingForm.get('weekend_fee')?.invalid && (settingForm.get('weekend_fee')?.touched || settingForm.get('weekend_fee')?.dirty)" class="text-danger small">
-                            <small *ngIf="settingForm.get('weekend_fee')?.errors?.['required']">Delivery Fee is required.</small>
+                    <label for="banner_img" class="form-label">{{ 'SETTINGS.UPLOAD_BANNER' | translate }}</label>
+                    <input type="file" id="banner_img" (change)="onFileChange($event, 'banner_img')"
+                        class="form-control" multiple />
+                    <div class="d-flex flex-wrap mt-3 gap-3">
+                        <div *ngFor="let banner of bannerPreviews; let i = index"
+                            class="position-relative image-preview-wrapper">
+                            <img [src]="banner" alt="Banner Preview"
+                                style="height: 100px; width: 160px; object-fit: cover;" />
+                            <button type="button"
+                                class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle"
+                                style="width: 24px; height: 24px; padding: 0; line-height: 1;"
+                                (click)="removeBanner(i)">
+                                ×
+                            </button>
                         </div>
                     </div>
+                    <small class="text-muted d-block mt-2">{{ 'SETTINGS.FILE_TYPES' | translate }}</small>
+                </div>
+            </div>
+
+            <!-- Delivery Fees -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <label for="weekend_fee" class="form-label">{{ 'SETTINGS.DELIVERY_FEE_WEEKEND' | translate
+                        }}</label>
+                    <input type="number" id="weekend_fee" formControlName="weekend_fee" class="form-control"
+                        placeholder="0.00" />
+                    <div *ngIf="settingForm.get('weekend_fee')?.invalid && (settingForm.get('weekend_fee')?.touched || settingForm.get('weekend_fee')?.dirty)"
+                        class="text-danger small mt-2">
+                        <small *ngIf="settingForm.get('weekend_fee')?.errors?.['required']">{{
+                            'SETTINGS.DELIVERY_FEE_WEEKEND' | translate }} {{ 'SETTINGS.REQUIRED' | translate }}</small>
+                    </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="weekday_fee" class="form-label">Delivery Fee (Weekday fee)</label>
-                        <input type="number" id="weekday_fee" formControlName="weekday_fee" class="form-control" placeholder="Enter Delivery Fee" />
-                        <div *ngIf="settingForm.get('weekday_fee')?.invalid && (settingForm.get('weekday_fee')?.touched || settingForm.get('weekday_fee')?.dirty)" class="text-danger small">
-                            <small *ngIf="settingForm.get('weekday_fee')?.errors?.['required']">Delivery Fee is required.</small>
-                        </div>
+                    <label for="weekday_fee" class="form-label">{{ 'SETTINGS.DELIVERY_FEE_WEEKDAY' | translate
+                        }}</label>
+                    <input type="number" id="weekday_fee" formControlName="weekday_fee" class="form-control"
+                        placeholder="0.00" />
+                    <div *ngIf="settingForm.get('weekday_fee')?.invalid && (settingForm.get('weekday_fee')?.touched || settingForm.get('weekday_fee')?.dirty)"
+                        class="text-danger small mt-2">
+                        <small *ngIf="settingForm.get('weekday_fee')?.errors?.['required']">{{
+                            'SETTINGS.DELIVERY_FEE_WEEKDAY' | translate }} {{ 'SETTINGS.REQUIRED' | translate }}</small>
                     </div>
                 </div>
             </div>
 
-            <!-- Row 5: Stripe & Publishable Keys -->
-            <div class="row">
+            <!-- AGB & Data Protection -->
+            <div class="row g-4 mb-4">
                 <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="agb" class="form-label">AGB</label>
-                        <input type="text" id="publish_key" formControlName="agb" class="form-control" placeholder="Enter AGB" />
-                        
-                    </div>
+                    <label for="agb" class="form-label">{{ 'SETTINGS.AGB' | translate }}</label>
+                    <input type="text" id="agb" formControlName="agb" class="form-control"
+                        [placeholder]="('SETTINGS.AGB' | translate)" />
                 </div>
                 <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="data_protection" class="form-label">Data Protection</label>
-                        <input type="text" id="publish_key" formControlName="data_protection" class="form-control" placeholder="Enter Data Protection" />
-                    </div>
+                    <label for="data_protection" class="form-label">{{ 'SETTINGS.DATA_PROTECTION' | translate }}</label>
+                    <input type="text" id="data_protection" formControlName="data_protection" class="form-control"
+                        [placeholder]="('SETTINGS.DATA_PROTECTION' | translate)" />
                 </div>
             </div>
 
-            <!-- Row 6: New Key (Left Side Only) -->
-            <div class="row">
+            <!-- Policy & SEPA -->
+            <div class="row g-4 mb-4">
                 <div class="col-md-6">
-                    <label for="cancellation_policy" class="form-label">Cancellation Policy</label>
-                    <input type="text" id="publish_key" formControlName="cancellation_policy" class="form-control" placeholder="Enter Cancellation Policy" />
+                    <label for="cancellation_policy" class="form-label">{{ 'SETTINGS.CANCELLATION_POLICY' | translate
+                        }}</label>
+                    <input type="text" id="cancellation_policy" formControlName="cancellation_policy"
+                        class="form-control" [placeholder]="('SETTINGS.CANCELLATION_POLICY' | translate)" />
                 </div>
                 <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="description" class="form-label">SEPA(Declaration)</label>
-                        <textarea id="description" formControlName="description" class="form-control" placeholder="Enter a Declaration"></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="webshop" class="form-label">Webshop</label>
-                        <input type="text" id="webshop" formControlName="webshop" class="form-control" placeholder="Enter Webshop" />
-                        
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="telephone" class="form-label">Telephone</label>
-                        <input type="text" id="telephone" formControlName="telephone" class="form-control" placeholder="Enter Telephone" />
-                    </div>
+                    <label for="description" class="form-label">{{ 'SETTINGS.SEPA' | translate }}</label>
+                    <textarea id="description" formControlName="description" class="form-control"
+                        [placeholder]="('SETTINGS.SEPA' | translate)"></textarea>
                 </div>
             </div>
 
-            <!-- <div class="row">
+            <!-- Webshop & Telephone -->
+            <div class="row g-4 mb-4">
                 <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label for="breaking_news" class="form-label">Breaking News</label>
-                        <input type="text" id="breaking_news" formControlName="breaking_news" class="form-control" placeholder="Enter New Value" />
-                        <div *ngIf="settingForm.get('breaking_news')?.invalid && (settingForm.get('breaking_news')?.touched || settingForm.get('breaking_news')?.dirty)" class="text-danger small">
-                            <small *ngIf="settingForm.get('breaking_news')?.errors?.['required']">This field is required.</small>
-                        </div>
-                    </div>
+                    <label for="webshop" class="form-label">{{ 'SETTINGS.WEBSHOP' | translate }}</label>
+                    <input type="text" id="webshop" formControlName="webshop" class="form-control"
+                        [placeholder]="('SETTINGS.WEBSHOP' | translate)" />
                 </div>
-            </div> -->
+                <div class="col-md-6">
+                    <label for="telephone" class="form-label">{{ 'SETTINGS.TELEPHONE' | translate }}</label>
+                    <input type="text" id="telephone" formControlName="telephone" class="form-control"
+                        [placeholder]="('SETTINGS.TELEPHONE' | translate)" />
+                </div>
+            </div>
 
-            <!-- Submit Button -->
-            <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-warning" style="width: 150px;">
-                    {{ isEditMode ? 'Update' : 'Submit' }}
+            <!-- Minimum Order -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <label for="minimumorder" class="form-label">{{ 'SETTINGS.MINIMUM_ORDER' | translate }}</label>
+                    <input type="number" id="minimumorder" formControlName="minimumorder" class="form-control"
+                        placeholder="0.00" />
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center mt-5">
+                <button type="submit" class="btn btn-warning">
+                    {{ (isEditMode ? 'SETTINGS.UPDATE' : 'SETTINGS.SUBMIT') | translate }}
                 </button>
             </div>
         </form>

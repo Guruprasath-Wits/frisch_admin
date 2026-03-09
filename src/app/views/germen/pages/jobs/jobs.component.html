@@ -1,60 +1,97 @@
-<div class="container">
-    <h3 class="mb-2" style="text-align: center; font-weight: bold !important;">{{ isEditMode ? 'Edit jobs' : 'Add jobs' }}</h3>
-  
-    <div class="add-user-card mb-3">
-      <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" class="job-form" enctype="multipart/form-data">
-        <div class="form-group mb-3">
-          <label class="form-label" for="job_name">Job Title</label>
-          <input type="text" id="job_name" formControlName="title" class="form-control" placeholder="Enter job title" />
+<div class="container-fluid jobs-container fade-in">
+  <div class="row justify-content-center">
+    <div class="col-12">
+      <!-- Add/Edit Job Card -->
+      <div class="premium-card">
+        <div class="card-header-premium">
+          <h2 class="card-title">{{ isEditMode ? 'Modify Job Listing' : 'Create New Job Opening' }}</h2>
+          <span class="card-subtitle">Verwalten Sie Stellenangebote und Karrieremöglichkeiten</span>
         </div>
-  
-        <div class="form-group mb-3">
-          <label class="form-label" for="description">Job Description</label>
-          <textarea id="description" formControlName="description" class="form-control" placeholder="Enter job Description"></textarea>
+
+        <div class="card-body p-0">
+          <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" class="job-form-premium">
+            <div class="row g-4">
+              <div class="col-md-12">
+                <div class="form-group-premium">
+                  <label class="form-label-premium" for="job_name">Job Title / Designation</label>
+                  <div class="input-group-premium">
+                    <i class="fas fa-briefcase input-icon"></i>
+                    <input type="text" id="job_name" formControlName="title" class="form-control-premium"
+                      placeholder="e.g. Delivery Driver, Warehouse Manager" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12">
+                <div class="form-group-premium">
+                  <label class="form-label-premium" for="description">Job Description & Requirements</label>
+                  <div class="input-group-premium">
+                    <i class="fas fa-list-alt input-icon"></i>
+                    <textarea id="description" formControlName="description" class="form-control-premium"
+                      placeholder="Provide detailed responsibilities and requirements..."></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions text-center mt-4">
+              <button type="submit" class="btn-submit-premium" [disabled]="jobForm.invalid">
+                <i class="fas mr-2" [ngClass]="isEditMode ? 'fa-sync-alt' : 'fa-plus-circle'"></i>
+                {{ isEditMode ? 'Update Job' : 'Add Job Listing' }}
+              </button>
+              <button type="button" *ngIf="isEditMode" class="btn-cancel-premium" (click)="resetForm()">
+                <i class="fas fa-times mr-2"></i> Cancel
+              </button>
+            </div>
+          </form>
         </div>
-  
-  
-        <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update job' : 'Add job' }}</button>
-        <!-- <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset</button> -->
-      </form>
-    </div>
-  
-    <h3 style="text-align: center; font-weight: bold !important;">jobs List</h3>
-  
-    <div class="add-user-card">
-      <table class="table  table-hover job-table">
-        <thead>
-          <tr>
-            <!-- <th>ID</th> -->
-            <th>S.No</th>
-            <th>Job Title</th>
-            <th>Job Description</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let job of paginatedJobs ; let i = index ">
-            <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
-            <!-- <td>{{ job.id }}</td> -->
-            <td>{{ job.title }}</td>
-            <td [innerHTML]="formatDescription(job.description)"></td>
+      </div>
 
+      <!-- Jobs List Header -->
+      <div class="text-center mt-5 mb-4">
+        <h3 class="fw-bold text-dark">Active Job Openings</h3>
+        <p class="text-muted">Currently published careers on your platform</p>
+      </div>
 
-            <td>
-              <button class="btn btn-warning btn-sm"  (click)="onEdit(job)">
-                <i class="fa-solid fa-pen-to-square" ></i></button>
-              <button class="btn btn-danger btn-sm" style="margin-left: 5px;" (click)="onDelete(job.id)">
-                <i class="fa-solid fa-trash" ></i></button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  
-    <div class="pagination-controls">
-      <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
-      <span>Page {{ page }} of {{ totalPages }}</span>
-      <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+      <!-- Jobs List Grid (Full Width) -->
+      <div class="job-list-premium" *ngIf="jobs.length > 0; else noJobs">
+        <div class="job-item-card" *ngFor="let job of paginatedJobs; let i = index">
+          <div class="job-content">
+            <span class="job-title-text">
+              <i class="fas fa-paperclip text-warning me-2 small"></i>
+              {{ job.title }}
+            </span>
+            <span class="job-desc-text" [innerHTML]="formatDescription(job.description)"></span>
+          </div>
+          <div class="job-actions">
+            <button class="btn-action-premium edit" (click)="onEdit(job)" title="Edit Job">
+              <i class="fas fa-pencil-alt"></i>
+            </button>
+            <button class="btn-action-premium delete" (click)="onDelete(job.id)" title="Delete Job">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <ng-template #noJobs>
+        <div class="text-center py-5">
+          <i class="fas fa-user-slash opacity-10 mb-3" style="font-size: 4rem;"></i>
+          <p class="text-muted fs-5">No job listings found. Start by creating one above.</p>
+        </div>
+      </ng-template>
+
+      <!-- Pagination Premium -->
+      <div class="pagination-premium" *ngIf="totalPages > 1">
+        <button class="page-btn" (click)="previousPage()" [disabled]="page === 1">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <span class="page-info">Page {{ page }} of {{ totalPages }}</span>
+        <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
     </div>
   </div>
-  
+</div>

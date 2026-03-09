@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Router } from '@angular/router';
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../../../admin.service';
 import Swal from 'sweetalert2';
 import { catchError, forkJoin, of, zip } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -61,6 +61,7 @@ export class OrderAssignedComponent implements OnInit {
   subscriptionOrders: Order[] = [];
   allUsers: any[] = []; // Store all users for lookup
   isLoading = false;
+  isDriverDropdownOpen = false;
   constructor(private router: Router, private adminService: AdminService, private http: HttpClient) { }
 
   ngOnInit(): void {
@@ -96,7 +97,7 @@ export class OrderAssignedComponent implements OnInit {
       },
 
 
-      error => {
+      (error: any) => {
         console.error('Error fetching Subscription Orders:', error);
       }
     );
@@ -121,7 +122,7 @@ export class OrderAssignedComponent implements OnInit {
         console.log(this.drivers);
         console.log('====================================');
       },
-      (error) => {
+      (error: any) => {
         console.error('Error fetching drivers:', error);
         Swal.fire('Error', 'Failed to load drivers. Please try again.', 'error');
       }
@@ -141,7 +142,7 @@ export class OrderAssignedComponent implements OnInit {
 
 
       },
-      (error) => console.error('Error fetching Orders:', error)
+      (error: any) => console.error('Error fetching Orders:', error)
     );
   }
 
@@ -156,7 +157,7 @@ export class OrderAssignedComponent implements OnInit {
           (user: any) => user.role.toLowerCase() === "driver"
         );
       },
-      (error) => console.error('Error fetching Drivers:', error)
+      (error: any) => console.error('Error fetching Drivers:', error)
     );
   }
 
@@ -177,7 +178,7 @@ export class OrderAssignedComponent implements OnInit {
     };
 
     this.adminService.getOrder(order).subscribe(
-      res => {
+      (res: any) => {
         console.log('Raw API response:', res);
 
         if (res.status === false) {
@@ -211,7 +212,7 @@ export class OrderAssignedComponent implements OnInit {
 
         this.showSubscriptionOrders = false;
       },
-      err => {
+      (err: any) => {
         console.error('Error fetching orders', err);
         Swal.fire('Error', 'An error occurred while fetching orders.', 'error');
       }
@@ -372,20 +373,74 @@ export class OrderAssignedComponent implements OnInit {
 
   editOrder(order: Order): void {
     Swal.fire({
-      title: 'Edit Driver Allocation',
-      input: 'select',
-      inputOptions: this.drivers.reduce((acc: Record<number, string>, driver) => {
-        acc[driver.id] = driver.username;
-        return acc;
-      }, {}),
-      inputPlaceholder: 'Select a driver',
-      showCancelButton: true,
+      title: 'Assign Driver',
+      width: '500px',
+      padding: '0',
+      showCloseButton: true,
+      customClass: {
+        popup: 'premium-swal-popup',
+        title: 'swal2-title',
+        htmlContainer: 'swal2-html-container',
+        confirmButton: 'swal2-confirm'
+      },
+      html: `
+        <div class="section-title-premium"><i class="fas fa-user-tag"></i> Reassign Order</div>
+        <div class="details-grid-premium">
+          <div class="detail-item-premium full-width">
+            <label>Select New Driver</label>
+            <div class="driver-selection-list">
+              ${this.drivers.map(d => `
+                <div class="driver-option-card" data-id="${d.id}">
+                  <div class="driver-avatar">
+                    <i class="fas fa-user-tie"></i>
+                  </div>
+                  <div class="driver-details">
+                    <span class="d-name">${d.username}</span>
+                    <span class="d-status"><i class="fas fa-check-circle"></i> Driver Team</span>
+                  </div>
+                  <i class="fas fa-check-circle check-icon"></i>
+                </div>
+              `).join('')}
+            </div>
+            <input type="hidden" id="newDriverId" value="">
+          </div>
+        </div>
+        <p style="margin-top: 20px; color: #b2bec3; font-size: 0.8rem; font-weight: 600; padding: 0 20px;">
+          <i class="fas fa-info-circle"></i> Once reassigned, the order will appear in the driver's task list immediately.
+        </p>
+      `,
+      didOpen: () => {
+        const cards = document.querySelectorAll('.driver-option-card');
+        const hiddenInput = document.getElementById('newDriverId') as HTMLInputElement;
+
+        cards.forEach(card => {
+          card.addEventListener('click', () => {
+            cards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            hiddenInput.value = card.getAttribute('data-id') || '';
+          });
+        });
+      },
+      preConfirm: () => {
+        const value = (document.getElementById('newDriverId') as HTMLInputElement).value;
+        if (!value) {
+          Swal.showValidationMessage('Please select a driver from the list');
+          return false;
+        }
+        return value;
+      }
     }).then((result) => {
       if (result.isConfirmed && result.value) {
         const newDriverId = Number(result.value);
         this.adminService.updateOrders(order.id, { driverId: newDriverId }).subscribe(
           () => {
-            Swal.fire('Success', 'Driver reassigned successfully!', 'success');
+            Swal.fire({
+              title: 'Success',
+              text: 'Driver reassigned successfully!',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
             this.loadOrders(); // Refresh orders to update driver info
           },
           (error) => {
@@ -400,20 +455,71 @@ export class OrderAssignedComponent implements OnInit {
 
   editOrders(order: Order): void {
     Swal.fire({
-      title: 'Edit Driver Allocation',
-      input: 'select',
-      inputOptions: this.drivers.reduce((acc: Record<number, string>, driver) => {
-        acc[driver.id] = driver.username;
-        return acc;
-      }, {}),
-      inputPlaceholder: 'Select a driver',
-      showCancelButton: true,
+      title: 'Assign Driver (Sub)',
+      width: '500px',
+      padding: '0',
+      showCloseButton: true,
+      customClass: {
+        popup: 'premium-swal-popup',
+        title: 'swal2-title',
+        htmlContainer: 'swal2-html-container',
+        confirmButton: 'swal2-confirm'
+      },
+      html: `
+        <div class="section-title-premium"><i class="fas fa-sync"></i> Reassign Subscription</div>
+        <div class="details-grid-premium">
+          <div class="detail-item-premium full-width">
+            <label>Select New Driver</label>
+            <div class="driver-selection-list">
+              ${this.drivers.map(d => `
+                <div class="driver-option-card" data-id="${d.id}">
+                  <div class="driver-avatar">
+                    <i class="fas fa-user-tie"></i>
+                  </div>
+                  <div class="driver-details">
+                    <span class="d-name">${d.username}</span>
+                    <span class="d-status"><i class="fas fa-check-circle"></i> Driver Team</span>
+                  </div>
+                  <i class="fas fa-check-circle check-icon"></i>
+                </div>
+              `).join('')}
+            </div>
+            <input type="hidden" id="newDriverId" value="">
+          </div>
+        </div>
+      `,
+      didOpen: () => {
+        const cards = document.querySelectorAll('.driver-option-card');
+        const hiddenInput = document.getElementById('newDriverId') as HTMLInputElement;
+
+        cards.forEach(card => {
+          card.addEventListener('click', () => {
+            cards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            hiddenInput.value = card.getAttribute('data-id') || '';
+          });
+        });
+      },
+      preConfirm: () => {
+        const value = (document.getElementById('newDriverId') as HTMLInputElement).value;
+        if (!value) {
+          Swal.showValidationMessage('Please select a driver from the list');
+          return false;
+        }
+        return value;
+      }
     }).then((result) => {
       if (result.isConfirmed && result.value) {
         const newDriverId = Number(result.value);
         this.adminService.updateSubscriptionOrders(order.id, { driverId: newDriverId }).subscribe(
           () => {
-            Swal.fire('Success', 'Driver reassigned successfully!', 'success');
+            Swal.fire({
+              title: 'Success',
+              text: 'Driver reassigned successfully!',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
             this.loadOrders(); // Refresh orders to update driver info
           },
           (error) => {
@@ -492,9 +598,9 @@ export class OrderAssignedComponent implements OnInit {
 
     // First, load drivers
     this.adminService.loadUsers().pipe(
-      catchError((error) => {
-        console.error('Error loading drivers:', error);
-        Swal.fire('Error', 'Failed to load drivers.', 'error');
+      catchError((error: any) => {
+        console.error('Error updating status:', error);
+        Swal.fire('Error', 'Failed to update order status.', 'error');
         return of({ user: [] }); // fallback to empty users
       })
     ).subscribe((userResponse: any) => {
@@ -505,13 +611,13 @@ export class OrderAssignedComponent implements OnInit {
 
       forkJoin({
         normalOrders: this.adminService.loadOrders().pipe(
-          catchError((error) => {
+          catchError((error: any) => {
             console.error('Error loading normal orders:', error);
             return of({ orders: [] }); // fallback to empty
           })
         ),
         subsOrders: this.adminService.loadSubsOrders().pipe(
-          catchError((error) => {
+          catchError((error: any) => {
             console.error('Error loading subscription orders:', error);
             return of({ subscribeData: [] }); // fallback to empty
           })
@@ -593,91 +699,108 @@ export class OrderAssignedComponent implements OnInit {
 
   selectDateAndDownload(): void {
     Swal.fire({
-      title: 'Select a Date and Category',
+      title: 'Production Report',
+      width: '460px',
+      padding: '0',
+      showCloseButton: true,
+      customClass: {
+        popup: 'premium-swal-popup',
+        title: 'swal2-title',
+        htmlContainer: 'swal2-html-container',
+        confirmButton: 'swal2-confirm'
+      },
       html: `
-       <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
-  <label for="deliveryDate"  font-weight: bold;">Select Delivery Date:</label>
-  <input 
-    type="date" 
-    id="deliveryDate" 
-    class="swal2-input" 
-    style="text-align: center; width: 100%; max-width: 300px; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"
-  />
-  <label for="categoryType"  font-weight: bold;">Select Category:</label>
-  <select 
-    id="categoryType" 
-    class="swal2-select" 
-    style="width: 100%; max-width: 300px; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"
-  >
-    <option value="" disabled selected>Select Category</option>
-    <option value="Bakkery">Bakkery_Items</option>
-    <option value="Others">Others</option>
-  </select>
-</div>
+        <div style="padding: 10px 20px 25px;">
+          <!-- 1. Date Selection Section -->
+          <div class="selection-card" style="background: #ffffff; border: 2px solid #edeff2; border-radius: 18px; padding: 18px; margin-bottom: 20px; position: relative;">
+            <label style="position: absolute; top: -11px; left: 18px; background: white; padding: 0 10px; font-size: 0.65rem; font-weight: 900; color: #a29bfe; text-transform: uppercase; letter-spacing: 1px;">Delivery Date</label>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 40px; height: 40px; background: #fff9e6; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                <i class="far fa-calendar-alt" style="color: #f7ce3e; font-size: 1.1rem;"></i>
+              </div>
+              <input type="date" id="deliveryDate" style="flex: 1; height: 44px; border: 2px solid #f1f2f6; border-radius: 12px; padding: 0 15px; font-weight: 700; color: #2d3436; font-size: 0.95rem; outline: none; background: #fcfcfd;">
+            </div>
+          </div>
 
+          <!-- 2. Category Selection (No Scroll) -->
+          <div style="position: relative;">
+            <label style="display: block; font-size: 0.65rem; font-weight: 900; color: #a29bfe; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-left: 5px;">Category Filter</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+              
+              <!-- Bakery Card -->
+              <div class="category-mode-card" data-value="Bakkery" style="background: #ffffff; border: 2px solid #edeff2; border-radius: 18px; padding: 15px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; position: relative; overflow: hidden;">
+                <div class="icon-box" style="width: 44px; height: 44px; background: #f8f9fa; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; transition: all 0.3s;">
+                  <i class="fas fa-bread-slice" style="color: #f7ce3e; font-size: 1.2rem;"></i>
+                </div>
+                <div style="font-weight: 800; color: #2d3436; font-size: 0.9rem; margin-bottom: 2px;">Bakery</div>
+                <div style="font-size: 0.65rem; color: #b2bec3; font-weight: 600;">Fresh Breads</div>
+                <div class="selection-indicator" style="position: absolute; top: 10px; right: 10px; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #edeff2; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">
+                  <i class="fas fa-check" style="font-size: 0.6rem; color: white; display: none;"></i>
+                </div>
+              </div>
+
+              <!-- Others Card -->
+              <div class="category-mode-card" data-value="Others" style="background: #ffffff; border: 2px solid #edeff2; border-radius: 18px; padding: 15px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; position: relative; overflow: hidden;">
+                <div class="icon-box" style="width: 44px; height: 44px; background: #f8f9fa; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; transition: all 0.3s;">
+                  <i class="fas fa-box" style="color: #a29bfe; font-size: 1.2rem;"></i>
+                </div>
+                <div style="font-weight: 800; color: #2d3436; font-size: 0.9rem; margin-bottom: 2px;">Others</div>
+                <div style="font-size: 0.65rem; color: #b2bec3; font-weight: 600;">General Items</div>
+                <div class="selection-indicator" style="position: absolute; top: 10px; right: 10px; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #edeff2; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">
+                  <i class="fas fa-check" style="font-size: 0.6rem; color: white; display: none;"></i>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <input type="hidden" id="categoryType" value="">
+        </div>
+
+        <style>
+          .category-mode-card:hover { border-color: #f7ce3e !important; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.04); }
+          .category-mode-card.active { border-color: #f7ce3e !important; background: #fffcf0 !important; box-shadow: 0 10px 25px rgba(247, 206, 62, 0.1) !important; }
+          .category-mode-card.active .icon-box { background: white !important; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+          .category-mode-card.active .selection-indicator { background: #f7ce3e !important; border-color: #f7ce3e !important; }
+          .category-mode-card.active .selection-indicator i { display: block !important; }
+          .category-mode-card.active div { color: #f7ce3e !important; }
+        </style>
       `,
-      //     preConfirm: () => {
-      //       const dateInput = document.getElementById('deliveryDate') as HTMLInputElement;
-      //       const categorySelect = document.getElementById('categoryType') as HTMLSelectElement;
+      didOpen: () => {
+        const cards = document.querySelectorAll('.category-mode-card');
+        const hiddenInput = document.getElementById('categoryType') as HTMLInputElement;
 
-      //       if (!dateInput || !dateInput.value) {
-      //         Swal.showValidationMessage('Please select a valid date.');
-      //         return false;
-      //       }
-
-      //       if (!categorySelect || !categorySelect.value) {
-      //         Swal.showValidationMessage('Please select a category.');
-      //         return false;
-      //       }
-
-
-      //       const selectedDate = new Date(dateInput.value);
-      //       const day = selectedDate.getDay();
-      //       if (day !== 6 && day !== 0) { // Not Saturday or Sunday
-      //         Swal.showValidationMessage('Only Saturdays and Sundays are allowed.');
-      //         return false;
-      //       }
-
-      //       return {
-      //         date: dateInput.value,
-      //         category: categorySelect.value
-      //       }; // Return both date and category
-      //     },
-      //   }).then(result => {
-      //     if (result.isConfirmed) {
-      //       const { date, category } = result.value;
-      //       this.getLabels(date, category); // Pass the selected date and category
-      //     }
-      //   });
-      // }
+        cards.forEach(card => {
+          card.addEventListener('click', () => {
+            cards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            hiddenInput.value = card.getAttribute('data-value') || '';
+          });
+        });
+      },
       preConfirm: async () => {
         const dateInput = document.getElementById('deliveryDate') as HTMLInputElement;
-        const categorySelect = document.getElementById('categoryType') as HTMLSelectElement;
+        const categorySelect = document.getElementById('categoryType') as HTMLInputElement;
 
-        if (!dateInput || !dateInput.value) {
+        if (!dateInput?.value) {
           Swal.showValidationMessage('Please select a valid date.');
           return false;
         }
 
-        if (!categorySelect || !categorySelect.value) {
+        if (!categorySelect?.value) {
           Swal.showValidationMessage('Please select a category.');
           return false;
         }
 
-        // Parse input date
         const inputDate = new Date(dateInput.value);
-        if (!inputDate) {
+        if (isNaN(inputDate.getTime())) {
           Swal.showValidationMessage('Invalid date format.');
           return false;
         }
 
-        const formattedDate = inputDate.toISOString().split('T')[0];
-
-        // ✅ Check if holiday
+        const formattedDate = dateInput.value;
         const isHoliday = await this.checkPublicHoliday(formattedDate);
-
-        // ✅ Condition 1: Only Saturday and Sunday are allowed (if NOT holiday)
         const day = inputDate.getDay(); // 0 = Sunday, 6 = Saturday
+
         if (!isHoliday && day !== 6 && day !== 0) {
           Swal.showValidationMessage('Only Saturdays, Sundays, or public holidays are allowed.');
           return false;
@@ -691,7 +814,7 @@ export class OrderAssignedComponent implements OnInit {
     }).then(result => {
       if (result.isConfirmed) {
         const { date, category } = result.value;
-        this.getLabels(date, category); // ✅ Download report if valid
+        this.getLabels(date, category);
       }
     });
   }
@@ -706,7 +829,7 @@ export class OrderAssignedComponent implements OnInit {
         },
         (error: any) => {
           console.error('Error fetching public holidays:', error);
-          resolve(false); // treat errors as non-holiday
+          resolve(false);
         }
       );
     });
@@ -724,7 +847,7 @@ export class OrderAssignedComponent implements OnInit {
         window.open(blobUrl, '_blank'); // Open PDF in new tab
         this.isLoading = false; // Stop loader
       },
-      (error) => {
+      (error: any) => {
         this.isLoading = false; // Stop loader on error
         console.error('Error fetching PDF:', error);
         Swal.fire('Error', 'There was an error fetching the labels. Please try again later.', 'error');
@@ -734,8 +857,6 @@ export class OrderAssignedComponent implements OnInit {
 
 
   getLabelReport(): void {
-    this.subscriptionOrders
-    this.filteredOrders
     let data: any = [];
     if (this.showSubscriptionOrders) {
       data = this.mergedOrders;
@@ -750,7 +871,7 @@ export class OrderAssignedComponent implements OnInit {
         setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
         Swal.fire('Success', 'File opened in a new tab.', 'success');
       },
-      (error) => {
+      (error: any) => {
         Swal.fire('Error', 'Could not open file.', 'error');
       }
     );
@@ -813,87 +934,98 @@ export class OrderAssignedComponent implements OnInit {
         const userId = order.user_id || order.userid || order.customer_id;
         // Fallback: If user not in allUsers, fetch it
         const userExists = this.allUsers.find(u => u.id == userId);
-        const userPromise = userExists ? Promise.resolve(userExists) : this.adminService.getUserById(userId).toPromise().then(res => res.user[0]).catch(() => null);
+        const userPromise = userExists ? Promise.resolve(userExists) : this.adminService.getUserById(userId).toPromise().then((res: any) => res.user[0]).catch(() => null);
 
-        userPromise.then(fetchedUser => {
+        userPromise.then((fetchedUser: any) => {
           if (fetchedUser && !userExists) this.allUsers.push(fetchedUser);
 
           Swal.fire({
             title: `Order Details - ${order_id}`,
-            html: `
-            <style>
-              table,th,td{
-              border:1px solid black;
-              
-              }
-            </style>
-              <p><strong>Order ID:</strong> ${order.order_id}</p>
-              <p><strong>Customer Name:</strong> ${this.getUserName(userId)}</p>
-              <p><strong>Address:</strong> ${order.address}</p>
-              <p><strong>Contact:</strong> ${order.contact}</p>
-              <p><strong>Instruction:</strong> ${order.instruction}</p>
-              <p><strong>Status:</strong> ${order.status}</p>
-              <p><strong>Delivery Date:</strong> ${order.delivery_date}</p>
-              <p><strong>Tipps:</strong> ${order.tips}€</p>
-              <p><strong>Total Price:</strong> ${(Number(order.price) + Number(order.tips)).toFixed(2)}€</p>
-              <table style='margin-left:80px;width:300px'>
-              <tr>
-                <th>Bags</th>
-                <th>Quantity</th?
-              </tr>
-              <tr>
-                <td>Große Tüte</td>
-                <td>${order.gro_bag}</td>
-              </tr>
-
-              <tr>
-                <td>Mittlere Tüte</td>
-                <td>${order.mitt_bag}</td>
-              </tr>
-
-              <tr>
-                <td>Baguette Tüte</td>
-                <td>${order.bagu_bag}</td>
-              </tr>
-
-              <tr>
-                <td>Zusätzliche Tüte</td>
-                <td>${order.zusätzliche_tüte}</td>
-              </tr>
-              </table>
-              <hr>
-              <h5>Products:</h5>
-              <ul>
-                ${orderDetails
-                .map(
-                  (detail: any) =>
-                    `<li style='margin-top:10px;list-style-type:none'>${detail.product_name} - Quantity: ${detail.quantity} &nbsp; &nbsp; ${detail.price}€</li>`
-                )
-                .join("")}
-              </ul>
-            `,
-            icon: "info",
-            confirmButtonText: "Close",
-            didOpen: () => {
-
-              const bagSelect = document.getElementById("bag-select") as HTMLSelectElement;
-              if (bagSelect) {
-                bagSelect.addEventListener("change", (event: Event) => {
-                  const selectedBag = (event.target as HTMLSelectElement).value;
-
-
-                  this.adminService.updateOrderBag(order_id, { bag: selectedBag }).subscribe(
-                    (response: any) => {
-                      Swal.fire("Success", "Bag updated successfully!", "success");
-                    },
-                    (error) => {
-                      Swal.fire("Error", "Failed to update bag. Please try again.", "error");
-                      console.error("Error updating bag:", error);
-                    }
-                  );
-                });
-              }
+            width: '750px',
+            padding: '0',
+            showCloseButton: true,
+            customClass: {
+              popup: 'premium-swal-popup',
+              title: 'swal2-title',
+              htmlContainer: 'swal2-html-container',
+              confirmButton: 'swal2-confirm'
             },
+            html: `
+              <div class="section-title-premium"><i class="fas fa-info-circle"></i> View Summary</div>
+              <div class="details-grid-premium">
+                <div class="detail-item-premium">
+                  <label>Order ID</label>
+                  <span>#${order.order_id}</span>
+                </div>
+                <div class="detail-item-premium">
+                  <label>Customer Name</label>
+                  <span>${this.getUserName(userId)}</span>
+                </div>
+                <div class="detail-item-premium full-width">
+                  <label>Address</label>
+                  <span>${order.address}</span>
+                </div>
+                <div class="detail-item-premium">
+                  <label>Contact</label>
+                  <span>${order.contact}</span>
+                </div>
+                <div class="detail-item-premium">
+                  <label>Status</label>
+                  <span style="text-transform: capitalize;">${order.status}</span>
+                </div>
+                <div class="detail-item-premium">
+                  <label>Delivery Date</label>
+                  <span>${order.delivery_date}</span>
+                </div>
+                <div class="detail-item-premium full-width">
+                  <label>Instruction</label>
+                  <span>${order.instruction || 'No instructions'}</span>
+                </div>
+              </div>
+
+              <div class="section-title-premium"><i class="fas fa-shopping-basket"></i> Products</div>
+              <div class="product-list-premium">
+                ${orderDetails.map((detail: any) => `
+                  <div class="product-row">
+                    <span class="name">${detail.product_name}</span>
+                    <span class="qty">x ${detail.quantity}</span>
+                    <span class="price">€${detail.price}</span>
+                  </div>
+                `).join('')}
+              </div>
+
+              <div class="section-title-premium"><i class="fas fa-box"></i> Bags Allocation</div>
+              <div class="bags-section-premium">
+                <div class="bags-grid" style="grid-template-columns: repeat(2, 1fr);">
+                  <div class="bag-display-item">
+                    <label>Große Tüte</label>
+                    <span class="bag-val">${order.gro_bag || 0}</span>
+                  </div>
+                  <div class="bag-display-item">
+                    <label>Mittlere Tüte</label>
+                    <span class="bag-val">${order.mitt_bag || 0}</span>
+                  </div>
+                  <div class="bag-display-item">
+                    <label>Baguette Tüte</label>
+                    <span class="bag-val">${order.bagu_bag || 0}</span>
+                  </div>
+                  <div class="bag-display-item">
+                    <label>Zusätzliche Tüte</label>
+                    <span class="bag-val">${order.zusätzliche_tüte || 0}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pricing-summary-premium">
+                <div class="price-row-mini">
+                  <span>Price: ${Number(order.price).toFixed(2)}€</span>
+                  <span>Tipps: ${Number(order.tips).toFixed(2)}€</span>
+                </div>
+                <div class="total-label">Total Amount</div>
+                <div class="total-value">${(Number(order.price) + Number(order.tips)).toFixed(2)}€</div>
+              </div>
+            `,
+            confirmButtonText: "Close",
           });
         });
       } else {
@@ -937,75 +1069,87 @@ export class OrderAssignedComponent implements OnInit {
 
             Swal.fire({
               title: `Order Details - ${order_id}`,
-              html: `
-              <p><strong>User ID:</strong> ${order.id}</p>
-              <p><strong>Order ID:</strong> ${order.order_id}</p>
-              <p><strong>Customer Name:</strong> ${this.getUserName(userId)}</p>
-              <p><strong>Address:</strong> ${order.address}</p>
-              <p><strong>Contact:</strong> ${order.contact}</p>
-              <p><strong>Instruction:</strong> ${order.instruction}</p>
-              <p><strong>Status:</strong> ${order.status}</p>
-              <p><strong>Delivery Date:</strong> ${order.delivery_date}</p>
-              <p><strong>Price:</strong> ${order.price}</p>
-              <table style='margin-left:80px;width:300px'>
-              <tr>
-                <th>Bags</th>
-                <th>Quantity</th?
-              </tr>
-              <tr>
-                <td>Große Tüte</td>
-                <td>${order.gro_bag}</td>
-              </tr>
-
-              <tr>
-                <td>Mittlere Tüte</td>
-                <td>${order.mitt_bag}</td>
-              </tr>
-
-              <tr>
-                <td>Baguette Tüte</td>
-                <td>${order.bagu_bag}</td>
-              </tr>
-              <tr>
-                <td>Zusätzliche Tüte</td>
-                <td>${order.zusätzliche_tüte}</td>
-              </tr>
-              </table>
-              <hr>
-              <h5>Products:</h5>
-              <ul>
-                ${orderDetails
-                  .map(
-                    (detail: any) =>
-                      `<li style='margin-top:10px;list-style-type:none'>${detail.product_name} - Quantity: ${detail.quantity} &nbsp; &nbsp; ${detail.price}€</li>`
-                  )
-                  .join("")}
-              </ul>
-
-              
-            `,
-              icon: "info",
-              confirmButtonText: "Close",
-              didOpen: () => {
-
-                const bagSelect = document.getElementById("bag-select") as HTMLSelectElement;
-                if (bagSelect) {
-                  bagSelect.addEventListener("change", (event: Event) => {
-                    const selectedBag = (event.target as HTMLSelectElement).value;
-
-
-                    this.adminService.updateSubcriptionOrderBag(order_id, { bag: selectedBag }).subscribe(
-                      (response: any) => {
-                        Swal.fire("Success", "Bag updated successfully!", "success");
-                      },
-                      (error) => {
-                        Swal.fire("Error", "Failed to update bag. Please try again.", "error");
-                        console.error("Error updating bag:", error);
-                      }
-                    );
-                  });
-                }
+              width: '750px',
+              padding: '0',
+              showCloseButton: true,
+              customClass: {
+                popup: 'premium-swal-popup',
+                title: 'swal2-title',
+                htmlContainer: 'swal2-html-container',
+                confirmButton: 'swal2-confirm'
               },
+              html: `
+                <div class="section-title-premium"><i class="fas fa-info-circle"></i> Subscription Overview</div>
+                <div class="details-grid-premium">
+                  <div class="detail-item-premium">
+                    <label>User ID</label>
+                    <span>#${order.id}</span>
+                  </div>
+                  <div class="detail-item-premium">
+                    <label>Order ID</label>
+                    <span>#${order.order_id}</span>
+                  </div>
+                  <div class="detail-item-premium full-width">
+                    <label>Address</label>
+                    <span>${order.address}</span>
+                  </div>
+                  <div class="detail-item-premium">
+                    <label>Contact</label>
+                    <span>${order.contact}</span>
+                  </div>
+                  <div class="detail-item-premium">
+                    <label>Status</label>
+                    <span style="text-transform: capitalize;">${order.status}</span>
+                  </div>
+                  <div class="detail-item-premium">
+                    <label>Delivery Date</label>
+                    <span>${order.delivery_date}</span>
+                  </div>
+                  <div class="detail-item-premium full-width">
+                    <label>Instruction</label>
+                    <span>${order.instruction || 'No instructions'}</span>
+                  </div>
+                </div>
+
+                <div class="section-title-premium"><i class="fas fa-shopping-basket"></i> Products</div>
+                <div class="product-list-premium">
+                  ${orderDetails.map((detail: any) => `
+                    <div class="product-row">
+                      <span class="name">${detail.product_name}</span>
+                      <span class="qty">x ${detail.quantity}</span>
+                      <span class="price">€${detail.price}</span>
+                    </div>
+                  `).join('')}
+                </div>
+
+                <div class="section-title-premium"><i class="fas fa-box"></i> Bags Allocation</div>
+                <div class="bags-section-premium">
+                  <div class="bags-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="bag-display-item">
+                      <label>Große Tüte</label>
+                      <span class="bag-val">${order.gro_bag || 0}</span>
+                    </div>
+                    <div class="bag-display-item">
+                      <label>Mittlere Tüte</label>
+                      <span class="bag-val">${order.mitt_bag || 0}</span>
+                    </div>
+                    <div class="bag-display-item">
+                      <label>Baguette Tüte</label>
+                      <span class="bag-val">${order.bagu_bag || 0}</span>
+                    </div>
+                    <div class="bag-display-item">
+                      <label>Zusätzliche Tüte</label>
+                      <span class="bag-val">${order.zusätzliche_tüte || 0}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="pricing-summary-premium">
+                  <div class="total-label">Total Amount</div>
+                  <div class="total-value">${order.price}€</div>
+                </div>
+              `,
+              confirmButtonText: "Close",
             });
           });
         } else {
@@ -1033,5 +1177,55 @@ export class OrderAssignedComponent implements OnInit {
 
   previousPage(): void {
     if (this.page > 1) this.page--;
+  }
+  toggleDriverDropdown(): void {
+    this.isDriverDropdownOpen = !this.isDriverDropdownOpen;
+  }
+
+  selectDriverOption(driver: Driver): void {
+    this.selectedDriver = driver.id.toString();
+    this.isDriverDropdownOpen = false;
+  }
+
+  getSelectedDriverName(): string {
+    const driver = this.drivers.find(d => d.id.toString() == this.selectedDriver);
+    return driver ? driver.username : 'Select a Driver';
+  }
+
+  async printPremiumLabels(): Promise<void> {
+    if (this.mergedOrders.length === 0) {
+      Swal.fire('No Orders', 'Please load orders first.', 'info');
+      return;
+    }
+
+    this.isLoading = true;
+
+    // Fetch details for all visible orders to get products
+    try {
+      const detailRequests = this.mergedOrders.map(order =>
+        this.adminService.loadDetailsOrder(order.order_id).pipe(
+          catchError(() => of({ orders: [] }))
+        )
+      );
+
+      const allDetails = await forkJoin(detailRequests).toPromise();
+
+      const ordersWithProducts = this.mergedOrders.map((order, index) => {
+        const details = allDetails ? allDetails[index] : null;
+        const productsSummary = details ? details.orders.map((p: any) => `${p.quantity} ${p.product_name}`).join(', ') : '';
+        return {
+          ...order,
+          productsSummary: productsSummary || 'No items'
+        };
+      });
+
+      localStorage.setItem('printOrders', JSON.stringify(ordersWithProducts));
+      this.isLoading = false;
+      window.open('/#/orders/label-print', '_blank');
+    } catch (error) {
+      this.isLoading = false;
+      console.error('Error preparing labels:', error);
+      Swal.fire('Error', 'Failed to prepare premium labels.', 'error');
+    }
   }
 }

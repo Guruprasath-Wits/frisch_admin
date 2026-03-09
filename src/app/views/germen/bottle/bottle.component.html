@@ -1,68 +1,121 @@
-<div class="container">
-    <h3 class="mb-2" style="text-align: center; font-weight: bold !important;">{{ isEditMode ? 'Flasche bearbeiten' :
-        'Flasche hinzufügen' }}</h3>
+<div class="container-fluid bottle-container fade-in">
+    <div class="row g-4">
+        <!-- Left Column: Add/Edit Form -->
+        <div class="col-lg-4 col-md-12">
+            <div class="card form-card">
+                <div class="card-header-custom text-center">
+                    <h4 class="card-title">{{ isEditMode ? 'Flasche bearbeiten' : 'Flasche hinzufügen' }}</h4>
+                    <p class="card-subtitle">Pfandflaschen verwalten</p>
+                </div>
 
-    <div class="add-user-card mb-3">
-        <form [formGroup]="bottleForm" (ngSubmit)="onSubmit()">
-            <div class="form-group mb-3">
-                <label for="bottle_name" class="form-label">Flaschenname</label>
-                <input type="text" id="bottle_name" formControlName="bottle_name" class="form-control"
-                    placeholder="z. B. Glasflasche 0,5L" />
-                <div *ngIf="bottleForm.get('bottle_name')?.invalid && bottleForm.get('bottle_name')?.touched"
-                    class="text-danger small mt-1">
-                    Feld ist erforderlich
+                <div class="card-body">
+                    <form [formGroup]="bottleForm" (ngSubmit)="onSubmit()">
+
+                        <div class="form-group mb-4">
+                            <label class="form-label-custom">Flaschenname</label>
+                            <div class="input-group-custom">
+                                <i class="fas fa-wine-bottle input-icon"></i>
+                                <input type="text" formControlName="bottle_name" class="form-control-custom"
+                                    placeholder="z. B. Glasflasche 0,5L" />
+                            </div>
+                            <div *ngIf="bottleForm.get('bottle_name')?.invalid && bottleForm.get('bottle_name')?.touched"
+                                class="text-danger small mt-1">
+                                Feld ist erforderlich
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label-custom">Pfand (€)</label>
+                            <div class="input-group-custom">
+                                <i class="fas fa-euro-sign input-icon"></i>
+                                <input type="number" formControlName="deposit" class="form-control-custom"
+                                    placeholder="0.15" step="0.01" />
+                            </div>
+                            <div *ngIf="bottleForm.get('deposit')?.invalid && bottleForm.get('deposit')?.touched"
+                                class="text-danger small mt-1">
+                                Gültiger Wert erforderlich
+                            </div>
+                        </div>
+
+                        <div class="form-actions mt-5 d-flex gap-3">
+                            <button type="button" class="btn-cancel flex-fill" *ngIf="isEditMode"
+                                (click)="resetForm()">Abbrechen</button>
+                            <button type="submit" class="btn-submit flex-fill" [disabled]="bottleForm.invalid">
+                                {{ isEditMode ? 'Flasche aktualisieren' : 'Flasche hinzufügen' }}
+                                <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+
+                    </form>
                 </div>
             </div>
+        </div>
 
-            <div class="form-group mb-3">
-                <label for="deposit" class="form-label">Pfand (€)</label>
-                <input type="number" id="deposit" formControlName="deposit" class="form-control" placeholder="0.15"
-                    step="0.01" />
-                <div *ngIf="bottleForm.get('deposit')?.invalid && bottleForm.get('deposit')?.touched"
-                    class="text-danger small mt-1">
-                    Gültiger Wert erforderlich
+        <!-- Right Column: List -->
+        <div class="col-lg-8 col-md-12">
+            <div class="card list-card">
+                <div class="card-header-custom text-center">
+                    <div>
+                        <h4 class="card-title">Flaschenliste</h4>
+                        <p class="card-subtitle">Gesamt Flaschen: {{ bottles.length }}</p>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table custom-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" width="10%">#</th>
+                                    <th width="50%">Flaschenname</th>
+                                    <th width="20%">Pfand (€)</th>
+                                    <th class="text-end" width="20%">Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let bottle of paginatedBottles; let i = index">
+                                    <td class="text-center">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                                    <td>
+                                        <h6 class="fw-bold mb-0">{{ bottle.bottle_name }}</h6>
+                                    </td>
+                                    <td>
+                                        <span class="badge-type">{{ bottle.deposit | number:'1.2-2' }}€</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <button class="btn-action btn-edit" (click)="onEdit(bottle)" title="Bearbeiten">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                        <button class="btn-action btn-delete" (click)="onDelete(bottle.id)"
+                                            title="Löschen">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="bottles.length === 0">
+                                    <td colspan="4" class="text-center py-5">
+                                        <div class="empty-state">
+                                            <i class="fas fa-box-open mb-3"></i>
+                                            <p class="text-muted">Keine Flaschen gefunden.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card-footer-custom" *ngIf="totalPages > 1">
+                    <div class="pagination-wrapper">
+                        <button class="page-btn" (click)="previousPage()" [disabled]="currentPage === 1">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="page-info">Seite {{ currentPage }} von {{ totalPages }}</span>
+                        <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Flasche aktualisieren' : 'Flasche hinzufügen'
-                }}</button>
-            <button type="button" class="btn btn-secondary ms-2" *ngIf="isEditMode"
-                (click)="resetForm()">Abbrechen</button>
-        </form>
-    </div>
-
-    <h3 style="text-align: center; font-weight: bold !important;">Flaschenliste</h3>
-
-    <table class="table table-hover category-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Flaschenname</th>
-                <th>Pfand (€)</th>
-                <th>Aktionen</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let bottle of paginatedBottles; let i = index">
-                <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-                <td>{{ bottle.bottle_name }}</td>
-                <td>{{ bottle.deposit | number:'1.2-2' }}€</td>
-                <td>
-                    <button style="margin-right: 5px;" class="btn btn-warning btn-sm" (click)="onEdit(bottle)"><i
-                            class="fa fa-edit"></i></button>
-                    <button class="btn btn-danger btn-sm" (click)="onDelete(bottle.id)"><i
-                            class="fa fa-trash"></i></button>
-                </td>
-            </tr>
-            <tr *ngIf="bottles.length === 0">
-                <td colspan="4" class="text-center py-4 text-muted">Keine Flaschen gefunden.</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="pagination-controls">
-        <button (click)="previousPage()" [disabled]="currentPage === 1">Zurück</button>
-        <span>Seite {{ currentPage }} von {{ totalPages }}</span>
-        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Weiter</button>
+        </div>
     </div>
 </div>

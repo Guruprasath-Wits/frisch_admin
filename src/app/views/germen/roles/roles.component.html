@@ -1,60 +1,100 @@
-<div class="container">
-    <h3 class="mb-2" style="text-align: center; font-weight: bold !important;">{{ isEditMode ? 'Edit Roles' : 'Add Roles' }}</h3>
-  
-    <div class="add-user-card mb-3">
-      <form [formGroup]="roleForm" (ngSubmit)="onSubmit()" class="role-form" enctype="multipart/form-data">
-        <div class="form-group mb-3">
-          <label class="form-label" for="role_name">Role Name</label>
-          <input style="width: 450px;" type="text" id="role_name" formControlName="role_name" class="form-control" placeholder="Enter role name" />
+<div class="container-fluid roles-container fade-in">
+  <!-- Add/Edit Role Card -->
+  <div class="row justify-content-center">
+    <div class="col-12">
+      <div class="premium-card">
+        <div class="card-header-custom d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="card-title">{{ isEditMode ? 'Edit Role' : 'Add New Role' }}</h4>
+            <p class="card-subtitle mb-0">Rollenberechtigungen verwalten</p>
+          </div>
+          <i class="fas fa-user-shield fa-2x text-white opacity-25"></i>
         </div>
-  
-        <!-- <div class="form-group mb-3">
-          <label class="form-label" for="description">Description</label>
-          <textarea id="description" formControlName="description" class="form-control" placeholder="Enter role description"></textarea>
-        </div> -->
-  
-  
-        <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update Role' : 'Add Role' }}</button>
-        <!-- <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset</button> -->
-      </form>
-    </div>
-  
-    <h3 style="text-align: center; font-weight: bold !important;">Roles List</h3>
-  
-    <div class="add-user-card">
-      <table class="table  table-hover role-table">
-        <thead>
-          <tr>
-            <!-- <th>ID</th> -->
-            <th>S.No</th>
-           
-            <th>role Name</th>
-            <!-- <th>Description</th> -->
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let role of paginatedRole ; let i = index">
-            <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
-            <!-- <td>{{ role.id }}</td> -->
-            <td>{{ role.role_name }}</td>
-            <!-- <td>{{ role.description }}</td> -->
-            
-            <td>
-              <button class="btn btn-warning btn-sm"  (click)="onEdit(role)">
-                <i class="fa-solid fa-pen-to-square" ></i></button>
-              <button class="btn btn-danger btn-sm" style="margin-left: 5px;" (click)="onDelete(role.id)">
-                <i class="fa-solid fa-trash" ></i></button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  
-    <div class="pagination-controls">
-      <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
-      <span>Page {{ page }} of {{ totalPages }}</span>
-      <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+
+        <div class="card-body p-4 p-md-5">
+          <form [formGroup]="roleForm" (ngSubmit)="onSubmit()" class="role-form">
+            <div class="row align-items-end g-4">
+              <div class="col-md-9">
+                <div class="form-group-custom mb-0">
+                  <label class="form-label-custom">Role Name</label>
+                  <div class="input-group-custom">
+                    <i class="fas fa-id-card-alt input-icon"></i>
+                    <input type="text" id="role_name" formControlName="role_name" class="form-control-custom"
+                      placeholder="Enter role name e.g. Manager" />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <button type="submit" class="btn-submit-premium w-100">
+                  <i class="fas" [ngClass]="isEditMode ? 'fa-sync-alt' : 'fa-plus-circle'"></i>
+                  <span class="ms-2">{{ isEditMode ? 'Update' : 'Create' }}</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Roles List Card -->
+      <div class="premium-card">
+        <div class="card-header-custom">
+          <h4 class="card-title">Roles List</h4>
+          <p class="card-subtitle mb-0">Existing user roles in the system</p>
+        </div>
+
+        <div class="card-body p-0">
+          <div class="table-responsive custom-table-wrapper">
+            <table class="table custom-table mb-0">
+              <thead>
+                <tr>
+                  <th width="100" class="text-center">S.No</th>
+                  <th>Role Name</th>
+                  <th width="150" class="text-end pe-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let role of paginatedRole; let i = index">
+                  <td class="text-center">
+                    <span class="id-badge">{{ (page - 1) * itemsPerPage + i + 1 }}</span>
+                  </td>
+                  <td>
+                    <span class="role-name-text">{{ role.role_name }}</span>
+                  </td>
+                  <td class="text-end pe-4">
+                    <div class="action-buttons">
+                      <button class="btn-action btn-edit" (click)="onEdit(role)" title="Edit Role">
+                        <i class="fas fa-pencil-alt"></i>
+                      </button>
+                      <button class="btn-action btn-delete" (click)="onDelete(role.id)" title="Delete Role">
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="paginatedRole.length === 0">
+                  <td colspan="3" class="text-center py-5">
+                    <div class="empty-state">
+                      <i class="fas fa-shield-alt mb-3 opacity-25" style="font-size: 3rem;"></i>
+                      <p class="text-muted">No roles found.</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pagination Section -->
+        <div class="pagination-wrapper" *ngIf="totalPages > 1">
+          <button class="page-btn" (click)="previousPage()" [disabled]="page === 1">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span class="page-info">Page {{ page }} of {{ totalPages }}</span>
+          <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
-  
+</div>

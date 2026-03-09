@@ -88,16 +88,22 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
       },
 
-       {
+      {
         path: 'coupon-management/voucher-type',
         component: VoucherListComponent,
-        title: 'Voucher Type',
+        title: 'Voucher List',
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'coupon-management/add-voucher',
+        component: AddVoucherComponent,
+        title: 'Add Voucher',
         canActivate: [AuthGuard],
       },
       {
         path: 'coupon-management/manage-vouchers',
         component: CouponListComponent,
-        title: 'Manage Vouchers',
+        title: 'Coupon List',
         canActivate: [AuthGuard],
       },
       {
@@ -203,6 +209,11 @@ export const routes: Routes = [
 
       {
         path: 'dashboard',
+        loadChildren: () => import('./views/dashboard/routes').then((m) => m.routes),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'settings',
         component: SettingsComponent,
         title: 'Settings',
         canActivate: [AuthGuard],
@@ -283,6 +294,12 @@ export const routes: Routes = [
     data: {
       title: 'Register Page'
     }
+  },
+  {
+    path: 'orders/label-print',
+    loadComponent: () => import('./views/germen/orders/order-label-print/order-label-print.component').then(m => m.OrderLabelPrintComponent),
+    title: 'Print Labels',
+    canActivate: [AuthGuard],
   },
   { path: '**', redirectTo: 'dashboard' }
 ];

@@ -1,68 +1,110 @@
-<div class="container mt-4">
-  <div class="filter-card p-4 mb-4">
-    <div class="row d-flex">
-        <div class="col-md-8 d-flex align-items-center mb-3">
-          <h3 style="font-weight: bold !important; margin-bottom: 0;">Subscription Transaction</h3>
+<div class="container-fluid transactions-container fade-in">
+  <!-- Premium Header & Filter Card -->
+  <div class="premium-card">
+    <div class="card-header-custom">
+      <div class="header-content">
+        <div>
+          <h2 class="card-title">Subscription Transactions</h2>
+          <span class="card-subtitle">Verwalten und verfolgen Sie alle Abonnementzahlungen</span>
         </div>
-        <div class="col-md-4 d-flex flex-column align-items-start mb-3">
-          <label for="monthSelect" class="form-label fw-bold mb-1">Select Month-Year</label>
-          <select id="monthSelect" class="form-control filter-input" [(ngModel)]="selectedMonth" (change)="onMonthChange()">
+
+        <div class="filter-group-custom select-wrapper">
+          <i class="fas fa-calendar-alt input-icon"></i>
+          <select id="monthSelect" class="select-custom" [(ngModel)]="selectedMonth" (change)="onMonthChange()">
             <option value="" disabled selected>Select Month-Year</option>
             <option *ngFor="let month of transactionsMonth" [value]="month">{{ month }}</option>
           </select>
         </div>
+      </div>
     </div>
-    <!-- <div class="row">
-      <div class="col-md-4 mb-3">
-        <input type="text" class="form-control filter-input" placeholder="Search by Username"
-          [(ngModel)]="searchTerm" />
+
+    <!-- Premium Table Section -->
+    <div class="card-body p-0">
+      <div class="table-responsive custom-table-wrapper">
+        <table class="table custom-table mb-0 text-center">
+          <thead>
+            <tr>
+              <th width="80">S.No</th>
+              <th class="text-start">Username</th>
+              <th>Amount</th>
+              <th>Payment ID</th>
+              <th>Status</th>
+              <th>Billing Month</th>
+              <th class="text-start">Error Message</th>
+              <th>Created At</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let user of transactions | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+              <td>
+                <span class="id-badge">{{ i + 1 + (page - 1) * itemsPerPage }}</span>
+              </td>
+              <td class="text-start">
+                <div class="d-flex align-items-center">
+                  <div class="avatar-circle me-2">
+                    <i class="fas fa-user-circle text-muted" style="font-size: 1.5rem;"></i>
+                  </div>
+                  <span class="fw-bold">{{ user.username }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="amount-text">{{ user.amount }}</span>
+              </td>
+              <td>
+                <span class="id-badge">{{ user.payment_id }}</span>
+              </td>
+              <td>
+                <span class="status-badge" [ngClass]="{
+                   'success': user.status.toLowerCase() === 'success' || user.status.toLowerCase() === 'paid',
+                   'failed': user.status.toLowerCase() === 'failed' || user.status.toLowerCase() === 'error',
+                   'pending': user.status.toLowerCase() === 'pending'
+                }">
+                  {{ user.status }}
+                </span>
+              </td>
+              <td>
+                <span class="fw-600">{{ user.billing_month }}</span>
+              </td>
+              <td class="text-start">
+                <small class="text-muted d-block text-truncate" style="max-width: 200px;" [title]="user.error_message">
+                  {{ user.error_message || 'No errors reported' }}
+                </small>
+              </td>
+              <td>
+                <div class="d-flex flex-column align-items-center">
+                  <span class="fw-bold">{{ user.created_at | date:'dd MMM yyyy' }}</span>
+                  <small class="text-muted" style="font-size: 0.7rem;">{{ user.created_at | date:'hh:mm a' }}</small>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="col-md-4 mb-3">
-        <input type="email" class="form-control filter-input" placeholder="Search by Email" [(ngModel)]="searchEmail" />
-      </div>
-      <div class="col-md-4 mb-3">
-        <input type="text" class="form-control filter-input" placeholder="Search by Phone No"
-          [(ngModel)]="searchPhone" />
-      </div>
-    </div> -->
+    </div>
   </div>
 
-  <!-- Table with Pagination -->
-  <div class="table-card p-3">
-    <div class="table-responsive">
-      <table class="table table-hover table-bordered text-center align-middle">
-        <thead class="table-header bg-warning text-dark">
-          <tr>
-            <th scope="col">S.No</th>
-            <th scope="col">Username</th>
-              <th scope="col">Amount</th>
-              <th scope="col">Payment ID</th>
-              <th scope="col">Status</th>
-              <th scope="col">Billing Month</th>
-              <th scope="col">Error Message</th>
-              <th scope="col">Created At</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let user of transactions | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
-            <td>{{ i + 1 + (page - 1) * itemsPerPage }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.amount }}</td>
-            <td>{{ user.payment_id }}</td>
-            <td>{{ user.status }}</td>
-            <td>{{ user.billing_month }}</td>
-            <td>{{ user.error_message }}</td>
-            <td>{{ user.created_at | date:'dd-MMM-yyyy' }}</td>
-          </tr>
-        </tbody>
-      </table>
+  <!-- Premium Pagination -->
+  <div class="pagination-premium" *ngIf="totalPages > 0">
+    <button class="page-btn" (click)="previousPage()" [disabled]="page === 1">
+      <i class="fas fa-chevron-left"></i> Previous
+    </button>
+
+    <div class="page-info">
+      Page <span class="text-dark">{{ page }}</span> of {{ totalPages }}
     </div>
+
+    <button class="page-btn next" (click)="nextPage()" [disabled]="page === totalPages">
+      Next <i class="fas fa-chevron-right"></i>
+    </button>
   </div>
 
-  <div class="pagination-controls">
-    <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
-    <span>Page {{ page }} of {{ totalPages }}</span>
-    <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+  <!-- Empty State -->
+  <div *ngIf="transactions.length === 0" class="text-center py-5">
+    <div class="mb-3">
+      <i class="fas fa-receipt opacity-25" style="font-size: 5rem; color: #b2bec3;"></i>
+    </div>
+    <h4 class="text-muted">No transactions found</h4>
+    <p class="text-muted small">Select a different month or search criteria</p>
   </div>
 </div>

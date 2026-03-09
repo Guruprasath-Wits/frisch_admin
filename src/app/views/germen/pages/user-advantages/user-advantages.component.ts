@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../../../admin.service';
 import Swal from 'sweetalert2';
 
 interface Advantages {
@@ -23,7 +23,7 @@ export class UserAdvantagesComponent implements OnInit {
   advantagesForm: FormGroup;
   isEditMode: boolean = false;
   selectedAdvantages: Advantages | null = null;
-  page: number = 1; 
+  page: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1;
 
@@ -129,7 +129,7 @@ export class UserAdvantagesComponent implements OnInit {
       if (result.isConfirmed) {
         this.adminService.deleteAdvantages(advantagesId).subscribe(
           response => {
-            this.userAdv = this.userAdv.filter(area => area.id !== advantagesId); 
+            this.userAdv = this.userAdv.filter(area => area.id !== advantagesId);
             Swal.fire('Deleted!', 'SampleOrder Product has been deleted.', 'success');
             // this.getAdvantages();
           },

@@ -22,12 +22,15 @@ import { DefaultFooterComponent, DefaultHeaderComponent } from './';
 import { navItems as originalNavItems } from './_nav'; // Import navItems as originalNavItems
 import { AdminService } from '../../admin.service';
 
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './default-layout.component.html',
   styleUrls: ['./default-layout.component.scss'],
   standalone: true,
   imports: [
+    TranslateModule,
     SidebarComponent,
     SidebarHeaderComponent,
     SidebarBrandComponent,
@@ -46,14 +49,18 @@ import { AdminService } from '../../admin.service';
   ],
 })
 export class DefaultLayoutComponent implements OnInit {
-  public navItems: INavData[] = [...originalNavItems]; // Copy original navItems array
+  public navItems: INavData[] = [];
   permissions: Record<string, number>[] = []; // Permissions as an array of key-value objects
   allowedNavItems: INavData[] = []; // Filtered navItems based on permissions
   currentUserId: string | null = null;
   roleId: string | null = null; // Current user ID from localStorage
   // Current user ID from localStorage
 
-  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) { }
+  constructor(
+    private adminService: AdminService,
+    private cdr: ChangeDetectorRef,
+    private translate: TranslateService
+  ) { }
 
   ngOnInit(): void {
     this.loadCurrentUser();
@@ -62,6 +69,15 @@ export class DefaultLayoutComponent implements OnInit {
     } else {
       Swal.fire('Error!', 'No user logged in.', 'error');
     }
+
+    this.translate.onLangChange.subscribe(() => {
+      this.translateNavItems();
+    });
+  }
+
+  translateNavItems(): void {
+    // Re-filter and then translate
+    this.MatchesPermission();
   }
 
   /**
@@ -115,10 +131,11 @@ export class DefaultLayoutComponent implements OnInit {
     allowedNames.add('Dashboard');
     allowedNames.add('Combo Packs');
     allowedNames.add('Fehlende Produkte');
+    allowedNames.add('Transactions');
     allowedNames.add('Coupon Management');
 
     // Filter from originalNavItems to maintain order and structure
-    this.navItems = originalNavItems.filter(item => {
+    const filteredSource = originalNavItems.filter(item => {
       // Always allow titles (headers)
       if (item.title) return true;
 
@@ -128,10 +145,60 @@ export class DefaultLayoutComponent implements OnInit {
       return false;
     });
 
-    console.log('Final Filtered Nav Items:', this.navItems);
+    // Translate names
+    this.navItems = this.translateItems(JSON.parse(JSON.stringify(filteredSource)));
+
+    console.log('Final Filtered Nav Items (Translated):', this.navItems);
     this.cdr.detectChanges();
   }
 
+  private translateItems(items: INavData[]): INavData[] {
+    return items.map(item => {
+      if (item.name) {
+        const key = this.getTranslationKey(item.name);
+        item.name = this.translate.instant(key);
+      }
+      if (item.children) {
+        item.children = this.translateItems(item.children);
+      }
+      return item;
+    });
+  }
+
+  private getTranslationKey(name: string): string {
+    const mapping: Record<string, string> = {
+      'Dashboard': 'SIDEBAR.DASHBOARD',
+      'Products': 'SIDEBAR.PRODUCTS',
+      'Category': 'SIDEBAR.CATEGORY',
+      'Steuer': 'SIDEBAR.STEUER',
+      'Flasche': 'SIDEBAR.FLASCHE',
+      'Product': 'SIDEBAR.PRODUCT',
+      'Fehlende Produkte': 'SIDEBAR.MISSING_PRODUCTS',
+      'Combo Packs': 'SIDEBAR.COMBO_PACKS',
+      'Orders': 'SIDEBAR.ORDERS_TITLE',
+      'Customer_Enquiry': 'SIDEBAR.CUSTOMER_ENQUIRY',
+      'Coupon Management': 'SIDEBAR.COUPON_MANAGEMENT',
+      'Voucher List': 'SIDEBAR.VOUCHER_LIST',
+      'Coupon List': 'SIDEBAR.COUPON_LIST',
+      'OrderList': 'SIDEBAR.ORDER_LIST',
+      'Pages': 'SIDEBAR.PAGES',
+      'Sample_Order': 'SIDEBAR.SAMPLE_ORDER',
+      'Our_Delivery_Areas': 'SIDEBAR.DELIVERY_AREAS',
+      'User_Advantages': 'SIDEBAR.USER_ADVANTAGES',
+      'Jobs': 'SIDEBAR.JOBS',
+      'Transactions': 'SIDEBAR.TRANSACTIONS',
+      'FAQ': 'SIDEBAR.FAQ',
+      'Imprint': 'SIDEBAR.IMPRINT',
+      'Extras': 'SIDEBAR.EXTRAS',
+      'Roles': 'SIDEBAR.ROLES',
+      'Permissions': 'SIDEBAR.PERMISSIONS',
+      'Users': 'SIDEBAR.USERS',
+      'Settings': 'SIDEBAR.SETTINGS',
+      'Received Order': 'Bestellungen erhalten', // fallback or add keys
+      // I should add more keys to json files if needed, but these cover the major ones.
+    };
+    return mapping[name] || name;
+  }
   /**
    * Handle scrollbar updates (optional).
    */

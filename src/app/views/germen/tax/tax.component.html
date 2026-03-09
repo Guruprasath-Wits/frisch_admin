@@ -1,67 +1,121 @@
-<div class="container">
-    <h3 class="mb-2" style="text-align: center; font-weight: bold !important;">{{ isEditMode ? 'Steuer bearbeiten' :
-        'Steuer hinzufügen' }}</h3>
+<div class="container-fluid tax-container fade-in">
+    <div class="row g-4">
+        <!-- Left Column: Add/Edit Form -->
+        <div class="col-lg-4 col-md-12">
+            <div class="card form-card">
+                <div class="card-header-custom text-center">
+                    <h4 class="card-title">{{ isEditMode ? 'Steuer bearbeiten' : 'Steuer hinzufügen' }}</h4>
+                    <p class="card-subtitle">Steuersätze verwalten</p>
+                </div>
 
-    <div class="add-user-card mb-3">
-        <form [formGroup]="taxForm" (ngSubmit)="onSubmit()">
-            <div class="form-group mb-3">
-                <label for="tax_name" class="form-label">Steuername</label>
-                <input type="text" id="tax_name" formControlName="tax_name" class="form-control"
-                    placeholder="z. B. MwSt 19%" />
-                <div *ngIf="taxForm.get('tax_name')?.invalid && taxForm.get('tax_name')?.touched"
-                    class="text-danger small mt-1">
-                    Feld ist erforderlich
+                <div class="card-body">
+                    <form [formGroup]="taxForm" (ngSubmit)="onSubmit()">
+
+                        <div class="form-group mb-4">
+                            <label class="form-label-custom">Steuername</label>
+                            <div class="input-group-custom">
+                                <i class="fas fa-percentage input-icon"></i>
+                                <input type="text" formControlName="tax_name" class="form-control-custom"
+                                    placeholder="z. B. MwSt 19%" />
+                            </div>
+                            <div *ngIf="taxForm.get('tax_name')?.invalid && taxForm.get('tax_name')?.touched"
+                                class="text-danger small mt-1">
+                                Feld ist erforderlich
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label-custom">Steuerwert (%)</label>
+                            <div class="input-group-custom">
+                                <i class="fas fa-calculator input-icon"></i>
+                                <input type="number" formControlName="tax_value" class="form-control-custom"
+                                    placeholder="19" />
+                            </div>
+                            <div *ngIf="taxForm.get('tax_value')?.invalid && taxForm.get('tax_value')?.touched"
+                                class="text-danger small mt-1">
+                                Gültiger Wert erforderlich
+                            </div>
+                        </div>
+
+                        <div class="form-actions mt-5 d-flex gap-3">
+                            <button type="button" class="btn-cancel flex-fill" *ngIf="isEditMode"
+                                (click)="resetForm()">Abbrechen</button>
+                            <button type="submit" class="btn-submit flex-fill" [disabled]="taxForm.invalid">
+                                {{ isEditMode ? 'Steuer aktualisieren' : 'Steuer hinzufügen' }}
+                                <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+
+                    </form>
                 </div>
             </div>
+        </div>
 
-            <div class="form-group mb-3">
-                <label for="tax_value" class="form-label">Steuerwert (%)</label>
-                <input type="number" id="tax_value" formControlName="tax_value" class="form-control" placeholder="19" />
-                <div *ngIf="taxForm.get('tax_value')?.invalid && taxForm.get('tax_value')?.touched"
-                    class="text-danger small mt-1">
-                    Gültiger Wert erforderlich
+        <!-- Right Column: List -->
+        <div class="col-lg-8 col-md-12">
+            <div class="card list-card">
+                <div class="card-header-custom text-center">
+                    <div>
+                        <h4 class="card-title">Steuerliste</h4>
+                        <p class="card-subtitle">Gesamt Steuern: {{ taxes.length }}</p>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table custom-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" width="10%">#</th>
+                                    <th width="40%">Steuername</th>
+                                    <th width="30%">Wert (%)</th>
+                                    <th class="text-end" width="20%">Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let tax of paginatedTaxes; let i = index">
+                                    <td class="text-center">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                                    <td>
+                                        <h6 class="fw-bold mb-0">{{ tax.tax_name }}</h6>
+                                    </td>
+                                    <td>
+                                        <span class="badge-type">{{ tax.tax_value }}%</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <button class="btn-action btn-edit" (click)="onEdit(tax)" title="Bearbeiten">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                        <button class="btn-action btn-delete" (click)="onDelete(tax.id)"
+                                            title="Löschen">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="taxes.length === 0">
+                                    <td colspan="4" class="text-center py-5">
+                                        <div class="empty-state">
+                                            <i class="fas fa-box-open mb-3"></i>
+                                            <p class="text-muted">Keine Steuern gefunden.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card-footer-custom" *ngIf="totalPages > 1">
+                    <div class="pagination-wrapper">
+                        <button class="page-btn" (click)="previousPage()" [disabled]="currentPage === 1">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="page-info">Seite {{ currentPage }} von {{ totalPages }}</span>
+                        <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Steuer aktualisieren' : 'Steuer hinzufügen'
-                }}</button>
-            <button type="button" class="btn btn-secondary ms-2" *ngIf="isEditMode"
-                (click)="resetForm()">Abbrechen</button>
-        </form>
-    </div>
-
-    <h3 style="text-align: center; font-weight: bold !important;">Steuerliste</h3>
-
-    <table class="table table-hover category-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Steuername</th>
-                <th>Wert (%)</th>
-                <th>Aktionen</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let tax of paginatedTaxes; let i = index">
-                <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-                <td>{{ tax.tax_name }}</td>
-                <td>{{ tax.tax_value }}%</td>
-                <td>
-                    <button style="margin-right: 5px;" class="btn btn-warning btn-sm" (click)="onEdit(tax)"><i
-                            class="fa fa-edit"></i></button>
-                    <button class="btn btn-danger btn-sm" (click)="onDelete(tax.id)"><i
-                            class="fa fa-trash"></i></button>
-                </td>
-            </tr>
-            <tr *ngIf="taxes.length === 0">
-                <td colspan="4" class="text-center py-4 text-muted">Keine Steuern gefunden.</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="pagination-controls">
-        <button (click)="previousPage()" [disabled]="currentPage === 1">Zurück</button>
-        <span>Seite {{ currentPage }} von {{ totalPages }}</span>
-        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Weiter</button>
+        </div>
     </div>
 </div>

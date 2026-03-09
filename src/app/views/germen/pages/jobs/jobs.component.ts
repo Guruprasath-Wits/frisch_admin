@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators,ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
-import { AdminService } from 'src/app/admin.service'; 
+import { AdminService } from '../../../../admin.service';
 import { CommonModule } from '@angular/common';
 
 interface Job {
@@ -15,15 +15,15 @@ interface Job {
   selector: 'app-jobs',
   templateUrl: './jobs.component.html',
   styleUrls: ['./jobs.component.scss'],
-  standalone:true,
-  imports:[ReactiveFormsModule,CommonModule]
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule]
 })
 export class JobsComponent implements OnInit {
   jobs: Job[] = [];
   jobForm: FormGroup;
   isEditMode: boolean = false;
   selectedJob: Job | null = null;
-  page: number = 1; 
+  page: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1;
 
@@ -92,7 +92,7 @@ export class JobsComponent implements OnInit {
   formatDescription(description: string): string {
     return description.replace(/\n/g, '<br>');
   }
-  
+
 
   onEdit(job: Job): void {
     this.isEditMode = true;
@@ -116,8 +116,8 @@ export class JobsComponent implements OnInit {
     }).then(result => {
       if (result.isConfirmed) {
         // this.jobService.deleteAdvantages(jobId).subscribe(
-          
-          this.jobService.deleteJobs(jobId).subscribe(
+
+        this.jobService.deleteJobs(jobId).subscribe(
           response => {
             this.jobs = this.jobs.filter(area => area.id !== jobId);
             Swal.fire('Deleted!', ' Jobs has been deleted.', 'success');

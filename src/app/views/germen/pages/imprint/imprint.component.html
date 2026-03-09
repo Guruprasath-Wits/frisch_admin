@@ -1,150 +1,176 @@
-<style>
-    .form-label {
-        font-weight: bold !important;
-    }
-    
-    .form-control {
-        width: 100% !important;
-    }
-    
-    .card {
-        max-width: 900px;
-        margin: auto;
-    }
-    
-    .row {
-        margin-bottom: 15px;
-    }
+<div class="container-fluid imprint-container fade-in">
+    <div class="row justify-content-center">
+        <div class="col-xl-9 col-lg-10">
+            <div class="premium-card">
+                <!-- Loading Spinner overlay -->
+                <div class="loading-overlay" *ngIf="isLoading">
+                    <div class="spinner-border text-warning" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
 
-    .btn-container {
-        text-align: center;
-    }
+                <!-- Premium Header -->
+                <div class="card-header-custom">
+                    <h2 class="card-title">Impressum & Legal</h2>
+                    <p class="card-subtitle">Rechtliche Informationen und Firmendaten verwalten</p>
+                </div>
 
-    .btn-warning {
-        width: 150px;
-    }
-</style>
+                <div class="card-body p-4 p-md-5">
+                    <form [formGroup]="imprintForm" (ngSubmit)="onSubmit()">
 
+                        <!-- Section 1: Company Information -->
+                        <div class="form-section mb-5">
+                            <div class="section-header">
+                                <i class="fas fa-building"></i>
+                                <h5>Company Information</h5>
+                            </div>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-group-custom">
+                                        <label class="form-label-custom">Owner / Name</label>
+                                        <div class="input-group-custom">
+                                            <i class="fas fa-user-tie input-icon"></i>
+                                            <input type="text" formControlName="name" class="form-control-custom"
+                                                placeholder="Enter full name" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group-custom">
+                                        <label class="form-label-custom">Company Name</label>
+                                        <div class="input-group-custom">
+                                            <i class="fas fa-industry input-icon"></i>
+                                            <input type="text" formControlName="company_name"
+                                                class="form-control-custom" placeholder="Enter company name" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group-custom">
+                                        <label class="form-label-custom">Full Address</label>
+                                        <div class="input-group-custom">
+                                            <i class="fas fa-map-marker-alt input-icon"></i>
+                                            <input type="text" formControlName="address" class="form-control-custom"
+                                                placeholder="Street, City, Zip, Country" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-<div class="container mt-4">
-    <h3 class="mb-4" style="text-align: center; font-weight: bold !important;">Imprint</h3>
-    <div class="card p-4 shadow">
-        <form [formGroup]="imprintForm" (ngSubmit)="onSubmit()">
-            <!-- Company Name -->
+                        <!-- Section 2: Contact & Business Type -->
+                        <div class="form-section mb-5">
+                            <div class="section-header">
+                                <i class="fas fa-address-book"></i>
+                                <h5>Contact & Business Details</h5>
+                            </div>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-group-custom">
+                                        <label class="form-label-custom">E-Mail Address</label>
+                                        <div class="input-group-custom">
+                                            <i class="fas fa-envelope input-icon"></i>
+                                            <input type="email" formControlName="email" class="form-control-custom"
+                                                placeholder="e.g. info@company.de" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group-custom">
+                                        <label class="form-label-custom">Mobile / Phone No</label>
+                                        <div class="input-group-custom">
+                                            <i class="fas fa-phone-alt input-icon"></i>
+                                            <input type="text" formControlName="tel" class="form-control-custom"
+                                                placeholder="+49 000 0000000" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group-custom">
+                                        <label class="form-label-custom">Business Type / Tax Info</label>
+                                        <div class="input-group-custom">
+                                            <i class="fas fa-briefcase input-icon"></i>
+                                            <input type="text" formControlName="business_type"
+                                                class="form-control-custom"
+                                                placeholder="e.g. Kleinunternehmerregelung" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="row">
-                <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="name" class="form-label">Name</label>
-                <input type="text" formControlName="name"  id="name" class="form-control" placeholder="Enter Name" />
-                <!-- <div *ngIf="settingForm.get('company_name')?.invalid && (settingForm.get('company_name')?.touched || settingForm.get('company_name')?.dirty)" class="text-danger small">
-                    <small *ngIf="settingForm.get('company_name')?.errors?.['required']">Company Name is required.</small>
-                </div> -->
-            </div>
-            </div>
+                        <!-- Section 3: Online Presence -->
+                        <div class="form-section mb-5">
+                            <div class="section-header">
+                                <i class="fas fa-globe"></i>
+                                <h5>Online Presence</h5>
+                            </div>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-group-custom">
+                                        <label class="form-label-custom">Platform Name</label>
+                                        <div class="input-group-custom">
+                                            <i class="fas fa-server input-icon"></i>
+                                            <input type="text" formControlName="platform" class="form-control-custom"
+                                                placeholder="e.g. Web, App" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group-custom">
+                                        <label class="form-label-custom">External Link / URL</label>
+                                        <div class="input-group-custom">
+                                            <i class="fas fa-link input-icon"></i>
+                                            <input type="text" formControlName="link" class="form-control-custom"
+                                                placeholder="https://..." />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="company_name" class="form-label">Company Name</label>
-                <input type="text" formControlName="company_name"  id="company_name"class="form-control" placeholder="Enter Company Name" />
-                <!-- <div *ngIf="settingForm.get('email')?.invalid && (settingForm.get('email')?.touched || settingForm.get('email')?.dirty)" class="text-danger small">
-                    <small *ngIf="settingForm.get('email')?.errors?.['required']">Email is required.</small>
-                </div> -->
-            </div>
+                        <!-- Section 4: Additional Content -->
+                        <div class="form-section mb-5">
+                            <div class="section-header">
+                                <i class="fas fa-file-contract"></i>
+                                <h5>Legal Notes & Privacy</h5>
+                            </div>
+                            <div class="row g-4">
+                                <div class="col-md-12">
+                                    <div class="form-group-custom">
+                                        <label class="form-label-custom">General Notes</label>
+                                        <div class="input-group-custom">
+                                            <i class="fas fa-sticky-note input-icon" style="top: 25px;"></i>
+                                            <textarea formControlName="notes" class="form-control-custom"
+                                                placeholder="Additional legal notes..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group-custom">
+                                        <label class="form-label-custom">Delivery App Privacy Policy</label>
+                                        <div class="input-group-custom">
+                                            <i class="fas fa-user-shield input-icon" style="top: 25px;"></i>
+                                            <textarea formControlName="privacy_policy" class="form-control-custom"
+                                                placeholder="Detailed privacy policy content..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
+                        <!-- Form Actions -->
+                        <div class="form-actions text-center mt-5">
+                            <button type="submit" class="btn-submit-premium"
+                                [disabled]="imprintForm.invalid || isLoading">
+                                <i class="fas" [ngClass]="isEditMode ? 'fa-sync-alt' : 'fa-check-circle'"></i>
+                                {{ isEditMode ? 'Update Imprint' : 'Save Imprint' }}
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
             </div>
         </div>
-           
-        <div class="row">
-
-           
-            <div class="col-md-6">
-            <!-- Contact Number -->
-            <div class="form-group mb-3">
-                <label for="address" class="form-label">Address</label>
-                <input type="text" id="address" formControlName="address"   class="form-control" placeholder="Enter Address" />
-                <!-- <div *ngIf="settingForm.get('contact_no')?.invalid && (settingForm.get('contact_no')?.touched || settingForm.get('contact_no')?.dirty)" class="text-danger small">
-                    <small *ngIf="settingForm.get('contact_no')?.errors?.['required']">Contact No is required.</small>
-                </div> -->
-            </div>
-            </div>
-
-            <div class="col-md-6">
-            <div class="form-group mb-4">
-                <label for="tel" class="form-label">Mobile No</label>
-                <input type="text" id="tel" formControlName="tel"   class="form-control" placeholder="Enter Mobile No" />
-            </div>
-            </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-        <div class="form-group mb-4">
-            <label for="email" class="form-label">E-Mail</label>
-            <input type="email" id="email" formControlName="email"  class="form-control" placeholder="Enter E-Mail" />
-        </div>
-        </div>
-
-        <div class="col-md-6">
-        <div class="form-group mb-4">
-            <label for="business_type" class="form-label">Business Type</label>
-            <input type="text" id="business_type" formControlName="business_type"  class="form-control" placeholder="Enter Business Type" />
-        </div>
-        </div>
-
-         
-
-    </div>
-
-
-    <div class="row">
-        <div class="col-md-6">
-        <div class="form-group mb-4">
-            <label for="platform" class="form-label">Platform</label>
-            <input type="text" id="platform"  formControlName="platform"  class="form-control" placeholder="Enter Platform" />
-        </div>
-        </div>
-        <div class="col-md-6">
-        <div class="form-group mb-4">
-            <label for="link" class="form-label">Link</label>
-            <input type="text" id="link"  class="form-control" formControlName="link" placeholder="Enter Link" />
-        </div>
-        </div>
-
-    </div>
-
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="form-group">
-                <label for="notes" class="form-label">Notes</label>
-                <input type="text" id="notes" formControlName="notes" class="form-control" placeholder="Enter Notes" />
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="form-group">
-                <label for="privacy_policy" class="form-label">Delivery App Privacy Policy</label>
-                <textarea id="privacy_policy" formControlName="privacy_policy" class="form-control" placeholder="Enter Privacy Policy"></textarea>
-
-            </div>
-        </div>
-    </div>
-
-        
-
-
-
-            <!-- Buttons -->
-            <div class="d-flex justify-content-between">
-                <button type="submit" style="margin-left: 620px;width: 150px;" class="btn btn-warning">
-                    {{ isEditMode ? 'Update' : 'Submit' }}
-                </button>
-                <!-- <button type="button" *ngIf="!isEditMode" class="btn btn-secondary" (click)="editSetting()">Edit</button> -->
-            </div>
-        </form>
     </div>
 </div>

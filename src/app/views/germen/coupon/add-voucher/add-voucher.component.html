@@ -1,34 +1,60 @@
-<div class="container-fluid">
-    <div class="form-card mb-4 mt-4">
-        <h2 class="title mb-4">{{ isEditMode ? 'Edit Voucher' : 'Add Voucher' }}</h2>
-
-        <form [formGroup]="voucherForm" (ngSubmit)="onSubmit()">
-            <div class="mb-3">
-                <label for="type" class="form-label">Voucher Type</label>
-                <input type="text" id="type" formControlName="type" class="form-control"
-                    placeholder="Enter voucher type">
-                <div *ngIf="voucherForm.get('type')?.touched && voucherForm.get('type')?.invalid"
-                    class="text-danger mt-1">
-                    Voucher type is required.
+<div class="container-fluid py-5">
+    <div class="premium-form-container fade-in">
+        <div class="premium-card">
+            <!-- Gradient Header Section -->
+            <div class="card-header-gradient">
+                <h2 class="form-title">{{ isEditMode ? 'Gutscheintyp bearbeiten' : 'Neuen Gutscheintyp erstellen' }}
+                </h2>
+                <div class="header-badge">
+                    <span>GUTSCHEINVERWALTUNG - BÄCKEREI</span>
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label for="description" class="form-label">Voucher Description</label>
-                <textarea id="description" formControlName="description" class="form-control" rows="3"
-                    placeholder="Enter voucher description"></textarea>
-                <div *ngIf="voucherForm.get('description')?.touched && voucherForm.get('description')?.invalid"
-                    class="text-danger mt-1">
-                    Voucher description is required.
-                </div>
-            </div>
+            <!-- Form Body -->
+            <div class="card-body-premium">
+                <form [formGroup]="voucherForm" (ngSubmit)="onSubmit()" class="modern-form">
+                    <div class="row">
+                        <!-- Voucher Type Name -->
+                        <div class="col-md-6 mb-4">
+                            <label for="type" class="form-label-premium">VOUCHER TYPE NAME *</label>
+                            <div class="input-container-premium">
+                                <i class="fas fa-tag input-icon"></i>
+                                <input type="text" id="type" formControlName="type" class="input-premium"
+                                    placeholder="Z.B., Rabattprozentsatz">
+                            </div>
+                            <div *ngIf="voucherForm.get('type')?.touched && voucherForm.get('type')?.invalid"
+                                class="error-message">
+                                Voucher type name is required.
+                            </div>
+                        </div>
 
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn submit-btn" [disabled]="voucherForm.invalid">
-                    {{ isEditMode ? 'Update Voucher' : 'Save Voucher' }}
-                </button>
-                <button type="button" class="btn cancel-btn" (click)="onCancel()">Cancel</button>
+                        <!-- Description -->
+                        <div class="col-md-6 mb-4">
+                            <label for="description" class="form-label-premium">BESCHREIBUNG *</label>
+                            <div class="input-container-premium">
+                                <i class="fas fa-align-left input-icon"></i>
+                                <input type="text" id="description" formControlName="description" class="input-premium"
+                                    placeholder="Z.B., Erhalte 20% Rabatt...">
+                            </div>
+                            <div *ngIf="voucherForm.get('description')?.touched && voucherForm.get('description')?.invalid"
+                                class="error-message">
+                                Description is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Actions -->
+                    <div class="form-actions-premium mt-4">
+                        <button type="submit" class="btn-premium save-btn" [disabled]="voucherForm.invalid">
+                            <i class="fas fa-check me-2"></i>
+                            {{ isEditMode ? 'GUTSCHEINTYP AKTUALISIEREN' : 'GUTSCHEINTYP ERSTELLEN' }}
+                        </button>
+                        <button type="button" class="btn-premium cancel-btn" (click)="onCancel()">
+                            ABBRECHEN
+                        </button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 </div>

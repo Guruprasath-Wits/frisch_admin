@@ -5,10 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { adminService } from '../../../../services/admin.services';
 import Swal from 'sweetalert2';
 
+import { TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-voucher-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './voucher-list.component.html',
   styleUrl: './voucher-list.component.scss'
 })
@@ -47,11 +49,11 @@ export class VoucherListComponent implements OnInit {
   }
 
   navigateToAddVoucher() {
-    this.router.navigate(['/coupon-management/manage-vouchers']);
+    this.router.navigate(['/coupon-management/add-voucher']);
   }
 
   onEdit(voucher: any) {
-    this.router.navigate(['/coupon-management/manage-vouchers'], { queryParams: { id: voucher.id } });
+    this.router.navigate(['/coupon-management/add-voucher'], { queryParams: { id: voucher.id } });
   }
 
   onDelete(id: number) {

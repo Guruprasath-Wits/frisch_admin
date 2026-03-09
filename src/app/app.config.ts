@@ -13,7 +13,10 @@ import { DropdownModule, SidebarModule } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { routes } from './app.routes';
 import { AdminService } from './admin.service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { StaticTranslateLoader } from './i18n-static.loader';
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,7 +33,18 @@ export const appConfig: ApplicationConfig = {
       withHashLocation()
     ),
     AdminService,
-    importProvidersFrom(SidebarModule, DropdownModule,HttpClientModule),
+    importProvidersFrom(
+      SidebarModule,
+      DropdownModule,
+      HttpClientModule,
+      TranslateModule.forRoot({
+        loader: {
+          provide: TranslateLoader,
+          useClass: StaticTranslateLoader
+        },
+        defaultLanguage: 'de'
+      })
+    ),
     IconSetService,
     provideAnimations()
   ]

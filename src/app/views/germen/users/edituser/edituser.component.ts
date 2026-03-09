@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../../../admin.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -26,6 +26,46 @@ export class EdituserComponent implements OnInit {
   userId: number = 0;
   user: any = {};  // Default initialization for user
   roles: any[] = []; // Initialize roles array
+  roleDropdownOpen: boolean = false;
+  liftDropdownOpen: boolean = false;
+
+  toggleRoleDropdown(): void {
+    this.roleDropdownOpen = !this.roleDropdownOpen;
+    if (this.roleDropdownOpen) this.liftDropdownOpen = false;
+  }
+
+  toggleLiftDropdown(): void {
+    this.liftDropdownOpen = !this.liftDropdownOpen;
+    if (this.liftDropdownOpen) this.roleDropdownOpen = false;
+  }
+
+  selectRole(role: any): void {
+    this.loginForm.patchValue({
+      role: role.role_name,
+      username: (this.loginForm.get('fname')?.value || '') + (this.loginForm.get('lname')?.value || '')
+    });
+    this.roleDropdownOpen = false;
+  }
+
+  selectLift(value: string): void {
+    this.loginForm.patchValue({ lift_availability: value });
+    this.liftDropdownOpen = false;
+  }
+
+  getSelectedRole(): string {
+    return this.loginForm.get('role')?.value || 'Select a role';
+  }
+
+  getSelectedLift(): string {
+    const val = this.loginForm.get('lift_availability')?.value;
+    if (val === 'Yes') return 'Ja';
+    if (val === 'No') return 'Nein';
+    return 'Select';
+  }
+
+  resetForm(): void {
+    this.router.navigate(['/users']);
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -86,7 +126,7 @@ export class EdituserComponent implements OnInit {
         this.roles = response.role || [];
         console.log('Roles loaded:', this.roles);  // Log roles for debugging
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading roles:', error);
       }
     });
@@ -95,11 +135,11 @@ export class EdituserComponent implements OnInit {
 
   fetchUserDetails() {
     this.adminService.getUserById(this.userId).subscribe(
-      (response) => {
+      (response: any) => {
         this.user = response.user;
         this.populateForm();
       },
-      (error) => {
+      (error: any) => {
         console.error('Error fetching user details:', error);
       }
     );
@@ -136,11 +176,11 @@ export class EdituserComponent implements OnInit {
     if (this.loginForm.valid) {
       const updatedUser = { id: this.userId, ...this.loginForm.value };
       this.adminService.updateUser(this.userId, updatedUser).subscribe(
-        (response) => {
+        (response: any) => {
           Swal.fire('User Updated', 'User updated successfully', 'success');
           this.router.navigate(['/users']);
         },
-        (error) => {
+        (error: any) => {
           Swal.fire('Error', 'Something went wrong', 'error');
           console.error('Error updating user:', error);
         }

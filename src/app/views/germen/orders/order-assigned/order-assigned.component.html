@@ -1,106 +1,175 @@
 <!-- Loader -->
 <div *ngIf="isLoading" class="loader-overlay">
-    <div class="loader"></div>
+    <div class="loader-premium"></div>
 </div>
 
-<div class="container mt-4">
-    <div class="filter-card p-4 mb-4">
-        <div class="row d-flex">
-            <h3 class="col-md-10 mb-3" style="font-weight: bold !important;">Order Assigned</h3>
-        </div>
-        <div class="row">
-
-            <div class="col-md-3 mb-3">
-                <input type="date" class="form-control filter-input" [(ngModel)]="searchDate" />
+<div class="order-container"
+    style="padding: 20px; background-color: transparent ; min-height: 100vh; width: 100%; max-width: 100%; animation: fadeIn 0.6s ease-out;">
+    <div class="premium-card">
+        <div class="card-header-premium">
+            <div class="header-content">
+                <h1 class="card-title">Order Assigned</h1>
+                <p class="mb-0 text-dark opacity-75">Review and manage assigned orders</p>
             </div>
-            <div class="col-md-6 mb-3">
-                <select class="form-control" [(ngModel)]="selectedDriver" required style="width: 50%;">
-                    <option value="" disabled>Select a Driver</option>
-                    <ng-container *ngFor="let driver of drivers">
-                        <option *ngIf="driver.role?.toLowerCase() === 'driver'" [value]="driver.id">
-                            {{ driver.username }}
-                        </option>
-
-                    </ng-container>
-                </select>
+            <div class="header-badge-premium">
+                TOTAL ORDERS: {{ mergedOrders.length }}
             </div>
-            <div class="col-md-6 mb-3">
-                <button (click)="GetOrder()" class="btn btn-warning" [disabled]="!searchDate || !selectedDriver">
-                    Get Order
-                </button>
-
-            </div>
-
         </div>
 
-        <button (click)="selectDateAndDownload()" class="btn btn-warning">Get Production House Report</button>
+        <div class="filter-strip">
+            <div class="search-grid-assigned">
+                <div class="date-input-premium">
+                    <label class="input-label-premium">Delivery Date</label>
+                    <div class="input-with-icon">
+                        <i class="far fa-calendar-alt input-icon-premium"></i>
+                        <input type="date" class="form-control-premium" [(ngModel)]="searchDate">
+                    </div>
+                </div>
 
-        <button style="margin-left: 20px;" (click)="getLabelReport()" class="btn btn-warning">Get Labels</button>
+                <div class="driver-select-premium">
+                    <label class="input-label-premium">Driver</label>
+                    <div class="custom-select-premium" [class.open]="isDriverDropdownOpen">
+                        <div class="select-trigger" (click)="toggleDriverDropdown()">
+                            <i class="fas fa-user-tie trigger-icon"></i>
+                            <span class="selected-value">{{ getSelectedDriverName() }}</span>
+                            <i class="fas fa-chevron-down arrow-icon"></i>
+                        </div>
 
-        <!-- <button style="margin-left: 20px;" (click)="SubscripOrders()" class="btn btn-warning">Subscription</button> -->
+                        <div class="select-options-container" *ngIf="isDriverDropdownOpen">
+                            <div class="option-item" *ngFor="let driver of drivers" (click)="selectDriverOption(driver)"
+                                [class.selected]="selectedDriver === driver.id.toString()">
+                                <div class="option-content">
+                                    <div class="driver-info">
+                                        <span class="driver-name">{{ driver.username }}</span>
+                                        <span class="driver-role">Driver Team</span>
+                                    </div>
+                                    <i class="fas fa-check check-icon"
+                                        *ngIf="selectedDriver === driver.id.toString()"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="action-buttons-strip">
+                    <button (click)="GetOrder()" class="btn-premium search-btn"
+                        [disabled]="!searchDate || !selectedDriver">
+                        <i class="fas fa-search"></i> Get Order
+                    </button>
 
-    </div>
+                    <button (click)="selectDateAndDownload()" class="btn-premium report-btn">
+                        <i class="fas fa-file-invoice"></i> Production Report
+                    </button>
 
-    <!-- Table with Pagination -->
-    <div class="table-card p-3">
-        <table class="table table-hover cursor-pointer">
-            <thead class="table-header">
-                <tr>
-                    <th>S.No</th>
-                    <th>Order ID</th>
-                    <th>Customer</th>
-                    <!-- <th>Product</th> -->
-                    <!-- <th>Quantity</th> -->
-                    <th>Price</th>
-                    <th>Delivery Date</th>
-                    <th>Address</th>
-                    <th>Contact</th>
-                    <th>Instruction</th>
-                    <th>Status</th>
-                    <th>Driver Name</th>
-                    <th *ngIf="hasDistanceColumn">Distance</th>
-                    <th *ngIf="hasTimeColumn">Time/Mins</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
+                    <button (click)="getLabelReport()" class="btn-premium label-btn">
+                        <i class="fas fa-tags"></i> Get Labels (PDF)
+                    </button>
 
-                <tr
-                    *ngFor="let order of mergedOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
-                    <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
-                    <td>{{ order.order_id }}</td>
-                    <td>{{ order.customerName }}</td>
+                    <button (click)="printPremiumLabels()" class="btn-premium search-btn" style="background: #9b59b6;">
+                        <i class="fas fa-print"></i> Premium Labels
+                    </button>
+                </div>
+            </div>
+        </div>
 
-                    <td>{{ order.price }}</td>
-                    <td>{{ order.delivery_date | date }}</td>
-                    <td>{{ order.address }}</td>
-                    <td>{{ order.contact }}</td>
-                    <td>{{ order.instruction }}</td>
-                    <td>{{ order.status }}</td>
-                    <td>{{ order.driverName }}</td>
-                    <td *ngIf="hasDistanceColumn">{{ order.distanceKm }}</td>
-                    <td *ngIf="hasTimeColumn">{{ order.estimatedTimeInMinutes }}</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm " style="margin: 5px;" (click)="editOrder(order)"> <i
-                                class="fa-solid fa-pencil"></i></button>
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Price</th>
+                        <th>Delivery Date</th>
+                        <th>Address</th>
+                        <th>Contact</th>
+                        <th>Instruction</th>
+                        <th>Status</th>
+                        <th>Driver</th>
+                        <th *ngIf="hasDistanceColumn" class="text-center">Distance</th>
+                        <th *ngIf="hasTimeColumn" class="text-center">Time</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        *ngFor="let order of mergedOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+                        <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
+                        <td><span class="order-id-badge">{{ order.order_id }}</span></td>
+                        <td>
+                            <div class="customer-info">
+                                <span class="customer-name-text">{{ order.customerName }}</span>
+                            </div>
+                        </td>
+                        <td><span class="price-text">€.{{ order.price }}</span></td>
+                        <td>
+                            <div class="date-text">
+                                <i class="far fa-calendar-alt"></i>
+                                {{ order.delivery_date | date:'mediumDate' }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="address-text">{{ order.address }}</div>
+                        </td>
+                        <td>{{ order.contact }}</td>
+                        <td>
+                            <div class="instruction-text" [title]="order.instruction">{{ order.instruction }}</div>
+                        </td>
+                        <td>
+                            <span class="status-badge" [ngClass]="order.status.toLowerCase()">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="driver-assigned">
+                                <i class="fas fa-user-circle"></i>
+                                {{ order.driverName }}
+                            </div>
+                        </td>
+                        <td *ngIf="hasDistanceColumn" class="text-center">
+                            <span class="metric-badge distance" *ngIf="order.distanceKm">{{ order.distanceKm }}
+                                km</span>
+                            <span *ngIf="!order.distanceKm">-</span>
+                        </td>
+                        <td *ngIf="hasTimeColumn" class="text-center">
+                            <span class="metric-badge time" *ngIf="order.estimatedTimeInMinutes">{{
+                                order.estimatedTimeInMinutes }} min</span>
+                            <span *ngIf="!order.estimatedTimeInMinutes">-</span>
+                        </td>
+                        <td class="text-center">
+                            <div class="action-cell">
+                                <button class="action-btn edit" (click)="editOrder(order)" title="Edit Allocation">
+                                    <i class="fas fa-pen-nib"></i>
+                                </button>
+                                <button class="action-btn view" (click)="viewOrder(order.order_id)"
+                                    title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="mergedOrders.length === 0">
+                        <td colspan="15" class="text-center py-5">
+                            <div class="empty-state">
+                                <i class="fas fa-clipboard-list fa-3x mb-3 text-muted opacity-25"></i>
+                                <p class="text-muted">No assigned orders found for the selected criteria.</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-                        <button (click)="viewOrder(order.order_id)" class="btn btn-warning btn-sm ml-2">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-
-
-
-
-        </table>
-
-        <div class="pagination-controls">
-            <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
-            <span>Page {{ page }} of {{ totalPages }}</span>
-            <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+        <div class="pagination-premium">
+            <button class="page-btn" (click)="previousPage()" [disabled]="page === 1">
+                <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            <div class="page-info">
+                Page <span>{{ page }}</span> of <span>{{ totalPages }}</span>
+            </div>
+            <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">
+                Next <i class="fas fa-chevron-right"></i>
+            </button>
         </div>
     </div>
 </div>

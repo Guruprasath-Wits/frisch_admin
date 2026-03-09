@@ -1,26 +1,259 @@
 @import "@coreui/coreui/scss/coreui";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
 :host {
-  .ng-scrollbar {
-    --scrollbar-padding: 1px;
-    --scrollbar-size: 5px;
-    --scrollbar-thumb-color: var(--cui-gray-500, #999);
-    --scrollbar-thumb-hover-color: var(--cui-gray-400, #999);
-    --scrollbar-hover-size: calc(var(--scrollbar-size) * 1.5);
-  }
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
-// ng-scrollbar css variables
-//.cui-scrollbar {
-//  --scrollbar-border-radius: 7px;
-//  --scrollbar-padding: 1px;
-//  --scrollbar-viewport-margin: 0;
-//  --scrollbar-track-color: transparent;
-//  --scrollbar-wrapper-color: transparent;
-//  --scrollbar-thumb-color: rgba(0, 0, 0, 0.2);
-//  --scrollbar-thumb-hover-color: var(--scrollbar-thumb-color);
-//  --scrollbar-size: 5px;
-//  --scrollbar-hover-size: var(--scrollbar-size);
-//  --scrollbar-thumb-transition: height ease-out 150ms, width ease-out 150ms;
-//  --scrollbar-track-transition: height ease-out 150ms, width ease-out 150ms;
-//}
+// Deep selector to override CoreUI Sidebar styles
+::ng-deep {
+  .sidebar {
+    // Midnight Gold Luxury Theme
+    --cui-sidebar-bg: transparent;
+    --cui-sidebar-width: 320px;
+    width: var(--cui-sidebar-width) !important;
+    background: linear-gradient(135deg, #131519 0%, #000000 100%); // ultra-premium black
+    --cui-sidebar-color: #e2e8f0;
+    --cui-sidebar-border-color: rgba(255, 215, 0, 0.1);
+    border-right: 1px solid var(--cui-sidebar-border-color);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+    z-index: 1030;
+
+    .sidebar-brand {
+      background: transparent !important;
+      backdrop-filter: none;
+      padding: 2rem 1rem;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.1); // Subtle gold divider
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      position: relative;
+      overflow: hidden;
+
+      // Shine effect for header
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+        animation: shine 8s infinite linear;
+      }
+
+      @keyframes shine {
+        0% {
+          left: -100%;
+        }
+
+        20% {
+          left: 100%;
+        }
+
+        100% {
+          left: 100%;
+        }
+      }
+
+      .sidebar-logo-container {
+        // Use min-width/height to prevent flexbox crushing
+        width: 55px;
+        height: 55px;
+        min-width: 55px;
+        min-height: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #FFF;
+        border-radius: 50%;
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); // Stronger glow
+        padding: 6px; // More breathing room
+        border: 2px solid #D4AF37;
+        flex-shrink: 0; // CRITICAL: Prevents squashing into an oval
+
+        .sidebar-logo {
+          width: 100%;
+          height: 100%;
+          object-fit: contain; // Ensures logo fits without stretching
+        }
+      }
+
+      .company-name {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        letter-spacing: 1px;
+        // Luxury Gold Gradient
+        background: linear-gradient(to right, #D4AF37, #FDB931, #D4AF37);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        margin: 0;
+        line-height: 1.2;
+        filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+        animation: shimmer 3s linear infinite;
+      }
+
+      @keyframes shimmer {
+        to {
+          background-position: 200% center;
+        }
+      }
+    }
+
+    .sidebar-nav {
+      padding: 1.5rem 1rem;
+
+      // Section Titles with separator line
+      .nav-title {
+        color: #475569;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+        padding-left: 1rem;
+        display: flex;
+        align-items: center;
+
+        &::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: linear-gradient(90deg, rgba(71, 85, 105, 0.3), transparent);
+          margin-left: 10px;
+        }
+      }
+
+      // Nav Items
+      .nav-item {
+        margin-bottom: 8px;
+        perspective: 1000px;
+
+        .nav-link {
+          border-radius: 12px; // More rounded
+          padding: 1rem 1.2rem;
+          color: #94a3b8;
+          font-weight: 500;
+          font-size: 0.95rem;
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          border: 1px solid transparent;
+          background: rgba(255, 255, 255, 0.01);
+          white-space: nowrap !important;
+          display: flex !important;
+          align-items: center !important;
+
+          .nav-icon {
+            color: #64748b;
+            transition: all 0.3s ease;
+            margin-right: 16px;
+            font-size: 1.2rem;
+            filter: drop-shadow(0 0 0 transparent);
+          }
+
+          &:hover {
+            background: rgba(255, 215, 0, 0.05); // Subtle gold tint
+            color: #FFF;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+
+            .nav-icon {
+              color: #FFD700; // Gold
+              filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+              transform: scale(1.1);
+            }
+          }
+
+          &.active {
+            // Radiant Gold Gradient
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
+            color: #000; // Black text on Gold background for high contrast luxury
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            font-weight: 800; // Bolder
+            border: none;
+
+            .nav-icon {
+              color: #000; // Black icon
+              filter: none;
+            }
+          }
+        }
+      }
+
+      // Submenus
+      .nav-group {
+        &.show {
+          background-color: rgba(0, 0, 0, 0.2);
+          border-radius: 16px;
+          padding: 8px;
+          margin: 8px 0 16px 0;
+          border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+      }
+
+      .nav-group-items {
+        padding-left: 0;
+
+        .nav-item {
+          margin-bottom: 4px;
+
+          .nav-link {
+            padding-left: 3.5rem;
+            font-size: 0.9rem;
+            background: transparent;
+            box-shadow: none;
+            border: none;
+            color: #94a3b8;
+            padding-top: 0.7rem;
+            padding-bottom: 0.7rem;
+
+            &:hover {
+              color: #f1f5f9;
+              background: rgba(255, 255, 255, 0.05);
+              transform: translateX(5px);
+            }
+
+            &.active {
+              color: #fbbf24;
+              font-weight: 600;
+              background: rgba(251, 191, 36, 0.08);
+
+              &::before {
+                content: '';
+                position: absolute;
+                left: 2rem;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background-color: #fbbf24;
+                box-shadow: 0 0 10px rgba(251, 191, 36, 0.8);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Slim Scrollbar
+  .ng-scrollbar {
+    --scrollbar-padding: 4px;
+    --scrollbar-size: 4px;
+    --scrollbar-thumb-color: rgba(148, 163, 184, 0.2);
+    --scrollbar-thumb-hover-color: #fbbf24;
+    --scrollbar-hover-size: 6px;
+    --scrollbar-track-color: transparent;
+    transition: all 0.3s;
+  }
+}

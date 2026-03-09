@@ -1,128 +1,284 @@
+/* Global Theme Variables */
+$primary: #f7ce3e;
+$primary-hover: #e6be2a;
+$secondary: #2d3436;
+$text-main: #2d3436;
+$text-muted: #636e72;
+$bg-body: #f8f9fa;
+$card-bg: #ffffff;
+$border-color: #f1f2f6;
+$shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05);
+$shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.1);
+$radius: 20px;
+$input-bg: #f8f9fa;
+
 .container-fluid {
+    padding: 40px 20px;
+    background-color: transparent;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: 80vh;
-    /* Centers vertically within the viewport */
-    padding: 20px;
+    align-items: flex-start;
+    animation: fadeIn 0.6s ease-out;
 }
 
-.form-card {
-    background-color: #f0f7ff;
-    border: 1px solid #c2d9ff;
-    border-radius: 8px;
-    padding: 32px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    width: 100%;
-    max-width: 1400px;
-}
-
-.form-title {
-    color: #1a1a1a;
-    font-weight: 700;
-    font-size: 1.5rem;
-    margin-bottom: 8px;
-}
-
-.form-subtitle {
-    color: #666;
-    font-size: 0.95rem;
-    margin-bottom: 24px;
-}
-
-.form-label {
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 8px;
-    display: block;
-}
-
-.form-control,
-.form-select {
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    padding: 14px 20px;
-    font-size: 1.1rem;
-    height: 55px;
-    background-color: #fff;
-    transition: all 0.2s ease;
-
-    &:focus {
-        border-color: #5d5fef;
-        box-shadow: 0 0 0 0.2rem rgba(93, 95, 239, 0.1);
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
 
-    &.dropdown-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        text-align: left;
-        color: #495057;
-
-        &::after {
-            margin-left: auto;
-        }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-.form-check {
-    padding: 8px 12px;
-    border-radius: 4px;
-    transition: background 0.2s;
-
-    &:hover {
-        background-color: #f8f9fa;
-    }
-
-    .form-check-label {
-        font-weight: 500;
-        color: #333;
-        cursor: pointer;
-        width: 100%;
-    }
-
-    .form-check-input {
-        cursor: pointer;
-        width: 1.2rem;
-        height: 1.2rem;
-        margin-top: 0.15rem;
-
-        &:checked {
-            background-color: #5d5fef;
-            border-color: #5d5fef;
-        }
-    }
-}
-
-.submit-btn {
-    background-color: #5d5fef;
-    color: #fff;
-    font-weight: 600;
-    padding: 12px 24px;
-    border-radius: 8px;
+/* Premium Card Design */
+.premium-card {
+    background: $card-bg;
     border: none;
+    border-radius: $radius;
+    box-shadow: $shadow-soft;
+    overflow: hidden;
+    width: 100%;
+    max-width: 1300px; // Increased from 1000px to reduce side space
+    position: relative;
     transition: all 0.3s ease;
 
-    &:hover:not(:disabled) {
-        background-color: #4a4cd9;
-    }
-
-    &:disabled {
-        background-color: #a0a0ff;
-        cursor: not-allowed;
+    &:hover {
+        box-shadow: $shadow-hover;
     }
 }
 
-.cancel-btn {
-    background-color: #e2e2e2;
-    color: #333;
-    font-weight: 600;
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: none;
-    transition: all 0.2s ease;
+.card-header-premium {
+    padding: 40px 30px;
+    background: linear-gradient(135deg, #f7ce3e 0%, #9D4EDF 100%);
+    text-align: center;
+    position: relative;
 
-    &:hover {
-        background-color: #d0d0d0;
+    .card-title {
+        font-size: 1.85rem;
+        font-weight: 800;
+        color: #2d3436;
+        margin-bottom: 12px;
+        letter-spacing: -0.5px;
+    }
+
+    .header-badge {
+        display: inline-block;
+        padding: 8px 25px;
+        background: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 30px;
+        color: #2d3436;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+}
+
+/* Form Body */
+.coupon-form-premium {
+    padding: 40px;
+
+    .form-label-premium {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: $text-main;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .input-group-premium {
+        position: relative;
+        margin-bottom: 25px;
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #b2bec3;
+            transition: color 0.3s ease;
+            z-index: 2;
+        }
+
+        .form-control-premium,
+        .form-select-premium {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 2px solid transparent;
+            background-color: $input-bg;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: $text-main;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            height: auto;
+
+            &::placeholder {
+                color: #b2bec3;
+            }
+
+            &:focus {
+                background-color: #fff;
+                border-color: $primary;
+                box-shadow: 0 0 0 4px rgba($primary, 0.15);
+                outline: none;
+
+                &+.input-icon {
+                    color: $primary;
+                }
+            }
+        }
+
+        select.form-select-premium {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23636e72' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+        }
+
+        /* Custom Look for the Dropdown Toggle Button */
+        .dropdown-trigger-premium {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            background-color: $input-bg;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            text-align: left;
+            font-weight: 500;
+            color: $text-main;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background-color: #f1f2f6;
+            }
+
+            &:focus {
+                background-color: #fff;
+                border-color: $primary;
+                box-shadow: 0 0 0 4px rgba($primary, 0.15);
+            }
+        }
+    }
+}
+
+/* User Selection Dropdown */
+.dropdown-menu-premium {
+    border: none !important;
+    border-radius: 15px !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15) !important;
+    padding: 15px !important;
+    margin-top: 10px !important;
+    border: 1px solid #f1f2f6 !important;
+
+    .user-list-item {
+        padding: 10px;
+        border-radius: 10px;
+        transition: all 0.2s;
+
+        &:hover {
+            background-color: rgba($primary, 0.1);
+        }
+
+        .form-check-input {
+            accent-color: $primary;
+            cursor: pointer;
+        }
+
+        .form-check-label {
+            cursor: pointer;
+            font-weight: 600;
+            color: $text-main;
+            margin-left: 10px;
+            font-size: 0.9rem;
+        }
+    }
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+
+    .btn-save-premium {
+        flex: 2;
+        padding: 16px;
+        background: #bdc3c7;
+        color: #fff;
+        border: none;
+        border-radius: 15px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+
+        &.active {
+            background: linear-gradient(45deg, #f7ce3e, #f1c40f);
+            color: #2d3436;
+            box-shadow: 0 8px 25px rgba(247, 206, 62, 0.4);
+
+            &:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 12px 30px rgba(247, 206, 62, 0.6);
+            }
+        }
+
+        &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+    }
+
+    .btn-cancel-premium {
+        flex: 1;
+        padding: 16px;
+        background: #f1f2f6;
+        color: $text-muted;
+        border: none;
+        border-radius: 15px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &:hover {
+            background: #e1e2e6;
+            color: $secondary;
+        }
+    }
+}
+
+/* Error Styling */
+.error-tip {
+    color: #e74c3c;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-left: 5px;
+
+    &::before {
+        content: "\f06a";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
     }
 }

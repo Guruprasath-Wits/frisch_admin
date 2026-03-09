@@ -1,28 +1,52 @@
-<div class="notification-list">
-  <!-- Filter Buttons -->
-  <div class="filter-buttons mb-3">
-    <button class="btn btn-warning" (click)="onFilterChange('all')">All</button>
-    <button class="btn btn-warning" (click)="onFilterChange('unread')">Unread</button>
-    <button class="btn btn-warning" (click)="onFilterChange('read')">Read</button>
+<div class="notification-container fade-in">
+  <div class="header-section">
+    <h2 class="page-title">Notifications</h2>
+
+    <div class="filter-tabs">
+      <button class="tab-btn" [class.active]="filterStatus === 'all'" (click)="onFilterChange('all')">
+        All
+      </button>
+      <button class="tab-btn" [class.active]="filterStatus === 'unread'" (click)="onFilterChange('unread')">
+        Unread
+        <span *ngIf="filterStatus !== 'unread'" class="badge-dot"></span>
+      </button>
+      <button class="tab-btn" [class.active]="filterStatus === 'read'" (click)="onFilterChange('read')">
+        Read
+      </button>
+    </div>
   </div>
 
-  <!-- Notification Cards -->
-  <div *ngFor="let notification of filteredNotifications" 
-       class="card notification-card mb-2"
-       [ngClass]="{'read': notification.status === 'read', 'unread': notification.status === 'unread'}">
+  <div class="notification-list">
+    <div *ngIf="filteredNotifications.length === 0" class="empty-state">
+      <i class="fas fa-bell-slash"></i>
+      <p>No notifications found.</p>
+    </div>
 
-    <div class="card-body">
-      <h5 class="card-title">{{ notification.title }}</h5>
-      <p class="card-text">{{ notification.created_at | date:'medium' }}</p>
+    <div *ngFor="let notification of filteredNotifications" class="notification-card"
+      [class.unread]="notification.status === 'unread'" (click)="viewNotification(notification.id)">
 
-      <button class="btn view-btn" (click)="viewNotification(notification.id)">
-        <i class="fas fa-eye" 
-           [ngClass]="{
-             'read-icon': notification.status === 'read', 
-             'unread-icon': notification.status === 'unread'
-           }">
-        </i>
-      </button>
+      <div class="card-left">
+        <div class="icon-circle" [style.background-color]="getIconColor(notification.title) + '20'"
+          [style.color]="getIconColor(notification.title)">
+          <i [class]="getIcon(notification.title)"></i>
+        </div>
+      </div>
+
+      <div class="card-content">
+        <div class="content-header">
+          <h5 class="notification-title">{{ notification.title }}</h5>
+          <span class="notification-date">{{ notification.created_at | date:'MMM d, y, h:mm a' }}</span>
+        </div>
+        <p class="notification-desc">{{ notification.desc }}</p>
+      </div>
+
+      <div class="card-right">
+        <span *ngIf="notification.status === 'unread'" class="status-indicator" title="Unread"></span>
+        <button class="btn-icon">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+
     </div>
   </div>
 </div>

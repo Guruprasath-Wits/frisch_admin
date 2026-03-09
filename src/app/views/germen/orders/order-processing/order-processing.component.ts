@@ -68,6 +68,7 @@ export class OrderProcessingComponent implements OnInit {
   userLongitude: number = 7.4179611;
 
   totalEstimatedTime: number = 0;
+  isDriverDropdownOpen: boolean = false;
 
 
   // Search Fields
@@ -478,99 +479,99 @@ export class OrderProcessingComponent implements OnInit {
     this.Orders.forEach((order) => (order.selected = isChecked));
   }
 
- indexCounter = 0;
+  indexCounter = 0;
 
-// assignOrdersToDrivers(): void {
-//   if (!this.selectedDriver) {
-//     Swal.fire('Error', 'Please select a driver', 'error');
-//     return;
-//   }
+  // assignOrdersToDrivers(): void {
+  //   if (!this.selectedDriver) {
+  //     Swal.fire('Error', 'Please select a driver', 'error');
+  //     return;
+  //   }
 
-//   const driverId = this.selectedDriver;
-//   const driverObj = this.drivers.find(driver => driver.id == driverId);
+  //   const driverId = this.selectedDriver;
+  //   const driverObj = this.drivers.find(driver => driver.id == driverId);
 
-//   // ✅ Use nearest-first route result instead of random selection order
-//   const selectedOrders = this.subscriptionOrders;
+  //   // ✅ Use nearest-first route result instead of random selection order
+  //   const selectedOrders = this.subscriptionOrders;
 
-//   if (!selectedOrders || selectedOrders.length === 0) {
-//     Swal.fire('Error', 'Please select at least one order', 'error');
-//     return;
-//   }
+  //   if (!selectedOrders || selectedOrders.length === 0) {
+  //     Swal.fire('Error', 'Please select at least one order', 'error');
+  //     return;
+  //   }
 
-//   const selectedNormalOrders = selectedOrders.filter((order: any) => order.type === 'normal');
-//   const selectedSubscriptionOrders = selectedOrders.filter((order: any) => order.type === 'subscription');
+  //   const selectedNormalOrders = selectedOrders.filter((order: any) => order.type === 'normal');
+  //   const selectedSubscriptionOrders = selectedOrders.filter((order: any) => order.type === 'subscription');
 
-//   if (selectedNormalOrders.length !== 0) {
-//     this.adminService.assignOrdersToDriver({
-//       driverId: driverId,
-//       orderIds: selectedOrders.map(order => order.id),
-//     }).subscribe(
-//       (response: any) => {
-//         // ✅ Assign unique index_id based on nearest-first order
-//         const ordersToStore = selectedOrders.map((order: any, idx: number) => {
-//           const { id, ...rest } = order;
+  //   if (selectedNormalOrders.length !== 0) {
+  //     this.adminService.assignOrdersToDriver({
+  //       driverId: driverId,
+  //       orderIds: selectedOrders.map(order => order.id),
+  //     }).subscribe(
+  //       (response: any) => {
+  //         // ✅ Assign unique index_id based on nearest-first order
+  //         const ordersToStore = selectedOrders.map((order: any, idx: number) => {
+  //           const { id, ...rest } = order;
 
-//           let updatedDeliveryDate: string | null = null;
-//           if (order.delivery_date) {
-//             const d = new Date(order.delivery_date);
-//             updatedDeliveryDate =
-//               d.getFullYear() + '-' +
-//               String(d.getMonth() + 1).padStart(2, '0') + '-' +
-//               String(d.getDate()).padStart(2, '0');
-//           }
+  //           let updatedDeliveryDate: string | null = null;
+  //           if (order.delivery_date) {
+  //             const d = new Date(order.delivery_date);
+  //             updatedDeliveryDate =
+  //               d.getFullYear() + '-' +
+  //               String(d.getMonth() + 1).padStart(2, '0') + '-' +
+  //               String(d.getDate()).padStart(2, '0');
+  //           }
 
-//           this.indexCounter++;
+  //           this.indexCounter++;
 
-//           return {
-//             ...rest,
-//             delivery_date: updatedDeliveryDate,
-//             index_id: idx + 1,  // ✅ order by nearest
-//             status: "Assigned",
-//             driver_id: driverObj?.id || driverId,
-//             driverName: driverObj?.username || '',
-//           };
-//         });
+  //           return {
+  //             ...rest,
+  //             delivery_date: updatedDeliveryDate,
+  //             index_id: idx + 1,  // ✅ order by nearest
+  //             status: "Assigned",
+  //             driver_id: driverObj?.id || driverId,
+  //             driverName: driverObj?.username || '',
+  //           };
+  //         });
 
-//         console.log('✅ Orders to store (nearest-first):', ordersToStore);
+  //         console.log('✅ Orders to store (nearest-first):', ordersToStore);
 
-//         this.adminService.storeProcessedOrders(ordersToStore).subscribe(
-//           res => console.log('Orders stored successfully', res),
-//           err => console.error('Error storing processed orders', err)
-//         );
+  //         this.adminService.storeProcessedOrders(ordersToStore).subscribe(
+  //           res => console.log('Orders stored successfully', res),
+  //           err => console.error('Error storing processed orders', err)
+  //         );
 
-//         ordersToStore.forEach(order => {
-//           const driverPerformance = {
-//             driver_id: driverObj?.id || this.selectedDriver,
-//             driverName: order.driverName,
-//             delivery_date: order.delivery_date,
-//             delivery_time: parseInt(order.estimatedTimeInMinutes, 10) || 0,
-//             delivery_distance: parseFloat(order.distanceKm) || 0,
-//             total_delivery: 1,
-//           };
+  //         ordersToStore.forEach(order => {
+  //           const driverPerformance = {
+  //             driver_id: driverObj?.id || this.selectedDriver,
+  //             driverName: order.driverName,
+  //             delivery_date: order.delivery_date,
+  //             delivery_time: parseInt(order.estimatedTimeInMinutes, 10) || 0,
+  //             delivery_distance: parseFloat(order.distanceKm) || 0,
+  //             total_delivery: 1,
+  //           };
 
-//           this.adminService.createDriverPerformance(driverPerformance).subscribe(
-//             res => console.log('Driver performance stored successfully', res),
-//             err => console.error('Error storing driver performance', err)
-//           );
-//         });
+  //           this.adminService.createDriverPerformance(driverPerformance).subscribe(
+  //             res => console.log('Driver performance stored successfully', res),
+  //             err => console.error('Error storing driver performance', err)
+  //           );
+  //         });
 
-//         Swal.fire('Success', response.message || 'Orders assigned successfully', 'success');
-//         this.loadOrders();
-//       },
-//       (error) => {
-//         console.error('Error assigning orders:', error);
-//         Swal.fire('Error', error.error.message || 'Failed to assign orders', 'error');
-//       }
-//     );
-//   }
+  //         Swal.fire('Success', response.message || 'Orders assigned successfully', 'success');
+  //         this.loadOrders();
+  //       },
+  //       (error) => {
+  //         console.error('Error assigning orders:', error);
+  //         Swal.fire('Error', error.error.message || 'Failed to assign orders', 'error');
+  //       }
+  //     );
+  //   }
 
-//   if (selectedSubscriptionOrders.length !== 0) {
-//     this.assignOrdersToDriverss();
-//   }
+  //   if (selectedSubscriptionOrders.length !== 0) {
+  //     this.assignOrdersToDriverss();
+  //   }
 
-//   this.selectedDriver = null;
-//   this.router.navigate(['/orders/assignOrders']);
-// }
+  //   this.selectedDriver = null;
+  //   this.router.navigate(['/orders/assignOrders']);
+  // }
 
 
 
@@ -680,259 +681,259 @@ export class OrderProcessingComponent implements OnInit {
 
   assignOrdersToDrivers(): void {
 
-  if (!this.selectedDriver) {
-    Swal.fire('Error', 'Please select a driver', 'error');
-    return;
-  }
-
-  const driverId = this.selectedDriver;
-  const driverObj = this.drivers.find(d => d.id == driverId);
-
-  const selectedOrders = this.subscriptionOrders.filter(o => o.selected);
-
-  if (selectedOrders.length === 0) {
-    Swal.fire('Error', 'Please select at least one order', 'error');
-    return;
-  }
-
-  const normalOrders = selectedOrders.filter(o => o.type === 'normal');
-  const subscriptionOrders = selectedOrders.filter(o => o.type === 'subscription');
-
-  /* ================= CALL BOTH APIS ================= */
-
-  const apiCalls: any[] = [];
-
-  // ✅ NORMAL → assignOrdersToDrivers
-  if (normalOrders.length > 0) {
-    apiCalls.push(
-      this.adminService.assignOrdersToDriver({
-        driverId,
-        orderIds: normalOrders.map(o => o.id)
-      })
-    );
-  }
-
-  // ✅ SUBSCRIPTION → assignOrdersToDriverss
-  if (subscriptionOrders.length > 0) {
-    apiCalls.push(
-      this.adminService.assignOrdersToDrivers({
-        driverId,
-        orderIds: subscriptionOrders.map(o => o.id)
-      })
-    );
-  }
-
-  /* ================= EXECUTE APIS ================= */
-
-  if (apiCalls.length > 0) {
-    forkJoin(apiCalls).subscribe(
-      () => {
-        this.storeAndPerformance(selectedOrders, driverId, driverObj);
-      },
-      err => {
-        console.error('Assign error:', err);
-        Swal.fire('Error', 'Failed to assign orders', 'error');
-      }
-    );
-  } else {
-    // safety fallback
-    this.storeAndPerformance(selectedOrders, driverId, driverObj);
-  }
-}
-
-
-
-private storeAndPerformance(
-  orders: any[],
-  driverId: any,
-  driverObj: any
-): void {
-
-  const ordersToStore = orders.map((order: any, idx: number) => {
-
-    const { id, ...rest } = order;
-
-    let delivery_date = null;
-    if (order.delivery_date) {
-      const d = new Date(order.delivery_date);
-      delivery_date =
-        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    }
-
-    return {
-      ...rest,
-      delivery_date,
-      index_id: idx + 1,
-      status: 'Assigned',
-      driver_id: driverObj?.id || driverId,
-      driverName: driverObj?.username || '',
-    };
-  });
-
-  // STORE
-  this.adminService.storeProcessedOrders(ordersToStore).subscribe();
-
-  // PERFORMANCE
-  ordersToStore.forEach(order => {
-    this.adminService.createDriverPerformance({
-      driver_id: driverObj?.id || driverId,
-      driverName: order.driverName,
-      delivery_date: order.delivery_date,
-      delivery_time: parseInt(order.estimatedTimeInMinutes, 10) || 0,
-      delivery_distance: parseFloat(order.distanceKm) || 0,
-      total_delivery: 1,
-    }).subscribe();
-  });
-
-  Swal.fire('Success', 'Orders assigned successfully', 'success');
-  this.loadOrders();
-  this.selectedDriver = null;
-  this.router.navigate(['/orders/assignOrders']);
-}
-
-
-
-calculateRouteThroughOrders(): void {
-  const selectedOrders = this.allOrdersMerged.filter(order => order.selected);
-
-  if (selectedOrders.length === 0) {
-    Swal.fire('Error', 'Please select at least one order', 'error');
-    return;
-  }
-
-  const origin = 'Bäckerei Vorwerk, Höfkerstraße 38, 44149 Dortmund';
-  const directionsService = new google.maps.DirectionsService();
-
-  let currentOrigin = origin;
-  let cumulativeTime = 0;
-  const maxAllowedTime = 240; // 4 hours
-  const finalOrders: any[] = [];
-  let removedCount = 0;
-
-  const remainingOrders = [...selectedOrders];
-
-  const processNext = () => {
-    if (remainingOrders.length === 0) {
-      if (removedCount > 0) {
-        Swal.fire(
-          'Time Limit Exceeded',
-          `${removedCount} orders were unselected to stay within 4 hours`,
-          'warning'
-        );
-      }
-
-      this.subscriptionOrders = finalOrders.map(o => ({
-        ...o,
-        selected: true
-      }));
-
-      this.Orders.forEach(order => {
-        if (!finalOrders.find(o => o.order_id === order.order_id)) {
-          order.selected = false;
-          order.distanceKm = undefined;
-          order.estimatedTimeInMinutes = undefined;
-          order.lat = '';
-          order.lng = '';
-        }
-      });
-
-      this.totalEstimatedTime = Math.ceil(cumulativeTime);
-      console.log('✅ Final Route Sequence:', this.subscriptionOrders);
-      this.assignEnabled = true;
+    if (!this.selectedDriver) {
+      Swal.fire('Error', 'Please select a driver', 'error');
       return;
     }
 
-    // Handle same-address orders
-    const lastOrder = finalOrders[finalOrders.length - 1];
+    const driverId = this.selectedDriver;
+    const driverObj = this.drivers.find(d => d.id == driverId);
 
-    for (let i = 0; i < remainingOrders.length; i++) {
-      const order = remainingOrders[i];
+    const selectedOrders = this.subscriptionOrders.filter(o => o.selected);
 
-      if (lastOrder && lastOrder.address === order.address) {
-        // Same location as last order
-        order.distanceKm = 0;
-        order.estimatedTimeInMinutes = 0;
-        order.lat = lastOrder.lat;
-        order.lng = lastOrder.lng;
-        finalOrders.push(order);
-        remainingOrders.splice(i, 1);
-        i--; // adjust index after removal
-        continue;
-      }
-    }
-
-    if (remainingOrders.length === 0) {
-      processNext();
+    if (selectedOrders.length === 0) {
+      Swal.fire('Error', 'Please select at least one order', 'error');
       return;
     }
 
-    // Calculate routes to all remaining orders from currentOrigin
-    let results: { order: any; result: any; status: any }[] = [];
-    let processed = 0;
+    const normalOrders = selectedOrders.filter(o => o.type === 'normal');
+    const subscriptionOrders = selectedOrders.filter(o => o.type === 'subscription');
 
-    remainingOrders.forEach(order => {
-      directionsService.route(
-        {
-          origin: currentOrigin,
-          destination: order.address,
-          travelMode: google.maps.TravelMode.DRIVING
+    /* ================= CALL BOTH APIS ================= */
+
+    const apiCalls: any[] = [];
+
+    // ✅ NORMAL → assignOrdersToDrivers
+    if (normalOrders.length > 0) {
+      apiCalls.push(
+        this.adminService.assignOrdersToDriver({
+          driverId,
+          orderIds: normalOrders.map(o => o.id)
+        })
+      );
+    }
+
+    // ✅ SUBSCRIPTION → assignOrdersToDriverss
+    if (subscriptionOrders.length > 0) {
+      apiCalls.push(
+        this.adminService.assignOrdersToDrivers({
+          driverId,
+          orderIds: subscriptionOrders.map(o => o.id)
+        })
+      );
+    }
+
+    /* ================= EXECUTE APIS ================= */
+
+    if (apiCalls.length > 0) {
+      forkJoin(apiCalls).subscribe(
+        () => {
+          this.storeAndPerformance(selectedOrders, driverId, driverObj);
         },
-        (result: any, status: any) => {
-          results.push({ order, result, status });
-          processed++;
-
-          if (processed === remainingOrders.length) {
-            const valid = results.filter(r => r.status === 'OK' && r.result?.routes?.length);
-            if (!valid.length) {
-              Swal.fire('Error', 'Failed to get directions for remaining orders', 'error');
-              return;
-            }
-
-            // Pick nearest by duration
-            valid.sort((a, b) => {
-              const durA = a.result.routes[0].legs[0].duration?.value || Infinity;
-              const durB = b.result.routes[0].legs[0].duration?.value || Infinity;
-              return durA - durB;
-            });
-
-            const nearest = valid[0];
-            const leg = nearest.result.routes[0].legs[0];
-            const distanceKm = leg.distance?.value ? leg.distance.value / 1000 : 0;
-            const durationMin = leg.duration?.value ? leg.duration.value / 60 : 0;
-
-            console.log(
-              `📍 Nearest order chosen from "${currentOrigin}" ->`,
-              nearest.order.address,
-              `(${distanceKm.toFixed(2)} km, ${Math.ceil(durationMin)} min)`
-            );
-
-            if (cumulativeTime + durationMin <= maxAllowedTime) {
-              nearest.order.distanceKm = parseFloat(distanceKm.toFixed(1));
-              nearest.order.estimatedTimeInMinutes = Math.ceil(durationMin);
-              nearest.order.lat = leg.end_location?.lat();
-              nearest.order.lng = leg.end_location?.lng();
-
-              cumulativeTime += durationMin;
-              finalOrders.push(nearest.order);
-
-              currentOrigin = nearest.order.address;
-            } else {
-              nearest.order.selected = false;
-              removedCount++;
-            }
-
-            const idx = remainingOrders.findIndex(o => o.order_id === nearest.order.order_id);
-            if (idx !== -1) remainingOrders.splice(idx, 1);
-
-            processNext();
-          }
+        err => {
+          console.error('Assign error:', err);
+          Swal.fire('Error', 'Failed to assign orders', 'error');
         }
       );
-    });
-  };
+    } else {
+      // safety fallback
+      this.storeAndPerformance(selectedOrders, driverId, driverObj);
+    }
+  }
 
-  processNext();
-}
+
+
+  private storeAndPerformance(
+    orders: any[],
+    driverId: any,
+    driverObj: any
+  ): void {
+
+    const ordersToStore = orders.map((order: any, idx: number) => {
+
+      const { id, ...rest } = order;
+
+      let delivery_date = null;
+      if (order.delivery_date) {
+        const d = new Date(order.delivery_date);
+        delivery_date =
+          `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      }
+
+      return {
+        ...rest,
+        delivery_date,
+        index_id: idx + 1,
+        status: 'Assigned',
+        driver_id: driverObj?.id || driverId,
+        driverName: driverObj?.username || '',
+      };
+    });
+
+    // STORE
+    this.adminService.storeProcessedOrders(ordersToStore).subscribe();
+
+    // PERFORMANCE
+    ordersToStore.forEach(order => {
+      this.adminService.createDriverPerformance({
+        driver_id: driverObj?.id || driverId,
+        driverName: order.driverName,
+        delivery_date: order.delivery_date,
+        delivery_time: parseInt(order.estimatedTimeInMinutes, 10) || 0,
+        delivery_distance: parseFloat(order.distanceKm) || 0,
+        total_delivery: 1,
+      }).subscribe();
+    });
+
+    Swal.fire('Success', 'Orders assigned successfully', 'success');
+    this.loadOrders();
+    this.selectedDriver = null;
+    this.router.navigate(['/orders/assignOrders']);
+  }
+
+
+
+  calculateRouteThroughOrders(): void {
+    const selectedOrders = this.allOrdersMerged.filter(order => order.selected);
+
+    if (selectedOrders.length === 0) {
+      Swal.fire('Error', 'Please select at least one order', 'error');
+      return;
+    }
+
+    const origin = 'Bäckerei Vorwerk, Höfkerstraße 38, 44149 Dortmund';
+    const directionsService = new google.maps.DirectionsService();
+
+    let currentOrigin = origin;
+    let cumulativeTime = 0;
+    const maxAllowedTime = 240; // 4 hours
+    const finalOrders: any[] = [];
+    let removedCount = 0;
+
+    const remainingOrders = [...selectedOrders];
+
+    const processNext = () => {
+      if (remainingOrders.length === 0) {
+        if (removedCount > 0) {
+          Swal.fire(
+            'Time Limit Exceeded',
+            `${removedCount} orders were unselected to stay within 4 hours`,
+            'warning'
+          );
+        }
+
+        this.subscriptionOrders = finalOrders.map(o => ({
+          ...o,
+          selected: true
+        }));
+
+        this.Orders.forEach(order => {
+          if (!finalOrders.find(o => o.order_id === order.order_id)) {
+            order.selected = false;
+            order.distanceKm = undefined;
+            order.estimatedTimeInMinutes = undefined;
+            order.lat = '';
+            order.lng = '';
+          }
+        });
+
+        this.totalEstimatedTime = Math.ceil(cumulativeTime);
+        console.log('✅ Final Route Sequence:', this.subscriptionOrders);
+        this.assignEnabled = true;
+        return;
+      }
+
+      // Handle same-address orders
+      const lastOrder = finalOrders[finalOrders.length - 1];
+
+      for (let i = 0; i < remainingOrders.length; i++) {
+        const order = remainingOrders[i];
+
+        if (lastOrder && lastOrder.address === order.address) {
+          // Same location as last order
+          order.distanceKm = 0;
+          order.estimatedTimeInMinutes = 0;
+          order.lat = lastOrder.lat;
+          order.lng = lastOrder.lng;
+          finalOrders.push(order);
+          remainingOrders.splice(i, 1);
+          i--; // adjust index after removal
+          continue;
+        }
+      }
+
+      if (remainingOrders.length === 0) {
+        processNext();
+        return;
+      }
+
+      // Calculate routes to all remaining orders from currentOrigin
+      let results: { order: any; result: any; status: any }[] = [];
+      let processed = 0;
+
+      remainingOrders.forEach(order => {
+        directionsService.route(
+          {
+            origin: currentOrigin,
+            destination: order.address,
+            travelMode: google.maps.TravelMode.DRIVING
+          },
+          (result: any, status: any) => {
+            results.push({ order, result, status });
+            processed++;
+
+            if (processed === remainingOrders.length) {
+              const valid = results.filter(r => r.status === 'OK' && r.result?.routes?.length);
+              if (!valid.length) {
+                Swal.fire('Error', 'Failed to get directions for remaining orders', 'error');
+                return;
+              }
+
+              // Pick nearest by duration
+              valid.sort((a, b) => {
+                const durA = a.result.routes[0].legs[0].duration?.value || Infinity;
+                const durB = b.result.routes[0].legs[0].duration?.value || Infinity;
+                return durA - durB;
+              });
+
+              const nearest = valid[0];
+              const leg = nearest.result.routes[0].legs[0];
+              const distanceKm = leg.distance?.value ? leg.distance.value / 1000 : 0;
+              const durationMin = leg.duration?.value ? leg.duration.value / 60 : 0;
+
+              console.log(
+                `📍 Nearest order chosen from "${currentOrigin}" ->`,
+                nearest.order.address,
+                `(${distanceKm.toFixed(2)} km, ${Math.ceil(durationMin)} min)`
+              );
+
+              if (cumulativeTime + durationMin <= maxAllowedTime) {
+                nearest.order.distanceKm = parseFloat(distanceKm.toFixed(1));
+                nearest.order.estimatedTimeInMinutes = Math.ceil(durationMin);
+                nearest.order.lat = leg.end_location?.lat();
+                nearest.order.lng = leg.end_location?.lng();
+
+                cumulativeTime += durationMin;
+                finalOrders.push(nearest.order);
+
+                currentOrigin = nearest.order.address;
+              } else {
+                nearest.order.selected = false;
+                removedCount++;
+              }
+
+              const idx = remainingOrders.findIndex(o => o.order_id === nearest.order.order_id);
+              if (idx !== -1) remainingOrders.splice(idx, 1);
+
+              processNext();
+            }
+          }
+        );
+      });
+    };
+
+    processNext();
+  }
 
 
 
@@ -1124,5 +1125,19 @@ calculateRouteThroughOrders(): void {
 
   private formatDate(date: string): string {
     return new Date(date).toISOString().split('T')[0];
+  }
+
+  toggleDriverDropdown(): void {
+    this.isDriverDropdownOpen = !this.isDriverDropdownOpen;
+  }
+
+  selectDriverOption(driver: Driver): void {
+    this.selectedDriver = driver.id;
+    this.isDriverDropdownOpen = false;
+  }
+
+  getSelectedDriverName(): string {
+    const driver = this.drivers.find(d => d.id == this.selectedDriver);
+    return driver ? driver.username : 'Choose a driver...';
   }
 }

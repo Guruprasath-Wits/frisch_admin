@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';  
-import { AdminService } from 'src/app/admin.service';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { AdminService } from '../../../../admin.service';
 import Swal from 'sweetalert2';
 
 interface Area {
@@ -26,7 +26,7 @@ export class DeliveryAreasComponent implements OnInit {
   areaForm: FormGroup;
   isEditMode: boolean = false;
   selectedArea: Area | null = null;
-  page: number = 1; 
+  page: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1;
 
@@ -49,7 +49,7 @@ export class DeliveryAreasComponent implements OnInit {
     this.adminService.getArea().subscribe(
       (response) => {
         console.log('API Response:', response); // Debugging
-  
+
         if (response && response.status && Array.isArray(response.area)) {
           this.areas = response.area.map((area: { id: number; area_name: string; zipcode: string }) => ({
             id: area.id,
@@ -60,7 +60,7 @@ export class DeliveryAreasComponent implements OnInit {
           console.warn('No areas found or invalid response format.');
           this.areas = []; // Ensure areas array is reset
         }
-  
+
         this.calculateTotalPages(); // Ensure pagination updates
       },
       (error) => {
@@ -69,19 +69,19 @@ export class DeliveryAreasComponent implements OnInit {
       }
     );
   }
-  
+
 
   onSubmit(): void {
     if (this.areaForm.valid) {
       const formValue = this.areaForm.value;
-  
+
       // Explicitly define areaData as an Area object
       const areaData: Area = {
         id: this.isEditMode && this.selectedArea ? this.selectedArea.id : 0, // Use 0 or a unique value for new areas
         area_name: formValue.area_name,
         zipcode: formValue.zipcode
       };
-  
+
       if (this.isEditMode && this.selectedArea) {
         // Update existing area
         this.adminService.updateAera(areaData).subscribe(
@@ -119,7 +119,7 @@ export class DeliveryAreasComponent implements OnInit {
       Swal.fire('Error', 'All fields are required', 'error');
     }
   }
-  
+
   onEdit(area: Area): void {
     this.isEditMode = true;
     this.selectedArea = area;
@@ -127,7 +127,7 @@ export class DeliveryAreasComponent implements OnInit {
     this.areaForm.patchValue({
       area_name: area.area_name,
       zipcode: area.zipcode,
-      id : area.id
+      id: area.id
     });
   }
 
@@ -147,7 +147,7 @@ export class DeliveryAreasComponent implements OnInit {
       }
     );
   }
-  
+
 
   resetForm(): void {
     this.isEditMode = false;

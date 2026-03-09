@@ -1,118 +1,175 @@
 <div class="container-fluid">
-    <div class="form-card mb-4 mt-4">
-        <h2 class="form-title">Neuen Gutschein erstellen - Bäckerei</h2>
-        <p class="form-subtitle">Bäckerei: Prozent, Versandkostenfrei oder Geld (€1-€100)</p>
+    <div class="premium-card">
+        <div class="card-header-premium">
+            <h2 class="card-title">{{ isEditMode ? 'Gutschein aktualisieren' : 'Neuen Gutschein erstellen' }}</h2>
+            <div class="header-badge">Gutscheinverwaltung - Bäckerei</div>
+        </div>
 
-        <form [formGroup]="couponForm" (ngSubmit)="onSubmit()">
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="code" class="form-label">Gutscheincode *</label>
-                    <input type="text" id="code" formControlName="code" class="form-control" placeholder="Z.B., SPAR20">
-                    <div *ngIf="couponForm.get('code')?.touched && couponForm.get('code')?.invalid"
-                        class="text-danger mt-1">
-                        Gutscheincode ist erforderlich.
+        <div class="card-body p-0">
+            <form [formGroup]="couponForm" (ngSubmit)="onSubmit()" class="coupon-form-premium">
+
+                <div class="row">
+                    <!-- Coupon Code -->
+                    <div class="col-md-6">
+                        <div class="form-group mb-4">
+                            <label class="form-label-premium">Gutscheincode *</label>
+                            <div class="input-group-premium">
+                                <i class="fas fa-tag input-icon"></i>
+                                <input type="text" formControlName="code" class="form-control-premium"
+                                    placeholder="Z.B., SPAR20">
+                            </div>
+                            <div *ngIf="couponForm.get('code')?.touched && couponForm.get('code')?.invalid"
+                                class="error-tip">
+                                Gutscheincode ist erforderlich.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Voucher Type -->
+                    <div class="col-md-6">
+                        <div class="form-group mb-4">
+                            <label class="form-label-premium">Typ *</label>
+                            <div class="input-group-premium">
+                                <i class="fas fa-layer-group input-icon"></i>
+                                <select formControlName="type" class="form-select-premium"
+                                    (change)="couponForm.get('type')?.updateValueAndValidity()">
+                                    <option value="">Bitte wählen</option>
+                                    <option *ngFor="let vt of voucherTypes" [value]="vt.type">{{ vt.type }}</option>
+                                </select>
+                            </div>
+                            <div *ngIf="couponForm.get('type')?.touched && couponForm.get('type')?.invalid"
+                                class="error-tip">
+                                Typ ist erforderlich.
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label for="type" class="form-label">Typ *</label>
-                    <select id="type" formControlName="type" class="form-select custom-select"
-                        (change)="couponForm.get('type')?.updateValueAndValidity()">
-                        <option value="">Bitte wählen</option>
-                        <option *ngFor="let vt of voucherTypes" [value]="vt.type">{{ vt.type }}</option>
-                    </select>
-                    <div *ngIf="couponForm.get('type')?.touched && couponForm.get('type')?.invalid"
-                        class="text-danger mt-1">
-                        Typ ist erforderlich.
+
+                <div class="row">
+                    <!-- Percentage Discount -->
+                    <div class="col-md-6" *ngIf="isDiscountFieldVisible && !isFlatDiscount">
+                        <div class="form-group mb-4">
+                            <label class="form-label-premium">Rabattprozentsatz *</label>
+                            <div class="input-group-premium">
+                                <i class="fas fa-percentage input-icon"></i>
+                                <input type="text" formControlName="discount_percentage" class="form-control-premium"
+                                    placeholder="z.B., 20">
+                            </div>
+                            <div *ngIf="couponForm.get('discount_percentage')?.touched && couponForm.get('discount_percentage')?.invalid"
+                                class="error-tip">
+                                Rabattprozentsatz ist erforderlich.
+                            </div>
+                        </div>
                     </div>
 
-                </div>
-            </div>
+                    <!-- Flat Amount -->
+                    <div class="col-md-6" *ngIf="isFlatDiscount">
+                        <div class="form-group mb-4">
+                            <label class="form-label-premium">Gutschein Betrag (€) *</label>
+                            <div class="input-group-premium">
+                                <i class="fas fa-euro-sign input-icon"></i>
+                                <input type="text" formControlName="voucher_amount" class="form-control-premium"
+                                    placeholder="z.B., 10">
+                            </div>
+                            <div *ngIf="couponForm.get('voucher_amount')?.touched && couponForm.get('voucher_amount')?.invalid"
+                                class="error-tip">
+                                Gutschein Betrag ist erforderlich.
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="row">
-                <!-- Percentage Discount Field -->
-                <div class="col-md-6 mb-3" *ngIf="isDiscountFieldVisible && !isFlatDiscount">
-                    <label for="discount_percentage" class="form-label">Rabattprozentsatz *</label>
-                    <input type="text" id="discount_percentage" formControlName="discount_percentage"
-                        class="form-control" placeholder="z.B., 20">
-                    <div *ngIf="couponForm.get('discount_percentage')?.touched && couponForm.get('discount_percentage')?.invalid"
-                        class="text-danger mt-1">
-                        Rabattprozentsatz ist erforderlich.
+                    <!-- Description -->
+                    <div class="col-md-6">
+                        <div class="form-group mb-4">
+                            <label class="form-label-premium">Beschreibung</label>
+                            <div class="input-group-premium">
+                                <i class="fas fa-align-left input-icon"></i>
+                                <input type="text" formControlName="description" class="form-control-premium"
+                                    placeholder="z.B., Erhalte 20% Rabatt...">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Flat Amount Voucher Field -->
-                <div class="col-md-6 mb-3" *ngIf="isFlatDiscount">
-                    <label for="voucher_amount" class="form-label">Gutschein Betrag (€) *</label>
-                    <input type="text" id="voucher_amount" formControlName="voucher_amount" class="form-control"
-                        placeholder="z.B., 10">
-                    <div *ngIf="couponForm.get('voucher_amount')?.touched && couponForm.get('voucher_amount')?.invalid"
-                        class="text-danger mt-1">
-                        Gutschein Betrag ist erforderlich.
+                <!-- User Email Selection (Conditional) -->
+                <div class="row" *ngIf="isEmailFieldVisible">
+                    <div class="col-md-12">
+                        <div class="form-group mb-4">
+                            <label class="form-label-premium">Benutzer E-Mail *</label>
+                            <div class="input-group-premium">
+                                <i class="fas fa-user-tag input-icon"></i>
+                                <c-dropdown [autoClose]="'outside'" class="w-100">
+                                    <button cButton cDropdownToggle class="dropdown-trigger-premium" type="button">
+                                        <span class="text-truncate">{{ getSelectedUsersDisplay() }}</span>
+                                    </button>
+                                    <ul cDropdownMenu class="dropdown-menu-premium w-100">
+                                        <li *ngFor="let user of userList; let i = index" class="user-list-item">
+                                            <c-form-check class="mb-0">
+                                                <input cFormCheckInput type="checkbox" [id]="'userCheck' + i"
+                                                    [checked]="isUserSelected(user.email)"
+                                                    (change)="onUserCheckChange(user.email, $event)">
+                                                <label cFormCheckLabel [for]="'userCheck' + i">
+                                                    {{ user.username }} <small class="text-muted">({{ user.email
+                                                        }})</small>
+                                                </label>
+                                            </c-form-check>
+                                        </li>
+                                    </ul>
+                                </c-dropdown>
+                            </div>
+                            <div *ngIf="couponForm.get('user_email')?.touched && couponForm.get('user_email')?.invalid"
+                                class="error-tip">
+                                Mindestens eine E-Mail ist erforderlich.
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label for="description" class="form-label">Beschreibung</label>
-                    <input type="text" id="description" formControlName="description" class="form-control"
-                        placeholder="z.B., Erhalte 20% Rabatt auf deine Bestellung">
-                </div>
-            </div>
 
-            <div class="row" *ngIf="isEmailFieldVisible">
-                <div class="col-md-12 mb-3">
+                <div class="row">
+                    <!-- Start Date -->
+                    <div class="col-md-6">
+                        <div class="form-group mb-4">
+                            <label class="form-label-premium">Von Datum *</label>
+                            <div class="input-group-premium">
+                                <i class="fas fa-calendar-alt input-icon"></i>
+                                <input type="date" formControlName="from_date" class="form-control-premium">
+                            </div>
+                            <div *ngIf="couponForm.get('from_date')?.touched && couponForm.get('from_date')?.invalid"
+                                class="error-tip">
+                                Von Datum ist erforderlich.
+                            </div>
+                        </div>
+                    </div>
 
-                    <label for="user_email" class="form-label">Benutzer E-Mail *</label>
-                    <c-dropdown [autoClose]="'outside'" class="w-100">
-                        <button cButton cDropdownToggle
-                            class="form-select text-start d-flex justify-content-between align-items-center w-100 bg-white"
-                            type="button">
-                            <span>{{ getSelectedUsersDisplay() }}</span>
-                        </button>
-                        <ul cDropdownMenu class="w-100 px-3 py-2 shadow-sm"
-                            style="max-height: 250px; overflow-y: auto; min-width: 100%;">
-                            <li *ngFor="let user of userList; let i = index">
-                                <c-form-check class="mb-1">
-                                    <input cFormCheckInput type="checkbox" [id]="'userCheck' + i"
-                                        [checked]="isUserSelected(user.email)"
-                                        (change)="onUserCheckChange(user.email, $event)">
-                                    <label cFormCheckLabel [for]="'userCheck' + i" class="ms-2">
-                                        {{ user.username }} ({{ user.email }})
-                                    </label>
-                                </c-form-check>
-                            </li>
-                        </ul>
-                    </c-dropdown>
-                    <div *ngIf="couponForm.get('user_email')?.touched && couponForm.get('user_email')?.invalid"
-                        class="text-danger mt-1">
-                        Mindestens eine E-Mail ist erforderlich.
+                    <!-- End Date -->
+                    <div class="col-md-6">
+                        <div class="form-group mb-4">
+                            <label class="form-label-premium">Bis Datum *</label>
+                            <div class="input-group-premium">
+                                <i class="fas fa-calendar-check input-icon"></i>
+                                <input type="date" formControlName="end_date" class="form-control-premium">
+                            </div>
+                            <div *ngIf="couponForm.get('end_date')?.touched && couponForm.get('end_date')?.invalid"
+                                class="error-tip">
+                                Bis Datum ist erforderlich.
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="from_date" class="form-label">Von Datum *</label>
-                    <input type="date" id="from_date" formControlName="from_date" class="form-control">
-                    <div *ngIf="couponForm.get('from_date')?.touched && couponForm.get('from_date')?.invalid"
-                        class="text-danger mt-1">
-                        Von Datum ist erforderlich.
-                    </div>
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-save-premium" [class.active]="couponForm.valid"
+                        [disabled]="couponForm.invalid">
+                        <i class="fas" [ngClass]="isEditMode ? 'fa-sync-alt' : 'fa-check-circle'"></i>
+                        {{ isEditMode ? 'Gutschein aktualisieren' : 'Gutschein erstellen' }}
+                    </button>
+                    <button type="button" class="btn-cancel-premium" (click)="onCancel()">
+                        Abbrechen
+                    </button>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label for="end_date" class="form-label">Bis Datum *</label>
-                    <input type="date" id="end_date" formControlName="end_date" class="form-control">
-                    <div *ngIf="couponForm.get('end_date')?.touched && couponForm.get('end_date')?.invalid"
-                        class="text-danger mt-1">
-                        Bis Datum ist erforderlich.
-                    </div>
-                </div>
-            </div>
 
-            <div class="d-flex gap-2 mt-2">
-                <button type="submit" class="btn submit-btn" [disabled]="couponForm.invalid">
-                    {{ isEditMode ? 'Gutschein aktualisieren' : 'Gutschein erstellen' }}
-                </button>
-                <button type="button" class="btn cancel-btn" (click)="onCancel()">Abbrechen</button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>

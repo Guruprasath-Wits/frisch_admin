@@ -2,33 +2,44 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { Router } from '@angular/router';
-import { AdminService } from 'src/app/admin.service';
-import { url } from 'src/app/config';
+import { Router, ActivatedRoute } from '@angular/router';
+import { AdminService } from '../../../admin.service';
+import { url } from '../../../config';
 import Swal from 'sweetalert2';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgxPaginationModule],
+  imports: [CommonModule, FormsModule, NgxPaginationModule, TranslateModule],
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.scss'],
 })
 export class ProductsComponent implements OnInit {
-  products: any[] = []; 
+  products: any[] = [];
   searchTerm: string = '';
-  page: number = 1; 
-  itemsPerPage: number = 5;
+  page: number = 1;
+  itemsPerPage: number = 10;
 
-  constructor(private router: Router, private productService: AdminService) {}
+  constructor(
+    private router: Router,
+    private productService: AdminService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
-    this.loadProducts(); // Load products on component initialization
+    this.route.queryParams.subscribe(params => {
+      if (params['page']) {
+        this.page = Number(params['page']);
+      }
+    });
+    this.loadProducts();
   }
 
   loadProducts() {
     this.productService.fetchProducts().subscribe(
-      (response) => {
+      (response: any) => {
         console.log(response)
         if (response.status) {
           // Map API response to fit component requirements
@@ -42,7 +53,7 @@ export class ProductsComponent implements OnInit {
           }));
         }
       },
-      (error) => {
+      (error: any) => {
         console.error('Error fetching products:', error);
       }
     );
@@ -63,10 +74,7 @@ export class ProductsComponent implements OnInit {
   }
 
   editProduct(product: any) {
-    console.log('====================================');
-    console.log(product.id);
-    console.log('====================================');
-    this.router.navigate(['/products/edit', product.id]);
+    this.router.navigate(['/products/edit', product.id], { queryParams: { page: this.page } });
   }
 
   deleteProduct(id: number) {
@@ -84,11 +92,11 @@ export class ProductsComponent implements OnInit {
     }).then(result => {
       if (result.isConfirmed) {
         this.productService.removeProduct(id).subscribe(
-          response => {
+          (response: any) => {
             Swal.fire('Deleted!', 'Product has been deleted.', 'success');
             this.loadProducts();
           },
-          error => {
+          (error: any) => {
             Swal.fire('Error', 'Failed to delete Product', 'error');
           }
         );

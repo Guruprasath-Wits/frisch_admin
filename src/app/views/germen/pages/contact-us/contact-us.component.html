@@ -1,52 +1,83 @@
-<div class="container mt-4">
-    <!-- Header Section -->
-    <div class="filter-card p-4 mb-4">
-      <div class="row d-flex align-items-center">
-        <h3 class="col-md-10 mb-3" style="font-weight: bold !important;">Customer Enquiry</h3>
+<div class="container-fluid contact-container fade-in">
+  <!-- Premium Card for Enquiry List -->
+  <div class="premium-card">
+    <div class="card-header-premium">
+      <div class="header-content">
+        <h2 class="card-title">Customer Enquiry</h2>
+        <p class="mb-0 text-dark opacity-75 fw-bold">Review and manage customer messages</p>
+      </div>
+      <div class="header-badge">
+        Total Enquiries: {{ contactUs.length }}
       </div>
     </div>
-  
-    <!-- Contact Us Table -->
-    <div class="table-card p-3">
-      <table class="table table-hover contactUslist-table">
-        <thead class="table-header bg-light">
-          <tr>
-            <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Description</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let contactUs of filteredcontactUs | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
-            <td>{{ (page - 1) * itemsPerPage + i + 1 }}</td>
-            <td>{{ contactUs.firstname }}</td>
-            <td>{{ contactUs.lastname }}</td>
-            <td>{{ contactUs.email }}</td>
-            <td>{{ contactUs.phone }}</td>
-            <td>{{ contactUs.description }}</td>
-            <td>
-                <button class="btn btn-danger btn-sm" (click)="deleteContact(contactUs.id)">
-                    <i class="fa-solid fa-trash" style="padding-left: 3px;"></i> 
+
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table custom-table mb-0">
+          <thead>
+            <tr>
+              <th class="text-center" width="80">#</th>
+              <th>Customer Info</th>
+              <th>Contact Number</th>
+              <th width="40%">Description & Message</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let enquiry of contactUs | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+              <td class="text-center">
+                <span class="fw-bold text-muted">{{ (page - 1) * itemsPerPage + i + 1 }}</span>
+              </td>
+              <td>
+                <div class="user-info">
+                  <span class="full-name">{{ enquiry.firstname }} {{ enquiry.lastname }}</span>
+                  <span class="email-text"><i class="far fa-envelope me-2"></i>{{ enquiry.email }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="phone-badge">
+                  <i class="fas fa-phone-alt"></i>
+                  {{ enquiry.phone }}
+                </div>
+              </td>
+              <td>
+                <div class="desc-box" [title]="enquiry.description">
+                  {{ enquiry.description }}
+                </div>
+              </td>
+              <td>
+                <div class="d-flex justify-content-center">
+                  <button class="btn-action-delete" (click)="deleteContact(enquiry.id)" title="Delete Enquiry">
+                    <i class="fas fa-trash-alt"></i>
                   </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-  
-      <!-- No Data Message -->
-      <div *ngIf="filteredcontactUs.length === 0" class="text-center py-3">
-        <p class="text-muted">No contact data available.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Premium Empty State -->
+        <div *ngIf="contactUs.length === 0" class="empty-state">
+          <i class="fas fa-inbox empty-icon"></i>
+          <h4>No Enquiries Yet</h4>
+          <p>When customers contact you, their messages will appear here.</p>
+        </div>
       </div>
     </div>
-  
-    <div class="pagination-controls">
-        <button (click)="previousPage()" [disabled]="page === 1">Previous</button>
-        <span>Page {{ page }} of {{ totalPages }}</span>
-        <button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+
+    <!-- Premium Pagination -->
+    <div class="pagination-premium" *ngIf="totalPages > 1">
+      <button class="page-btn" (click)="previousPage()" [disabled]="page === 1">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div class="page-info">
+        Page <span class="text-dark fw-bolder">{{ page }}</span> of <span class="text-dark fw-bolder">{{ totalPages
+          }}</span>
       </div>
+      <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
   </div>
-  
+</div>

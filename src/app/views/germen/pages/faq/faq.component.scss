@@ -1,100 +1,318 @@
+/* Global Theme Variables */
+$primary: #f7ce3e;
+$primary-hover: #e6be2a;
+$secondary: #2d3436;
+$text-main: #2d3436;
+$text-muted: #636e72;
+$bg-body: #f1f2f6;
+$card-bg: #ffffff;
+$border-color: #dfe6e9;
+$shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.05);
+$shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1);
+$radius: 20px;
+$input-bg: #f8f9fa;
 
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-    font-family: "Nunito", "Segoe UI", Arial, sans-serif;
-  }
-  
-  
-  .add-user-card {
-    background-color: #ffffff;
-    border: 1px solid #e1b12c;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-  }
+.faq-container {
+  padding: 15px;
+  background-color: #ffffff;
+  min-height: 100vh;
+  animation: fadeIn 0.6s ease-out;
+}
 
-  .add-user-card form label{
-    font-size: 16px;
-    font-weight: bold;
-  }
-  
-  /* Form inputs */
-  .form-control {
-    width: 75%;
-    border: 1px solid #e1b12c; /* Add border color */
-  }
-  
-  .form-control:focus {
-    box-shadow: 0 0 5px 1px #e1b12c; /* Focus shadow */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
 
-  .table-striped > tbody > tr:nth-of-type(odd) {
-    background-color: #fcf4d9;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .table-hover > tbody > tr:hover {
-    background-color: #ffe680 !important;
+}
+
+/* Premium Card Styling */
+.premium-card {
+  background: $card-bg;
+  border: none;
+  border-radius: $radius;
+  box-shadow: $shadow-soft;
+  overflow: hidden;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, $primary, #9D4EDF);
+    z-index: 10;
   }
-  
-  .table td,
-  .table th {
-    vertical-align: middle;
-    padding: 12px; /* Add padding to make the table cells look better */
-    border-bottom: 1px solid #e1b12c; /* Add bottom border to make rows distinct */
+}
+
+.card-header-premium {
+  padding: 20px;
+  background: #fff;
+  border-bottom: 2px solid #f1f2f6;
+  text-align: center;
+
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: $secondary;
+    margin: 0;
+    letter-spacing: -0.5px;
   }
-  
-  /* Button styling */
-  .btn-primary {
-    background-color: #e1b12c;
-    border-color: #e1b12c;
-    color: #000;
+
+  .card-subtitle {
+    font-size: 0.95rem;
+    color: $text-muted;
+    margin-top: 5px;
+    font-weight: 500;
+    display: block;
   }
-  
-  .btn-primary:hover {
-    background-color: #ecb50f; /* Hover effect */
+}
+
+/* Form Styling */
+.faq-form-premium {
+  padding: 20px;
+
+  .form-label-premium {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: $text-main;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+    display: block;
   }
-  
-  .btn-primary:disabled {
-    background-color: #d3d3d3; /* Disabled button */
+
+  .input-group-premium {
+    position: relative;
+
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #b2bec3;
+      transition: color 0.3s ease;
+      z-index: 2;
+    }
+
+    .form-control-premium {
+      width: 100%;
+      padding: 12px 15px 12px 45px;
+      border: 2px solid transparent;
+      background-color: $input-bg;
+      border-radius: 12px;
+      font-size: 1rem;
+      color: $text-main;
+      transition: all 0.3s ease;
+      font-weight: 500;
+
+      &::placeholder {
+        color: #b2bec3;
+      }
+
+      &:focus {
+        background-color: #fff;
+        border-color: $primary;
+        box-shadow: 0 0 0 4px rgba($primary, 0.15);
+        outline: none;
+
+        &+.input-icon {
+          color: $primary;
+        }
+      }
+    }
+
+    textarea.form-control-premium {
+      padding-top: 15px;
+      min-height: 120px;
+      resize: vertical;
+
+      &+.input-icon {
+        top: 25px;
+        transform: none;
+      }
+    }
+  }
+}
+
+/* Buttons */
+.btn-submit-premium {
+  padding: 15px 40px;
+  background: linear-gradient(45deg, $primary, #9D4EDF);
+  border: none;
+  border-radius: 15px;
+  color: #fff;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(247, 206, 62, 0.4);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(247, 206, 62, 0.6);
+  }
+
+  &:disabled {
+    background: #bdc3c7;
     cursor: not-allowed;
+    box-shadow: none;
   }
-  
-  /* Adjust for button margin */
-  .btn {
-    margin-top: 15px; /* Add margin for spacing */
+}
+
+.btn-cancel-premium {
+  padding: 15px 30px;
+  background: #f1f2f6;
+  border: none;
+  border-radius: 15px;
+  color: $text-muted;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-left: 10px;
+
+  &:hover {
+    background: #e1e2e6;
+    color: $text-main;
+  }
+}
+
+/* List Styling */
+.faq-list-premium {
+  margin-top: 30px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.faq-item-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px 20px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  border-left: 4px solid $primary;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:hover {
+    transform: translateX(10px);
+    box-shadow: $shadow-soft;
   }
 
-  .pagination-controls {
-    margin-top: 20px;
+  .faq-content {
+    flex: 1;
+    padding-right: 20px;
+
+    .faq-q {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: $secondary;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .faq-a {
+      font-size: 0.95rem;
+      color: $text-muted;
+      line-height: 1.6;
+      display: block;
+    }
+  }
+
+  .faq-actions {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+.btn-action-premium {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  cursor: pointer;
+
+  &.edit {
+    background: rgba($primary, 0.1);
+    color: darken($primary, 20%);
+
+    &:hover {
+      background: $primary;
+      color: #fff;
+      transform: scale(1.1);
+    }
+  }
+
+  &.delete {
+    background: rgba(#e74c3c, 0.1);
+    color: #e74c3c;
+
+    &:hover {
+      background: #e74c3c;
+      color: #fff;
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* Pagination */
+.pagination-premium {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 40px;
+  padding-bottom: 50px;
+
+  .page-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    border: 2px solid #f1f2f6;
+    background: white;
+    color: $text-main;
+    display: flex;
     align-items: center;
-    position: static;
-  }
-  
-  .pagination-controls button {
-    background-color: #e1b12c;
-    color: #000;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 12px;
-    margin: 8px 5px;
+    justify-content: center;
     cursor: pointer;
-  
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      border-color: $primary;
+      color: $primary;
+      background: #fffdf0;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
-  
-  .pagination-controls button:hover:not(:disabled) {
-    background-color: #d39e00;
+
+  .page-info {
+    font-weight: 700;
+    color: $text-muted;
+    font-size: 0.95rem;
   }
-  
-  .pagination-controls button:disabled {
-    background-color: #d3d3d3;
-    cursor: not-allowed;
-  }
-  
-  .pagination-controls span {
-    margin: 0 10px;
-  }
-  
-  
+}

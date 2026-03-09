@@ -1,104 +1,161 @@
-<div class="container">
-  <h3 class="mb-2" style="text-align: center; font-weight: bold !important;">{{ isEditMode ? 'Edit Category' : 'Add Category' }}</h3>
-  
-  <div class="add-user-card mb-3">
-    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
-      <div class="form-group mb-3">
-        <label for="form-label category_name">Category Name</label>
-        <input type="text" id="category_name" formControlName="category_name" class="form-control" placeholder="Enter category name" />
-      </div>
+<div class="container-fluid category-container fade-in">
+  <div class="row g-4">
+    <!-- Left Column: Add New Category Form -->
+    <div class="col-lg-4">
+      <div class="premium-card">
+        <div class="card-header-premium">
+          <h2 class="card-title">{{ (isEditMode ? 'CATEGORY.EDIT_TITLE' : 'CATEGORY.ADD_TITLE') | translate }}</h2>
+          <div class="header-badge">{{ 'CATEGORY.MANAGE_DESC' | translate }}</div>
+        </div>
 
-      <div class="form-group mb-3">
-        <label for="category_type" class="form-label">Category Type</label>
-        <select id="category_type" formControlName="category_type" class="form-control" required>
-          <option value="" disabled selected>Select category type</option>
-          <option value="Bakkery">Bakkery Items</option>
-          <option value="free_trail">Free Trial</option>
-          <option value="Others">Others</option>
-        </select>
-      </div>
-      
+        <div class="card-body p-0">
+          <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="category-form-premium">
 
-      <div class="form-group mb-3">
-        <label for="form-label category_desc">Description</label>
-        <textarea id="category_desc" formControlName="category_desc" class="form-control" placeholder="Enter category description"></textarea>
-      </div>
+            <div class="form-group mb-4">
+              <label class="form-label-premium">{{ 'CATEGORY.NAME' | translate }}</label>
+              <div class="input-group-premium">
+                <i class="fas fa-tag input-icon"></i>
+                <input type="text" formControlName="category_name" class="form-control-premium"
+                  [placeholder]="'CATEGORY.NAME_PLACEHOLDER' | translate" />
+              </div>
+            </div>
 
+            <div class="form-group mb-4">
+              <label class="form-label-premium">{{ 'CATEGORY.TYPE' | translate }}</label>
+              <div class="input-group-premium">
+                <i class="fas fa-th-large input-icon"></i>
+                <select formControlName="category_type" class="form-control-premium" required>
+                  <option value="" disabled selected>{{ 'CATEGORY.SELECT_TYPE' | translate }}</option>
+                  <option value="Bakkery">{{ 'CATEGORY.TYPE_BAKERY' | translate }}</option>
+                  <option value="free_trail">{{ 'CATEGORY.TYPE_FREE_TRIAL' | translate }}</option>
+                  <option value="Others">{{ 'CATEGORY.TYPE_OTHERS' | translate }}</option>
+                </select>
+              </div>
+            </div>
 
+            <div class="form-group mb-4">
+              <label class="form-label-premium">{{ 'CATEGORY.DESCRIPTION' | translate }}</label>
+              <div class="input-group-premium">
+                <textarea formControlName="category_desc" class="form-control-premium"
+                  [placeholder]="'CATEGORY.DESC_PLACEHOLDER' | translate"></textarea>
+              </div>
+            </div>
 
-      <div class="form-group mb-3">
-        <label for="image_file" class="form-label">Upload Image</label>
-        <input 
-          type="file" 
-          id="image_file" 
-          (change)="onFileChange($event)" 
-          class="form-control" 
-          accept="image/png, image/jpeg, image/jpg"
-        />
-        <small class="text-danger">**The file types must be jpg/png/jpeg</small>
-      
-        <!-- Image Preview -->
-        <div *ngIf="imagePreview" class="preview mt-3">
-          <h5>Preview:</h5>
-          <img [src]="imagePreview" alt="Image Preview" class="img-thumbnail">
-          <button class="btn btn-danger mt-2" style="margin-left: 10%;" (click)="removeImage()">Remove Image</button>
+            <div class="form-group mb-4">
+              <label class="form-label-premium">{{ 'CATEGORY.IMAGE' | translate }}</label>
+              <div class="upload-zone-premium" [class.has-preview]="imagePreview">
+                <input type="file" (change)="onFileChange($event)" class="file-input" accept="image/*" />
+                <div class="upload-content">
+                  <div class="upload-icon">
+                    <i class="fas" [ngClass]="imagePreview ? 'fa-sync-alt' : 'fa-cloud-upload-alt'"></i>
+                  </div>
+                  <span>{{ 'CATEGORY.CHOOSE_FILE' | translate }}</span>
+                </div>
+              </div>
+              <small class="text-muted d-block mt-2" style="font-size: 0.75rem;">{{ 'CATEGORY.SUPPORTED_FORMATS' |
+                translate }}</small>
+
+              <div *ngIf="imagePreview" class="image-preview-premium">
+                <img [src]="imagePreview" alt="Preview">
+                <button type="button" class="btn-remove" (click)="removeImage()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-actions mt-5">
+              <button type="submit" class="btn-save-premium" [class.active]="categoryForm.valid"
+                [disabled]="categoryForm.invalid">
+                {{ (isEditMode ? 'CATEGORY.UPDATE' : 'CATEGORY.SAVE') | translate }}
+                <i class="fas fa-arrow-right"></i>
+              </button>
+              <button type="button" class="btn-cancel w-100 mt-2"
+                style="border:none; background:transparent; font-weight:700; color:#b2bec3; text-transform:uppercase; font-size:0.8rem; letter-spacing:1px;"
+                *ngIf="isEditMode" (click)="resetForm()">
+                {{ 'CATEGORY.DISCARD' | translate }}
+              </button>
+            </div>
+
+          </form>
         </div>
       </div>
-      
+    </div>
 
-      
+    <!-- Right Column: Category List -->
+    <div class="col-lg-8">
+      <div class="premium-card">
+        <div class="card-header-premium">
+          <h2 class="card-title">{{ 'CATEGORY.LIST_TITLE' | translate }}</h2>
+          <div class="header-badge">{{ 'CATEGORY.TOTAL' | translate }}: {{ categories.length }}</div>
+        </div>
 
-     
-      
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table custom-table mb-0">
+              <thead>
+                <tr>
+                  <th class="text-center" width="60">#</th>
+                  <th width="100">{{ 'CATEGORY.IMAGE_COL' | translate }}</th>
+                  <th>{{ 'CATEGORY.NAME_COL' | translate }}</th>
+                  <th width="40%">{{ 'CATEGORY.DESC_COL' | translate }}</th>
+                  <th class="text-end">{{ 'CATEGORY.ACTIONS_COL' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let category of paginatedCategories; let i = index">
+                  <td class="text-center">
+                    <span class="fw-bold text-muted">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</span>
+                  </td>
+                  <td>
+                    <div class="cat-img-wrapper">
+                      <img [src]="getImageUrl(category.category_img)" alt="{{ category.category_name }}">
+                    </div>
+                  </td>
+                  <td>
+                    <span class="cat-name">{{ category.category_name }}</span>
+                    <span class="cat-badge">{{ category.category_type }}</span>
+                  </td>
+                  <td>
+                    <p class="cat-desc" [title]="category.category_desc">{{ category.category_desc }}</p>
+                  </td>
+                  <td class="text-end">
+                    <button class="btn-action-premium edit" (click)="onEdit(category)" title="Edit">
+                      <i class="fas fa-pencil-alt"></i>
+                    </button>
+                    <button class="btn-action-premium delete" (click)="onDelete(category.id)" title="Delete">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </td>
+                </tr>
 
-      
+                <!-- Empty State -->
+                <tr *ngIf="categories.length === 0">
+                  <td colspan="5" class="text-center py-5">
+                    <div class="text-center opacity-25">
+                      <i class="fas fa-layer-group mb-3" style="font-size: 4rem;"></i>
+                      <h4 class="fw-bold">{{ 'CATEGORY.EMPTY' | translate }}</h4>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-      <!-- <div *ngIf="imagePreview" class="form-group mb-3">
-        </div> -->
-
-
-   
-
-
-      <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update Category' : 'Add Category' }}</button>
-    </form>
-  </div>
-
-  <h3 style="text-align: center; font-weight: bold !important;">Category List</h3>
-  
-  <table class="table table-hover category-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Category Name</th>
-        <th>Description</th>
-        <th>Image</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let category of paginatedCategories;let i = index">
-        <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-        <td>{{ category.category_name }}</td>
-        <td>{{ category.category_desc }}</td>
-        <td>
-          <a [href]="category.category_img" target="_blank">
-          <img [src]="file + category.category_img" style="width: 200px;height: 200px;"  class="category-image" />
-        </a>
-        </td>
-        <td>
-          <button style="margin-right: 5px;" class="btn btn-warning btn-sm" *ngIf="category.id" (click)="onEdit(category)"><i class="fa fa-edit"></i></button>
-          <button class="btn btn-danger btn-sm" *ngIf="category.id" (click)="onDelete(category.id)"><i class="fa fa-trash"></i></button>
-
-         
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="pagination-controls">
-    <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
-    <span>Page {{ currentPage }} of {{ totalPages }}</span>
-    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+        <!-- Pagination -->
+        <div class="card-footer p-0 border-0" *ngIf="totalPages > 1">
+          <div class="pagination-premium">
+            <button class="page-btn" (click)="previousPage()" [disabled]="currentPage === 1">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <span class="page-info">{{ 'CATEGORY.PAGE_INFO' | translate:{current: currentPage, total: totalPages}
+              }}</span>
+            <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../../../admin.service';
 import { ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-addproduct',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './addproduct.component.html',
   styleUrls: ['./addproduct.component.scss'],
 })
@@ -61,10 +61,10 @@ export class AddproductComponent {
   // Load product categories for the dropdown
   loadCategories() {
     this.apiService.getCategory({}).subscribe(
-      (response) => {
+      (response: any) => {
         this.categories = response.category;
       },
-      (error) => {
+      (error: any) => {
         console.error('Error fetching categories:', error);
       }
     );
@@ -72,10 +72,10 @@ export class AddproductComponent {
 
   loadTaxes() {
     this.apiService.getTaxes().subscribe(
-      (response) => {
+      (response: any) => {
         this.taxes = response.tax;
       },
-      (error) => {
+      (error: any) => {
         console.error('Error fetching taxes:', error);
       }
     );
@@ -83,10 +83,10 @@ export class AddproductComponent {
 
   loadBottles() {
     this.apiService.getBottles().subscribe(
-      (response) => {
+      (response: any) => {
         this.bottles = response.bottle;
       },
-      (error) => {
+      (error: any) => {
         console.error('Error fetching bottles:', error);
       }
     );
@@ -95,7 +95,7 @@ export class AddproductComponent {
   // Load product data to populate form fields
   loadProductData(id: string) {
     this.apiService.getProductById(id).subscribe(
-      (response) => {
+      (response: any) => {
         const product = response.product;
         this.productForm.patchValue({
           product_name: product.product_name,
@@ -114,7 +114,7 @@ export class AddproductComponent {
           tax: product.tax
         });
       },
-      (error) => {
+      (error: any) => {
         console.error('Error loading product data:', error);
       }
     );
@@ -233,12 +233,12 @@ export class AddproductComponent {
 
 
       this.apiService.createProduct(formData).subscribe(
-        (response) => {
+        (response: any) => {
           console.log('Product Created successfully:', response);
           Swal.fire('Added!', 'Product has been added.', 'success');
           this.router.navigate(['/products'])
         },
-        (error) => {
+        (error: any) => {
           Swal.fire('ErrorX', 'Something Went Wrong.', 'error');
           console.error('Error updating product:', error);
         }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../../admin.service';
 import { CommonModule } from '@angular/common';
 
 interface Role {
@@ -10,19 +10,21 @@ interface Role {
   access: { [key: string]: number };
 }
 
+import { TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-permission',
   templateUrl: './permission.component.html',
   styleUrls: ['./permission.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, TranslateModule],
 })
 export class PermissionComponent implements OnInit {
   roleForm: FormGroup;
   pages: string[] = [
     'Category', 'Product', 'Customer_Enquiry', 'Coupon Management', 'OrderList', 'Sample_Order',
     'Our_Delivery_Areas', 'User_Advantages', 'Jobs', 'FAQ', 'Roles',
-    'Permissions', 'Users', 'Settings', 'Imprint',  'Subscription_Transactions'
+    'Permissions', 'Users', 'Settings', 'Imprint', 'Subscription_Transactions'
   ];
   allocatedAccess: { [key: string]: number } = {};
   roles: Role[] = [];
@@ -32,6 +34,7 @@ export class PermissionComponent implements OnInit {
   page: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1;
+  dropdownOpen: boolean = false;
 
   constructor(private fb: FormBuilder, private adminService: AdminService) {
     this.roleForm = this.fb.group({
@@ -64,7 +67,7 @@ export class PermissionComponent implements OnInit {
           Swal.fire('Error!', 'Failed to load roles.', 'error');
         }
       },
-      error: (error) => Swal.fire('Error!', 'Failed to load roles.', 'error'),
+      error: (error: any) => Swal.fire('Error!', 'Failed to load roles.', 'error'),
     });
   }
 
@@ -101,6 +104,21 @@ export class PermissionComponent implements OnInit {
 
   onAccessChange(page: string, event: Event): void {
     this.allocatedAccess[page] = (event.target as HTMLInputElement).checked ? 1 : 0;
+  }
+
+  toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  selectRole(role: any) {
+    this.roleForm.patchValue({ role: role.id });
+    this.dropdownOpen = false;
+  }
+
+  getSelectedRoleName(): string {
+    const roleId = this.roleForm.get('role')?.value;
+    const role = this.roles.find(r => r.id == roleId);
+    return role ? role.role_name : 'Choose a role...';
   }
 
   onSubmit(): void {
@@ -163,10 +181,10 @@ export class PermissionComponent implements OnInit {
             if (response.status) {
               // Successfully deleted, filter out the deleted role
               this.permissions = this.permissions.filter((p) => p.id !== roleId);
-  
+
               // Recalculate pagination after deletion
               this.calculateTotalPages();
-  
+
               // Show success message after deletion
               Swal.fire('Deleted!', 'Role has been deleted successfully.', 'success');
             } else {

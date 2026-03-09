@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AdminService } from 'src/app/admin.service';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AdminService } from '../../../../admin.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
-import { url } from 'src/app/config';
+import { url } from '../../../../config';
 
 @Component({
   selector: 'app-editproduct',
   templateUrl: './editproduct.component.html',
   styleUrls: ['./editproduct.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule]
+  imports: [ReactiveFormsModule, CommonModule, RouterLink]
 })
 export class EditproductComponent implements OnInit {
   productForm: FormGroup;
@@ -22,7 +22,8 @@ export class EditproductComponent implements OnInit {
   selectedFile: File | null = null;
   imagePreview: string | null = null; // For previewing selected or existing image
   oldImage: string = ''; // Store old image path
-  newurl: any
+  newurl: any;
+  currentPage: number = 1;
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -48,6 +49,7 @@ export class EditproductComponent implements OnInit {
     });
 
     this.productId = this.route.snapshot.paramMap.get('id') || '';
+    this.currentPage = Number(this.route.snapshot.queryParamMap.get('page')) || 1;
   }
 
   ngOnInit() {
@@ -277,7 +279,7 @@ export class EditproductComponent implements OnInit {
         (response) => {
           console.log('Product updated successfully:', response);
           Swal.fire('Success!', 'Product has been updated.', 'success');
-          this.router.navigate(['/products']);
+          this.router.navigate(['/products'], { queryParams: { page: this.currentPage } });
         },
         (error) => {
           console.error('Error updating product:', error);

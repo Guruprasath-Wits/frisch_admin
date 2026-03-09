@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Router } from '@angular/router';
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../../../admin.service';
 import Swal from 'sweetalert2';
 
 export interface User {
@@ -13,22 +13,24 @@ export interface User {
   phoneNo: string;
   address: string;
   street: string;
-  zipCode: string ;
-  subtown: string ;
-  bday: string ;
-  acc_no: string ;
-  ban_no: string ;
-  bc_no: string ;
+  zipCode: string;
+  subtown: string;
+  bday: string;
+  acc_no: string;
+  ban_no: string;
+  bc_no: string;
   role: string;
   ort: string;
   active: boolean;
-  status: string; 
+  status: string;
 }
+
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-userslist',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgxPaginationModule],
+  imports: [CommonModule, FormsModule, NgxPaginationModule, TranslateModule],
   templateUrl: './userslist.component.html',
   styleUrls: ['./userslist.component.scss']
 })
@@ -53,34 +55,34 @@ export class UserslistComponent implements OnInit {
 
   }
 
-toggleUser(user: User) {
-  const newStatus = user.status === '1' ? 0 : 1;
+  toggleUser(user: User) {
+    const newStatus = user.status === '1' ? 0 : 1;
 
-  this.adminService.updateUserStatus(user.id, newStatus).subscribe({
-    next: () => {
-      user.status = newStatus.toString(); // keep string consistency
-    },
-    error: (err) => {
-      console.error('Error updating status:', err);
-    }
-  });
-}
+    this.adminService.updateUserStatus(user.id, newStatus).subscribe({
+      next: () => {
+        user.status = newStatus.toString(); // keep string consistency
+      },
+      error: (err) => {
+        console.error('Error updating status:', err);
+      }
+    });
+  }
 
 
-onToggleChange(user: any, isChecked: boolean) {
-  const newStatus = isChecked ? 1 : 0;
+  onToggleChange(user: any, isChecked: boolean) {
+    const newStatus = isChecked ? 1 : 0;
 
-  // Ensure user.id is converted to number if needed
-  this.adminService.updateUserStatus(+user.id, newStatus).subscribe({
-    next: (response) => {
-      console.log('Status updated:', response);
-      user.status = newStatus.toString(); // keep consistency with string
-    },
-    error: (err) => {
-      console.error('Failed to update status:', err);
-    }
-  });
-}
+    // Ensure user.id is converted to number if needed
+    this.adminService.updateUserStatus(+user.id, newStatus).subscribe({
+      next: (response) => {
+        console.log('Status updated:', response);
+        user.status = newStatus.toString(); // keep consistency with string
+      },
+      error: (err) => {
+        console.error('Failed to update status:', err);
+      }
+    });
+  }
 
 
 
@@ -94,8 +96,8 @@ onToggleChange(user: any, isChecked: boolean) {
   loadUser(): void {
     this.adminService.loadUsers().subscribe(
       (response: any) => {
-        console.log(response); 
-        
+        console.log(response);
+
         this.users = response.user.map((user: any) => ({
           id: user.id,
           username: user.username,
@@ -111,23 +113,23 @@ onToggleChange(user: any, isChecked: boolean) {
           bc_no: user.bc_no,
           role: user.role,
           ort: user.ort, // Ensure ort is defined, default to empty string if not present
-          status: user.status 
+          status: user.status
         }));
-        
+
       },
-      error => {
+      (error: any) => {
         console.error('Error fetching users:', error);
       }
     );
   }
-  
-  
+
+
 
   get filteredUsers() {
     return this.users.filter(user =>
       (!this.searchTerm || user.username.toLowerCase().includes(this.searchTerm.toLowerCase())) &&
       (!this.searchEmail || user.email.toLowerCase().includes(this.searchEmail.toLowerCase())) &&
-      (!this.searchPhone || user.phoneNo.includes(this.searchPhone)) 
+      (!this.searchPhone || user.phoneNo.includes(this.searchPhone))
     );
   }
 
@@ -164,14 +166,14 @@ onToggleChange(user: any, isChecked: boolean) {
             Swal.fire('Deleted!', 'User has been deleted.', 'success');
             // this.loadUser();
           },
-          error => {
+          (error: any) => {
             Swal.fire('Error', 'Failed to delete User', 'error');
           }
         );
       }
     });
 
-    
+
   }
 
   onPageChange(newPage: number) {

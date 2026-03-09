@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';  
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../../admin.service';
 import Swal from 'sweetalert2';
 
 interface Role {
@@ -26,7 +26,7 @@ export class RolesComponent implements OnInit {
   roleForm: FormGroup;
   isEditMode: boolean = false;
   selectedRole: Role | null = null;
-  page: number = 1; 
+  page: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1; // Initialize totalPages
 
@@ -43,11 +43,11 @@ export class RolesComponent implements OnInit {
 
   loadRoles(): void {
     this.roleService.getRole().subscribe(
-      response => {
-        this.role = response.role; 
-        this.calculateTotalPages(); 
+      (response: any) => {
+        this.role = response.role;
+        this.calculateTotalPages();
       },
-      error => {
+      (error: any) => {
         console.error('Error fetching roles:', error);
       }
     );
@@ -71,12 +71,12 @@ export class RolesComponent implements OnInit {
 
         // Update role via API
         this.roleService.updateRole(roleData).subscribe(
-          response => {
+          (response: any) => {
             if (response.status) {
               const index = this.role.findIndex((c) => c.id === this.selectedRole!.id);
-              this.role[index] = response.role; 
-              this.resetForm(); 
-              this.calculateTotalPages(); 
+              this.role[index] = response.role;
+              this.resetForm();
+              this.calculateTotalPages();
               Swal.fire('Added!', 'Roles has been added.', 'success');
             } else {
               console.error('Failed to update role:', response.message);
@@ -84,7 +84,7 @@ export class RolesComponent implements OnInit {
 
             }
           },
-          error => {
+          (error: any) => {
             console.error('Error updating role:', error);
             Swal.fire('Error!', 'Error updating Role.', 'error');
 
@@ -92,42 +92,42 @@ export class RolesComponent implements OnInit {
         );
       } else {
 
-        if(roleData){
+        if (roleData) {
 
           this.roleService.createRole(roleData).subscribe(
-            response => {
+            (response: any) => {
               if (response.status) {
                 this.role.push(response.role); // Add the new role to the list
                 this.resetForm(); // Reset form after successful creation
                 this.calculateTotalPages();
                 Swal.fire('Added!', 'Roles has been added.', 'success');
-                 // Recalculate total pages after creation
+                // Recalculate total pages after creation
               } else {
-  
+
                 Swal.fire('Error!', 'Error Create Role.', 'error');
                 // console.error('Failed to create role:', response.message);
-              
-  
+
+
               }
             },
-            error => {
+            (error: any) => {
               Swal.fire('Error!', 'Error Create Role.', 'error');
-  
+
               console.error('Error creating role:', error);
             }
           );
 
         }
-        else{
+        else {
 
           Swal.fire('Error!', 'Error Create Role.', 'error');
 
 
         }
 
-       
-        
-       
+
+
+
       }
     }
   }
@@ -144,17 +144,17 @@ export class RolesComponent implements OnInit {
   onDelete(roleId: number): void {
     // Delete role via API
     this.roleService.deleteRole(roleId).subscribe(
-      response => {
+      (response: any) => {
         if (response.status) {
           this.role = this.role.filter((c) => c.id !== roleId); // Remove the deleted role
-          this.calculateTotalPages(); 
-          Swal.fire('Sucess!', 'Deleted Sucessfully', 'success');
-          
+          this.calculateTotalPages();
+          Swal.fire('Success!', 'Deleted Successfully', 'success');
+
         } else {
           console.error('Failed to delete role:', response.message);
         }
       },
-      error => {
+      (error: any) => {
         console.error('Error deleting role:', error);
       }
     );

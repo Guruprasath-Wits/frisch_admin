@@ -2,14 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AdminService } from '../../../admin.service';
-import { WidgetsDropdownComponent } from '../../widgets/widgets-dropdown/widgets-dropdown.component';
+
 import Swal from 'sweetalert2';
-import { url } from 'src/app/config';
+import { url } from '../../../config';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, WidgetsDropdownComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
@@ -35,7 +37,8 @@ export class SettingsComponent implements OnInit {
       banner_img: [[]], // store array of files
       breaking_news: [''],
       webshop: [''],
-      telephone: ['']
+      telephone: [''],
+      minimumorder: ['']
     });
   }
 

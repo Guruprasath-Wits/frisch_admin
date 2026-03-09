@@ -1,116 +1,174 @@
-<div class="container">
-    <h3 class="mb-2" style="text-align: center; font-weight: bold !important;">{{ isEditMode ? 'Edit Sample Orders' : 'Add Sample Orders' }}</h3>
+<div class="container-fluid sample-order-container fade-in">
+  <div class="row g-4">
+    <!-- Left Column: Add New Sample Order Form -->
+    <div class="col-lg-4">
+      <div class="premium-card">
+        <div class="card-header-premium">
+          <h2 class="card-title">{{ isEditMode ? 'Edit Sample Order' : 'Add Sample Order' }}</h2>
+          <div class="header-badge">Configure your free trial offerings</div>
+        </div>
 
-    <div class="add-user-card mb-3">
-        <form [formGroup]="sample_orderForm" (ngSubmit)="onSubmit()" class="sample_order-form" enctype="multipart/form-data">
-            <!-- Sample Order Product with select dropdown -->
-            <!-- <div class="form-group mb-3">
-                <label class="form-label" for="sample_order_product">Sample Order Product</label>
-                <select id="sample_order_product" formControlName="sample_order_product" class="form-control">
-                    <option value="" class="text-muted">Select Product</option>
-                    <option *ngFor="let product of products" [value]="product.id">{{ product.name }}</option>
-                </select>
-            </div> -->
+        <div class="card-body p-0">
+          <form [formGroup]="sample_orderForm" (ngSubmit)="onSubmit()" class="sample-order-form-premium">
 
-<div class="form-group mb-3 position-relative">
-  <label class="form-label">Sample Order Product</label>
+            <!-- Multi-Product Dropdown -->
+            <div class="form-group mb-4">
+              <label class="form-label-premium">Sample Order Products</label>
+              <div class="input-group-premium">
+                <i class="fas fa-boxes input-icon"></i>
+                <div class="dropdown-trigger-premium" (click)="toggleDropdown()" [class.open]="dropdownOpen">
+                  <span class="text-truncate">{{ getSelectedProductNames() || 'Select Products' }}</span>
+                  <i class="fas fa-chevron-down ms-2" [style.transform]="dropdownOpen ? 'rotate(180deg)' : 'none'"
+                    style="transition:0.3s"></i>
+                </div>
 
-  <div (click)="toggleDropdown()" class="form-control d-flex justify-content-between align-items-center" style="cursor: pointer;">
-    {{ getSelectedProductNames() || 'Select Products' }}
-
-    <span class="ms-2">&#9662;</span>
-  </div>
-
-  <div *ngIf="dropdownOpen">
-   <div *ngFor="let product of products" class="form-check">
-  <input
-    type="checkbox"
-    class="form-check-input"
-    [checked]="isProductSelected(product.id)"
-    (change)="onProductChange(product.id, $event)">
-  <label class="form-check-label ms-2">{{ product.name }}</label>
-</div>
-
-  </div>
-</div>
-
-
-            <div class="form-group mb-3">
-                <label class="form-label" for="description">Sample Order Name</label>
-                <textarea id="description" formControlName="sample_order_description" class="form-control" placeholder="Enter Sample Order Name"></textarea>
+                <div class="multi-dropdown-menu" *ngIf="dropdownOpen">
+                  <div *ngFor="let product of products" class="form-check" (click)="$event.stopPropagation()">
+                    <input type="checkbox" class="form-check-input" [id]="'product_' + product.id"
+                      [checked]="isProductSelected(product.id)" (change)="onProductChange(product.id, $event)">
+                    <label class="form-check-label" [for]="'product_' + product.id">{{ product.name }}</label>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div class="form-group mb-3">
-                <label class="form-label" for="description">Sample Order Description</label>
-                <textarea id="description" formControlName="description" class="form-control" placeholder="Enter Description"></textarea>
+            <div class="form-group mb-4">
+              <label class="form-label-premium">Sample Order Name</label>
+              <div class="input-group-premium">
+                <i class="fas fa-signature input-icon"></i>
+                <textarea formControlName="sample_order_description" class="form-control-premium"
+                  placeholder="e.g. Morning Selection Pack"></textarea>
+              </div>
             </div>
- <div class="form-group">
-  <label for="image_file" class="form-label">Upload Image</label><br>
-  <input type="file" id="image_file" (change)="onFileChange($event)" /><br>
 
-  <button type="button" class="btn btn-success mt-2" (click)="uploadProductImage()">Upload Image</button>
+            <div class="form-group mb-4">
+              <label class="form-label-premium">Detailed Description</label>
+              <div class="input-group-premium">
+                <i class="fas fa-align-left input-icon"></i>
+                <textarea formControlName="description" class="form-control-premium"
+                  placeholder="Items included in this sample..."></textarea>
+              </div>
+            </div>
 
-  <div *ngIf="sample_orderForm.get('product_img')?.value" class="image-preview mt-2">
-    <!-- <img [src]="fileUrl + sample_orderForm.get('product_img')?.value" alt="Product Image" class="preview-img" /> -->
-    <button type="button" class="btn btn-danger btn-sm mt-1" (click)="removeImage()">Remove</button>
-  </div>
-</div>
+            <!-- Image Upload Section -->
+            <div class="form-group mb-4">
+              <label class="form-label-premium">Sample Image</label>
+              <div class="upload-zone-premium">
+                <input type="file" id="image_file" (change)="onFileChange($event)" accept="image/*" />
+                <div class="upload-content">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <span>{{ selectedFile ? selectedFile.name : 'Click or Drag Image' }}</span>
+                </div>
+              </div>
 
-            <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update Sample Order' : 'Add Sample Order' }}</button>
-        </form>
+              <div *ngIf="sample_orderForm.get('product_img')?.value" class="image-preview-premium">
+                <img [src]="sample_orderForm.get('product_img')?.value" alt="Preview">
+                <button type="button" class="btn-remove" (click)="removeImage()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+
+              <button type="button" class="btn-upload-action" [disabled]="!selectedFile" (click)="uploadProductImage()">
+                <i class="fas fa-arrow-up me-2"></i> Confirm Upload
+              </button>
+            </div>
+
+            <div class="form-actions mt-5">
+              <button type="submit" class="btn-save-premium"
+                [class.active]="sample_orderForm.valid && sample_orderForm.get('product_img')?.value"
+                [disabled]="sample_orderForm.invalid || !sample_orderForm.get('product_img')?.value">
+                <i class="fas" [ngClass]="isEditMode ? 'fa-sync-alt' : 'fa-plus-circle'"></i>
+                {{ isEditMode ? 'Update Sample' : 'Save Sample' }}
+                <i class="fas fa-arrow-right ms-auto"></i>
+              </button>
+              <button type="button" class="btn-discard-premium" *ngIf="isEditMode" (click)="resetForm()">
+                Discard Changes
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
     </div>
 
-    <h3 style="text-align: center;font-weight: bold !important;">Sample Orders List</h3>
+    <!-- Right Column: Sample Orders List -->
+    <div class="col-lg-8">
+      <div class="premium-card">
+        <div class="card-header-premium">
+          <h2 class="card-title">Sample Orders List</h2>
+          <div class="header-badge">Active Trials: {{ sampleOrders.length }}</div>
+        </div>
 
-    <div class="add-user-card">
-        <table class="table table-hover sample_order-table">
-            <thead>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table custom-table mb-0">
+              <thead>
                 <tr>
-                    <!-- <th>ID</th> -->
-                    <th>S.No</th>
-
-                    <th>Sample Order Product</th>
-                    <th>Sample Order Name</th>
-                    <th>Sample Order Description</th>
-                    <th>Actions</th>
+                  <th class="text-center" width="60">#</th>
+                  <th width="30%">Included Products</th>
+                  <th>Order Name</th>
+                  <th width="35%">Description</th>
+                  <th class="text-end">Actions</th>
                 </tr>
-            </thead>
-          <tbody>
-  <tr *ngFor="let sample_order of paginatedCategories; let i = index">
-    <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+              </thead>
+              <tbody>
+                <tr *ngFor="let sample_order of paginatedCategories; let i = index">
+                  <td class="text-center">
+                    <span class="fw-bold text-muted">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</span>
+                  </td>
+                  <td>
+                    <ng-container *ngIf="sample_order.products && sample_order.products.length > 0; else noProducts">
+                      <span *ngFor="let product of sample_order.products" class="prod-list-badge">
+                        {{ product.name }}
+                      </span>
+                    </ng-container>
+                    <ng-template #noProducts><span class="text-muted italic">No Products</span></ng-template>
+                  </td>
+                  <td>
+                    <span class="order-name-text">{{ sample_order.sample_order_description }}</span>
+                  </td>
+                  <td>
+                    <div class="order-desc-text" [innerHTML]="formatDescription(sample_order.description)"></div>
+                  </td>
+                  <td class="text-end">
+                    <div class="d-flex justify-content-end">
+                      <button class="btn-action-premium edit" (click)="onEdit(sample_order)" title="Edit">
+                        <i class="fas fa-pencil-alt"></i>
+                      </button>
+                      <button class="btn-action-premium delete" (click)="onDelete(sample_order.id)" title="Delete">
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
 
- <td>
-  <ng-container *ngIf="sample_order.products && sample_order.products.length > 0; else noProducts">
-    <div *ngFor="let product of sample_order.products">
-      1 x  {{ product.name }}
+                <!-- Empty State -->
+                <tr *ngIf="sampleOrders.length === 0">
+                  <td colspan="5" class="text-center py-5">
+                    <div class="text-center opacity-25">
+                      <i class="fas fa-shopping-basket mb-3" style="font-size: 4rem;"></i>
+                      <h4 class="fw-bold">No Sample Orders Found</h4>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="card-footer p-0 border-0" *ngIf="totalPages > 1">
+          <div class="pagination-premium">
+            <button class="page-btn" (click)="previousPage()" [disabled]="currentPage === 1">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-  </ng-container>
-
-  <ng-template #noProducts>No Products</ng-template>
-</td>
-
-
-    <td>{{ sample_order.sample_order_description }}</td>
-    <td [innerHTML]="formatDescription(sample_order.description)"></td>
-    <td>
-      <button class="btn btn-warning btn-sm" (click)="onEdit(sample_order)">
-        <i class="fa-solid fa-pen-to-square"></i>
-      </button>
-      <button class="btn btn-danger btn-sm ms-2" (click)="onDelete(sample_order.id)">
-        <i class="fa-solid fa-trash"></i>
-      </button>
-    </td>
-  </tr>
-</tbody>
-
-        </table>
-    </div>
-
-    <div class="pagination-controls">
-        <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
-    </div>
-    
-
+  </div>
 </div>

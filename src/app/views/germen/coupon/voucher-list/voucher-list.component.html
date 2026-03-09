@@ -1,43 +1,72 @@
-<div class="container-fluid">
-  <div class="header-card mb-4 mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2 class="title">Voucher List</h2>
-      <button class="btn add-btn" (click)="navigateToAddVoucher()">Add Voucher</button>
+<div class="container-fluid voucher-container fade-in">
+  <div class="premium-card">
+    <!-- Premium Header -->
+    <div class="card-header-premium">
+      <div class="header-content">
+        <h2 class="card-title">{{ 'VOUCHER.LIST_TITLE' | translate }}</h2>
+        <p class="header-info mb-0">{{ 'VOUCHER.MANAGE_DESC' | translate }}</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-add-voucher" (click)="navigateToAddVoucher()">
+          <i class="fas fa-plus-circle"></i>
+          {{ 'VOUCHER.ADD_BTN' | translate }}
+        </button>
+      </div>
     </div>
-    <div class="search-container">
-      <input type="text" class="form-control search-input" placeholder="Search by Voucher Type"
-        [(ngModel)]="searchTerm">
-    </div>
-  </div>
 
-  <div class="list-card">
-    <table class="table custom-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Voucher Type</th>
-          <th>Voucher Description</th>
-          <th class="text-center">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let voucher of filteredVouchers; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>{{ voucher.type }}</td>
-          <td>{{ voucher.description }}</td>
-          <td class="text-center">
-            <button class="btn btn-action edit-btn me-2" (click)="onEdit(voucher)">
-              <i class="fa-solid fa-pen-to-square"></i>
-            </button>
-            <button class="btn btn-action delete-btn" (click)="onDelete(voucher.id)">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </td>
-        </tr>
-        <tr *ngIf="filteredVouchers.length === 0">
-          <td colspan="4" class="text-center">No vouchers found.</td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Filter Strip -->
+    <div class="filter-strip">
+      <div class="search-box-premium">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="form-control-premium" [placeholder]="'VOUCHER.SEARCH_PLACEHOLDER' | translate"
+          [(ngModel)]="searchTerm">
+      </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table custom-table mb-0">
+          <thead>
+            <tr>
+              <th class="text-center" width="80">#</th>
+              <th>{{ 'VOUCHER.TYPE_COL' | translate }}</th>
+              <th width="50%">{{ 'VOUCHER.DESC_COL' | translate }}</th>
+              <th class="text-center">{{ 'VOUCHER.ACTION_COL' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let voucher of filteredVouchers; let i = index">
+              <td class="text-center voucher-id">{{ i + 1 }}</td>
+              <td class="voucher-type">
+                <span>{{ voucher.type }}</span>
+              </td>
+              <td>
+                <div class="desc-text">{{ voucher.description }}</div>
+              </td>
+              <td class="text-center">
+                <div class="d-flex justify-content-center">
+                  <button class="btn-action-premium edit" (click)="onEdit(voucher)"
+                    [title]="'VOUCHER.EDIT_TOOLTIP' | translate">
+                    <i class="fas fa-pencil-alt"></i>
+                  </button>
+                  <button class="btn-action-premium delete" (click)="onDelete(voucher.id)"
+                    [title]="'VOUCHER.DELETE_TOOLTIP' | translate">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Premium Empty State -->
+        <div *ngIf="filteredVouchers.length === 0" class="empty-state">
+          <i class="fas fa-ticket-alt empty-icon"></i>
+          <h4>{{ 'VOUCHER.EMPTY_TITLE' | translate }}</h4>
+          <p>{{ 'VOUCHER.EMPTY_DESC' | translate }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

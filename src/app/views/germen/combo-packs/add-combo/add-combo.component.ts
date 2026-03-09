@@ -222,4 +222,8 @@ export class AddComboComponent implements OnInit {
             this.comboForm.markAllAsTouched();
         }
     }
+
+    onCancel() {
+        this.router.navigate(['/combo-packs']);
+    }
 }

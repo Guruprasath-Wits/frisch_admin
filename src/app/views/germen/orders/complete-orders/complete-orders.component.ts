@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Router } from '@angular/router';
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../../../admin.service';
 import Swal from 'sweetalert2';
-import { url } from 'src/app/config';
+import { url } from '../../../../config';
 
 // Define the Order interface to match the API response structure
 export interface Order {
@@ -43,10 +43,10 @@ export class CompleteOrdersComponent implements OnInit {
   searchDate: string = '';
   page: number = 1;
   itemsPerPage: number = 50;
-  url : any
+  url: any
 
   constructor(private router: Router, private adminService: AdminService) {
-this.url = url
+    this.url = url
   }
 
   ngOnInit(): void {
@@ -60,7 +60,7 @@ this.url = url
       (response: { user: Driver[] }) => {
         this.drivers = response.user.filter((user) => user.role.toLowerCase() === 'driver');
       },
-      (error) => console.error('Error fetching drivers:', error)
+      (error: any) => console.error('Error fetching drivers:', error)
     );
   }
 
@@ -73,7 +73,7 @@ this.url = url
           driverName: this.getDriverName(order.delivery_person_id) // Map driver name to the order
         }));
       },
-      (error) => console.error('Error fetching orders:', error)
+      (error: any) => console.error('Error fetching orders:', error)
     );
   }
 
@@ -97,24 +97,24 @@ this.url = url
 
   // Utility function to extract date in YYYY-MM-DD format
   // Utility function to normalize the date format
-extractDate(dateTime: string | null): string {
-  if (!dateTime) return ''; // Handle null or undefined values
+  extractDate(dateTime: string | null): string {
+    if (!dateTime) return ''; // Handle null or undefined values
 
-  // Attempt parsing based on known formats
-  let date: Date;
-  if (/^\d{4}-\d{2}-\d{2}/.test(dateTime)) {
-    date = new Date(dateTime); // ISO format
-  } else if (/^\d{2}-\d{2}-\d{4}/.test(dateTime)) {
-    const [day, month, year] = dateTime.split('-').map(Number);
-    date = new Date(year, month - 1, day);
-  } else {
-    console.warn('Unrecognized date format:', dateTime);
-    return ''; // Return empty string for invalid formats
+    // Attempt parsing based on known formats
+    let date: Date;
+    if (/^\d{4}-\d{2}-\d{2}/.test(dateTime)) {
+      date = new Date(dateTime); // ISO format
+    } else if (/^\d{2}-\d{2}-\d{4}/.test(dateTime)) {
+      const [day, month, year] = dateTime.split('-').map(Number);
+      date = new Date(year, month - 1, day);
+    } else {
+      console.warn('Unrecognized date format:', dateTime);
+      return ''; // Return empty string for invalid formats
+    }
+
+    // Validate the parsed date
+    return isNaN(date.getTime()) ? '' : date.toISOString().split('T')[0]; // Normalize to YYYY-MM-DD
   }
-
-  // Validate the parsed date
-  return isNaN(date.getTime()) ? '' : date.toISOString().split('T')[0]; // Normalize to YYYY-MM-DD
-}
 
 
   // Pagination logic
@@ -154,7 +154,7 @@ extractDate(dateTime: string | null): string {
             Swal.fire('Success', 'Driver reassigned successfully!', 'success');
             this.loadOrders(); // Refresh orders to update driver info
           },
-          (error) => {
+          (error: any) => {
             Swal.fire('Error', 'Failed to reassign driver.', 'error');
             console.error('Error reassigning driver:', error);
           }
@@ -165,19 +165,61 @@ extractDate(dateTime: string | null): string {
 
   // View order details in a modal
   viewOrder(order: Order): void {
+    const deliveryImage = order.picture ? order.picture : '';
+
     Swal.fire({
       title: `Order Details - ${order.order_id}`,
+      width: '600px',
+      padding: '0',
+      showCloseButton: true,
+      customClass: {
+        popup: 'premium-swal-popup',
+        title: 'swal2-title',
+        htmlContainer: 'swal2-html-container',
+        confirmButton: 'swal2-confirm'
+      },
       html: `
-        <p><strong>Order ID:</strong> ${order.order_id}</p>
-        <p><strong>User ID:</strong> ${order.user_id}</p>
-        <p><strong>Status:</strong> ${order.status}</p>
-        <p><strong>Delivery Person:</strong> ${order.driverName}</p>
-        <p><strong>Delivery Date:</strong> ${this.extractDate(order.date)}</p>
-        <p><strong>Complete Time:</strong> ${order.complete_time} hours</p>
-        <p><strong>Complete Distance:</strong> ${order.complete_distance} km</p>
-        <img src="${this.url}/${order.picture}" alt="Delivery Picture" style="width: 100px; height: 100px; object-fit: cover;">
+        <div class="section-title-premium"><i class="fas fa-info-circle"></i> Delivery Summary</div>
+        <div class="details-grid-premium">
+          <div class="detail-item-premium">
+            <label>Order ID</label>
+            <span>#${order.order_id}</span>
+          </div>
+          <div class="detail-item-premium">
+            <label>User ID</label>
+            <span>#${order.user_id}</span>
+          </div>
+          <div class="detail-item-premium">
+            <label>Driver</label>
+            <span>${order.driverName}</span>
+          </div>
+          <div class="detail-item-premium">
+            <label>Delivery Date</label>
+            <span>${this.extractDate(order.date)}</span>
+          </div>
+          <div class="detail-item-premium">
+            <label>Complete Time</label>
+            <span>${order.time || 'N/A'}</span>
+          </div>
+          <div class="detail-item-premium">
+            <label>Status</label>
+            <span style="text-transform: capitalize;">${order.status}</span>
+          </div>
+        </div>
+
+        ${deliveryImage ? `
+          <div class="section-title-premium"><i class="fas fa-camera"></i> Delivery Evidence</div>
+          <div style="text-align: center; margin-top: 15px;">
+            <img src="${deliveryImage}" alt="Evidence" style="width: 100%; max-height: 300px; border-radius: 15px; object-fit: contain; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 2px solid #fff;">
+          </div>
+        ` : `
+          <div class="section-title-premium"><i class="fas fa-camera-slash"></i> Delivery Evidence</div>
+          <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 12px; color: #b2bec3;">
+            <i class="fas fa-image fa-2x mb-2"></i>
+            <p style="margin: 0; font-size: 0.9rem;">No picture available for this delivery</p>
+          </div>
+        `}
       `,
-      icon: 'info',
       confirmButtonText: 'Close',
     });
   }

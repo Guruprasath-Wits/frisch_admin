@@ -3,7 +3,7 @@ import { NgStyle } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../../../admin.service';
 import Swal from 'sweetalert2';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -55,6 +55,8 @@ export class AdduserComponent implements OnInit {
   userId: number = 0;
   user: any;
   roles: any[] = []; // Array to store roles
+  roleDropdownOpen: boolean = false;
+  liftDropdownOpen: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -162,5 +164,41 @@ export class AdduserComponent implements OnInit {
 
   get f() {
     return this.loginForm.controls;
+  }
+
+  resetForm() {
+    this.router.navigate(['/users']);
+  }
+
+  toggleRoleDropdown() {
+    this.roleDropdownOpen = !this.roleDropdownOpen;
+    this.liftDropdownOpen = false;
+  }
+
+  toggleLiftDropdown() {
+    this.liftDropdownOpen = !this.liftDropdownOpen;
+    this.roleDropdownOpen = false;
+  }
+
+  selectRole(role: any) {
+    this.loginForm.patchValue({ role: role.role_name });
+    this.roleDropdownOpen = false;
+  }
+
+  selectLift(value: string) {
+    this.loginForm.patchValue({ lift_availability: value });
+    this.liftDropdownOpen = false;
+  }
+
+  getSelectedRole(): string {
+    const role = this.loginForm.get('role')?.value;
+    return role || 'Select a role';
+  }
+
+  getSelectedLift(): string {
+    const lift = this.loginForm.get('lift_availability')?.value;
+    if (lift === 'Yes') return 'Ja';
+    if (lift === 'No') return 'Nein';
+    return 'Select';
   }
 }
