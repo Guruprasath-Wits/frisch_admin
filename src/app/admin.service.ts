@@ -95,6 +95,27 @@ export class AdminService {
     return this.http.put<any>(`${url}/category/update/${id}`, category);
   }
 
+  // Main Category Methods
+  public getMainCategory(): Observable<any> {
+    return this.http.get<any>(`${url}/main-category/read`);
+  }
+
+  public getMainCategoryById(id: number): Observable<any> {
+    return this.http.get<any>(`${url}/main-category/read/${id}`);
+  }
+
+  public addMainCategory(data: any): Observable<any> {
+    return this.http.post<any>(`${url}/main-category/create`, data);
+  }
+
+  public updateMainCategory(id: number, data: any): Observable<any> {
+    return this.http.put<any>(`${url}/main-category/update/${id}`, data);
+  }
+
+  public removeMainCategory(id: number): Observable<any> {
+    return this.http.post<any>(`${url}/main-category/delete/${id}`, {});
+  }
+
   public getProducts(): Observable<any> {
     return this.http.get(`${url}/product/read`);
   }
@@ -459,5 +480,18 @@ export class AdminService {
 
   public markMissingProductAsRead(id: number): Observable<any> {
     return this.http.put<any>(`${url}/missingProduct/read/${id}`, {});
+  }
+
+  // Holiday Methods
+  public getHolidays(): Observable<any> {
+    return this.http.get<any>(`${url}/holiday/read`);
+  }
+
+  public addHoliday(data: any): Observable<any> {
+    return this.http.post<any>(`${url}/holiday/create`, data);
+  }
+
+  public deleteHoliday(id: number): Observable<any> {
+    return this.http.delete<any>(`${url}/holiday/delete/${id}`);
   }
 }

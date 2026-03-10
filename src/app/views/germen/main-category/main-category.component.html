@@ -1,0 +1,124 @@
+<div class="container-fluid category-container fade-in">
+    <div class="row g-4">
+        <!-- Left Column: Add New Category Form -->
+        <div class="col-lg-4">
+            <div class="premium-card">
+                <div class="card-header-premium">
+                    <h2 class="card-title">{{ (isEditMode ? 'MAIN_CAT.EDIT_TITLE' : 'MAIN_CAT.ADD_TITLE') | translate }}
+                    </h2>
+                    <div class="header-badge">{{ 'MAIN_CAT.MANAGE_DESC' | translate }}</div>
+                </div>
+
+                <div class="card-body p-0">
+                    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="category-form-premium">
+
+                        <div class="form-group mb-4">
+                            <label class="form-label-premium">{{ 'MAIN_CAT.NAME' | translate }}</label>
+                            <div class="input-group-premium">
+                                <i class="fas fa-tag input-icon"></i>
+                                <input type="text" formControlName="category_name" class="form-control-premium"
+                                    [placeholder]="'MAIN_CAT.NAME_PLACEHOLDER' | translate" />
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label-premium">{{ 'MAIN_CAT.DESCRIPTION' | translate }}</label>
+                            <div class="input-group-premium">
+                                <textarea formControlName="category_desc" class="form-control-premium"
+                                    [placeholder]="'MAIN_CAT.DESC_PLACEHOLDER' | translate"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions mt-5">
+                            <button type="submit" class="btn-save-premium" [class.active]="categoryForm.valid"
+                                [disabled]="categoryForm.invalid">
+                                {{ (isEditMode ? 'MAIN_CAT.UPDATE' : 'MAIN_CAT.SAVE') | translate }}
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                            <button type="button" class="btn-cancel w-100 mt-2"
+                                style="border:none; background:transparent; font-weight:700; color:#b2bec3; text-transform:uppercase; font-size:0.8rem; letter-spacing:1px;"
+                                *ngIf="isEditMode" (click)="resetForm()">
+                                {{ 'MAIN_CAT.DISCARD' | translate }}
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Category List -->
+        <div class="col-lg-8">
+            <div class="premium-card">
+                <div class="card-header-premium">
+                    <h2 class="card-title">{{ 'MAIN_CAT.LIST_TITLE' | translate }}</h2>
+                    <div class="header-badge">{{ 'MAIN_CAT.TOTAL' | translate }}: {{ categories.length }}</div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table custom-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" width="60">#</th>
+                                    <th>{{ 'MAIN_CAT.NAME_COL' | translate }}</th>
+                                    <th width="40%">{{ 'MAIN_CAT.DESC_COL' | translate }}</th>
+                                    <th class="text-end">{{ 'MAIN_CAT.ACTIONS_COL' | translate }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let category of paginatedCategories; let i = index">
+                                    <td class="text-center">
+                                        <span class="fw-bold text-muted">{{ (currentPage - 1) * itemsPerPage + i + 1
+                                            }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="cat-name">{{ category.category_name }}</span>
+                                    </td>
+                                    <td>
+                                        <p class="cat-desc" [title]="category.category_desc">{{ category.category_desc
+                                            }}</p>
+                                    </td>
+                                    <td class="text-end">
+                                        <button class="btn-action-premium edit" (click)="onEdit(category)" title="Edit">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                        <button class="btn-action-premium delete" (click)="onDelete(category.id)"
+                                            title="Delete">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <!-- Empty State -->
+                                <tr *ngIf="categories.length === 0">
+                                    <td colspan="4" class="text-center py-5">
+                                        <div class="text-center opacity-25">
+                                            <i class="fas fa-layer-group mb-3" style="font-size: 4rem;"></i>
+                                            <h4 class="fw-bold">{{ 'MAIN_CAT.EMPTY' | translate }}</h4>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="card-footer p-0 border-0" *ngIf="totalPages > 1">
+                    <div class="pagination-premium">
+                        <button class="page-btn" (click)="previousPage()" [disabled]="currentPage === 1">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="page-info">{{ 'MAIN_CAT.PAGE_INFO' | translate:{current: currentPage, total:
+                            totalPages}
+                            }}</span>
+                        <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

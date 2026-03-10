@@ -45,13 +45,13 @@
                 </div>
                 <div class="col-md-6">
                   <div class="form-group-custom">
-                    <label class="form-label-custom">Category</label>
+                    <label class="form-label-custom">Sub-Category</label>
                     <div class="dropdown-box">
                       <div class="input-group-custom" (click)="toggleCategoryDropdown()">
                         <i class="fas fa-layer-group input-icon"></i>
                         <div class="form-control-custom d-flex align-items-center cursor-pointer"
                           style="min-height: 48px;">
-                          {{ getSelectedCategoryNames() || 'Select Categories' }}
+                          {{ getSelectedCategoryNames() || 'Select Sub-Categories' }}
                         </div>
                         <i class="fas fa-chevron-down dropdown-arrow"></i>
                       </div>
@@ -72,7 +72,7 @@
                     <div class="input-group-custom">
                       <i class="fas fa-toggle-on input-icon"></i>
                       <select formControlName="product_status" class="form-control-custom select-custom">
-                        <option value="" disabled selected>Select Category</option>
+                        <option value="" disabled selected>Select Sub-Category</option>
                         <option value="Enable">Enable</option>
                         <option value="Disable">Disable</option>
                       </select>

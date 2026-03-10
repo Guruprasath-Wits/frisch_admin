@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AdminService } from '../../../admin.service';
 import Swal from 'sweetalert2';
-import { file_url } from '../../../config';
+
 import { CommonModule } from '@angular/common';
 
 interface Category {
@@ -11,7 +11,9 @@ interface Category {
   category_type: string;
 
   category_desc: string;
-  category_img?: string;
+  delivery_fee_weekday: number;
+  delivery_fee_weekend: number;
+  holiday_fee: number;
 }
 
 import { TranslateModule } from '@ngx-translate/core';
@@ -30,13 +32,13 @@ import { TranslateModule } from '@ngx-translate/core';
 export class CategoryComponent implements OnInit {
   categoryForm: FormGroup;
   categories: Category[] = [];
-  imagePreview: string | null = null;
   currentCategory: Category | null = null;
   isEditMode: boolean = false;
   currentPage: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1;
-  file = file_url
+
+  mainCategories: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -47,28 +49,38 @@ export class CategoryComponent implements OnInit {
       category_type: ['', Validators.required],
 
       category_desc: ['', Validators.required],
-      image_file: [null]
+      delivery_fee_weekday: [0, Validators.required],
+      delivery_fee_weekend: [0, Validators.required],
+      holiday_fee: [0, Validators.required]
     });
   }
 
   ngOnInit(): void {
     this.getCategories();
+    this.getMainCategories();
   }
 
-  removeImage(): void {
-    this.categoryForm.patchValue({ image_file: null });
-    this.imagePreview = null;
+  getMainCategories(): void {
+    this.adminService.getMainCategory().subscribe(
+      (response: any) => {
+        if (response.status) {
+          this.mainCategories = response.category;
+        }
+      },
+      error => {
+        console.error('Error fetching main categories:', error);
+      }
+    );
   }
+
+
 
   getCategories(): void {
     this.adminService.getCategory({}).subscribe(
       (response: any) => {
         if (response.status) {
           console.log('Raw category response:', response.category);
-          this.categories = response.category.map((cat: any) => ({
-            ...cat,
-            category_img: `${cat.category_img}`
-          }));
+          this.categories = response.category;
           console.log('Processed categories:', this.categories);
           this.totalPages = Math.ceil(this.categories.length / this.itemsPerPage);
         } else {
@@ -81,40 +93,7 @@ export class CategoryComponent implements OnInit {
     );
   }
 
-  // onFileChange(event: any): void {
-  //   if (event.target.files.length > 0) {
-  //     const file = event.target.files[0];
-  //     this.categoryForm.patchValue({ image_file: file });
-  //     const reader = new FileReader();
-  //     reader.onload = () => {
-  //       this.imagePreview = reader.result as string;
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // }
 
-  onFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-
-      // Validate file type
-      const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-      if (!validTypes.includes(file.type)) {
-        alert('Invalid file type! Please upload a JPG, PNG, or JPEG image.');
-        return;
-      }
-
-      this.categoryForm.patchValue({ image_file: file });
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
 
   onSubmit(): void {
     if (!this.categoryForm.value.category_name || !this.categoryForm.value.category_type) {
@@ -126,36 +105,32 @@ export class CategoryComponent implements OnInit {
     formData.append('category_type', this.categoryForm.value.category_type);
 
     formData.append('category_desc', this.categoryForm.value.category_desc);
-
-    // Append image if it's a new file, else retain existing image
-    if (this.categoryForm.value.image_file) {
-      formData.append('category_img', this.categoryForm.value.image_file);
-    } else if (this.currentCategory?.category_img) {
-      formData.append('category_img', this.currentCategory.category_img); // Ensure backend can handle this
-    }
+    formData.append('delivery_fee_weekday', this.categoryForm.value.delivery_fee_weekday);
+    formData.append('delivery_fee_weekend', this.categoryForm.value.delivery_fee_weekend);
+    formData.append('holiday_fee', this.categoryForm.value.holiday_fee);
 
     if (this.isEditMode && this.currentCategory?.id) {
 
       this.adminService.updateCategory(this.currentCategory.id, formData).subscribe(
         response => {
-          Swal.fire('Updated!', 'Category has been updated.', 'success');
+          Swal.fire('Updated!', 'Sub-Category has been updated.', 'success');
           this.resetForm();
           this.getCategories();
         },
         error => {
-          Swal.fire('Error', 'Failed to update category()', 'error');
+          Swal.fire('Error', 'Failed to update sub-category()', 'error');
         }
       );
     } else {
 
       this.adminService.addCategory(formData).subscribe(
         response => {
-          Swal.fire('Added!', 'Category has been added.', 'success');
+          Swal.fire('Added!', 'Sub-Category has been added.', 'success');
           this.resetForm();
           this.getCategories();
         },
         error => {
-          Swal.fire('Error', 'Failed to add category', 'error');
+          Swal.fire('Error', 'Failed to add sub-category', 'error');
         }
       );
     }
@@ -166,29 +141,13 @@ export class CategoryComponent implements OnInit {
     this.isEditMode = true;
     this.currentCategory = category;
 
-    // Extract the relative path for the category image
-    const imagePath = category.category_img?.replace(/^http:\/\/[^\/]+\/uploads\//, 'uploads/') || null;
-
     this.categoryForm.patchValue({
       category_name: category.category_name,
       category_type: category.category_type,
       category_desc: category.category_desc,
-      image_file: null // Reset the file input field
-    });
-
-    this.imagePreview = imagePath; // Use the relative path for the preview
-
-    // Listen for new file uploads and update the preview dynamically
-    this.categoryForm.get('image_file')?.valueChanges.subscribe((file: File | null) => {
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.imagePreview = reader.result as string; // Update preview with new file
-        };
-        reader.readAsDataURL(file);
-      } else {
-        this.imagePreview = imagePath; // Retain relative path if no new image is uploaded
-      }
+      delivery_fee_weekday: category.delivery_fee_weekday,
+      delivery_fee_weekend: category.delivery_fee_weekend,
+      holiday_fee: category.holiday_fee
     });
   }
 
@@ -213,11 +172,11 @@ export class CategoryComponent implements OnInit {
         this.adminService.removeCategory(id).subscribe(
           response => {
             this.categories = this.categories.filter((f) => f.id !== id);
-            Swal.fire('Deleted!', 'Category has been deleted.', 'success');
+            Swal.fire('Deleted!', 'Sub-Category has been deleted.', 'success');
             // this.getCategories();
           },
           error => {
-            Swal.fire('Error', 'Failed to delete category', 'error');
+            Swal.fire('Error', 'Failed to delete sub-category', 'error');
           }
         );
       }
@@ -227,7 +186,6 @@ export class CategoryComponent implements OnInit {
   resetForm(): void {
     this.categoryForm.reset();
     this.isEditMode = false;
-    this.imagePreview = null;
     this.currentCategory = null;
   }
 
@@ -244,32 +202,5 @@ export class CategoryComponent implements OnInit {
     const endIndex = startIndex + this.itemsPerPage;
     return this.categories.slice(startIndex, endIndex);
   }
-  getImageUrl(img: string | undefined): string {
-    if (!img) {
-      return 'assets/images/placeholder.jpg';
-    }
 
-    // If already a full URL, return as is
-    if (img.startsWith('http://') || img.startsWith('https://')) {
-      return img;
-    }
-
-    // Build the full URL - ensure no double slashes
-    let baseUrl = this.file;
-    let imagePath = img;
-
-    // Remove trailing slash from base URL if present
-    if (baseUrl.endsWith('/')) {
-      baseUrl = baseUrl.slice(0, -1);
-    }
-
-    // Ensure image path starts with /
-    if (!imagePath.startsWith('/')) {
-      imagePath = '/' + imagePath;
-    }
-
-    const fullUrl = `${baseUrl}${imagePath}`;
-    console.log('Image URL:', fullUrl, 'from', img);
-    return fullUrl;
-  }
 }

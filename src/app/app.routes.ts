@@ -22,6 +22,7 @@ import { VoucherListComponent } from './views/germen/coupon/voucher-list/voucher
 import { AddVoucherComponent } from './views/germen/coupon/add-voucher/add-voucher.component';
 import { CouponListComponent } from './views/germen/coupon/coupon-list/coupon-list.component';
 import { AddCouponComponent } from './views/germen/coupon/add-coupon/add-coupon.component';
+import { HolidayComponent } from './views/germen/pages/holiday/holiday.component';
 
 
 export const routes: Routes = [
@@ -41,6 +42,11 @@ export const routes: Routes = [
       {
         path: 'users',
         loadChildren: () => import('./views/germen/users/routes').then((m) => m.routes),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'main-category',
+        loadComponent: () => import('./views/germen/main-category/main-category.component').then(m => m.MainCategoryComponent),
         canActivate: [AuthGuard],
       },
       {
@@ -204,6 +210,12 @@ export const routes: Routes = [
         path: 'imprint',
         component: ImprintComponent,
         title: 'Imprint',
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'holiday',
+        component: HolidayComponent,
+        title: 'Holiday',
         canActivate: [AuthGuard],
       },
 

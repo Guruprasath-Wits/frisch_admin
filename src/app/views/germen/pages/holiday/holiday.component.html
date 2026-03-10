@@ -1,0 +1,83 @@
+<div class="container-fluid holiday-container fade-in">
+    <div class="row g-4">
+        <!-- Left Column: Add Holiday Form -->
+        <div class="col-lg-4">
+            <div class="premium-card">
+                <div class="card-header-premium">
+                    <h2 class="card-title">{{ 'Add New Holiday' | translate }}</h2>
+                    <div class="header-badge">{{ 'Manage your Holiday Details' | translate }}</div>
+                </div>
+
+                <div class="card-body p-3">
+                    <form [formGroup]="holidayForm" (ngSubmit)="onSubmit()" class="holiday-form-premium">
+                        <div class="form-group mb-3">
+                            <label class="form-label-premium">{{ 'Date' | translate }}</label>
+                            <div class="input-group-premium">
+                                <i class="fas fa-calendar-plus input-icon"></i>
+                                <input type="date" formControlName="holiday_date" class="form-control-premium" />
+                            </div>
+                        </div>
+
+                        <div class="form-actions mt-4">
+                            <button type="submit" class="btn-save-premium" [class.active]="holidayForm.valid"
+                                [disabled]="holidayForm.invalid">
+                                {{ 'Save' | translate }}
+                                <i class="fas fa-plus ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Holiday List -->
+        <div class="col-lg-8">
+            <div class="premium-card">
+                <div class="card-header-premium">
+                    <h2 class="card-title">Holiday List</h2>
+                    <div class="header-badge">{{ 'TOTAL Holiday' | translate }}: {{ holidays.length }}</div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table custom-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" width="60">#</th>
+                                    <th class="text-center">{{ 'Date' | translate }}</th>
+                                    <th width="100" class="text-end">{{ 'Actions' | translate }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let h of holidays; let i = index">
+                                    <td class="text-center">
+                                        <span class="fw-bold text-muted">{{ i + 1 }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="holiday-date">{{ h.holiday_date | date: 'dd.MM.yyyy' }}</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <button class="btn-action-premium delete" (click)="onDelete(h.id)"
+                                            title="Delete">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <!-- Empty State -->
+                                <tr *ngIf="holidays.length === 0">
+                                    <td colspan="3" class="text-center py-5">
+                                        <div class="text-center opacity-25">
+                                            <i class="fas fa-calendar-times mb-3" style="font-size: 4rem;"></i>
+                                            <h4 class="fw-bold">{{ 'No Holiday Found' | translate }}</h4>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

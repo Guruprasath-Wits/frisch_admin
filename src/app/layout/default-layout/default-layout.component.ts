@@ -133,6 +133,9 @@ export class DefaultLayoutComponent implements OnInit {
     allowedNames.add('Fehlende Produkte');
     allowedNames.add('Transactions');
     allowedNames.add('Coupon Management');
+    allowedNames.add('Main_Category');
+    allowedNames.add('Sub_Category');
+    allowedNames.add('Holiday');
 
     // Filter from originalNavItems to maintain order and structure
     const filteredSource = originalNavItems.filter(item => {
@@ -169,7 +172,8 @@ export class DefaultLayoutComponent implements OnInit {
     const mapping: Record<string, string> = {
       'Dashboard': 'SIDEBAR.DASHBOARD',
       'Products': 'SIDEBAR.PRODUCTS',
-      'Category': 'SIDEBAR.CATEGORY',
+      'Main_Category': 'SIDEBAR.CATEGORY',
+      'Sub_Category': 'SIDEBAR.SUB_CATEGORY',
       'Steuer': 'SIDEBAR.STEUER',
       'Flasche': 'SIDEBAR.FLASCHE',
       'Product': 'SIDEBAR.PRODUCT',
@@ -194,6 +198,7 @@ export class DefaultLayoutComponent implements OnInit {
       'Permissions': 'SIDEBAR.PERMISSIONS',
       'Users': 'SIDEBAR.USERS',
       'Settings': 'SIDEBAR.SETTINGS',
+      'Holiday': 'Holiday',
       'Received Order': 'Bestellungen erhalten', // fallback or add keys
       // I should add more keys to json files if needed, but these cover the major ones.
     };

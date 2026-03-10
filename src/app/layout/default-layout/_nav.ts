@@ -18,9 +18,14 @@ export const navItems: INavData[] = [
   },
 
   {
-    name: 'Category',
-    url: 'category',
+    name: 'Main_Category',
+    url: 'main-category',
     iconComponent: { name: 'cil-grid' }
+  },
+  {
+    name: 'Sub_Category',
+    url: 'category',
+    iconComponent: { name: 'cil-list-filter' }
   },
   {
     name: 'Steuer',
@@ -211,7 +216,12 @@ export const navItems: INavData[] = [
     name: 'Imprint',
     url: '/imprint',
     iconComponent: { name: 'cil-description' },
+  },
 
+  {
+    name: 'Holiday',
+    url: '/holiday',
+    iconComponent: { name: 'cil-calendar' },
   },
 
 
