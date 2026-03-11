@@ -14,6 +14,7 @@ interface Category {
   delivery_fee_weekday: number;
   delivery_fee_weekend: number;
   holiday_fee: number;
+  min_delivery_charge: number;
 }
 
 import { TranslateModule } from '@ngx-translate/core';
@@ -51,7 +52,8 @@ export class CategoryComponent implements OnInit {
       category_desc: ['', Validators.required],
       delivery_fee_weekday: [0, Validators.required],
       delivery_fee_weekend: [0, Validators.required],
-      holiday_fee: [0, Validators.required]
+      holiday_fee: [0, Validators.required],
+      min_delivery_charge: [0, Validators.required]
     });
   }
 
@@ -108,6 +110,7 @@ export class CategoryComponent implements OnInit {
     formData.append('delivery_fee_weekday', this.categoryForm.value.delivery_fee_weekday);
     formData.append('delivery_fee_weekend', this.categoryForm.value.delivery_fee_weekend);
     formData.append('holiday_fee', this.categoryForm.value.holiday_fee);
+    formData.append('min_delivery_charge', this.categoryForm.value.min_delivery_charge);
 
     if (this.isEditMode && this.currentCategory?.id) {
 
@@ -147,7 +150,8 @@ export class CategoryComponent implements OnInit {
       category_desc: category.category_desc,
       delivery_fee_weekday: category.delivery_fee_weekday,
       delivery_fee_weekend: category.delivery_fee_weekend,
-      holiday_fee: category.holiday_fee
+      holiday_fee: category.holiday_fee,
+      min_delivery_charge: category.min_delivery_charge
     });
   }
 

@@ -65,11 +65,26 @@
               </div>
             </div>
 
-            <div class="form-group mb-4">
-              <label class="form-label-premium">{{ 'HOLIDAY FEE' | translate }}</label>
-              <div class="input-group-premium">
-                <i class="fas fa-calendar-day input-icon"></i>
-                <input type="number" formControlName="holiday_fee" class="form-control-premium" placeholder="0.00" />
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group mb-4">
+                  <label class="form-label-premium">{{ 'HOLIDAY FEE' | translate }}</label>
+                  <div class="input-group-premium">
+                    <i class="fas fa-calendar-day input-icon"></i>
+                    <input type="number" formControlName="holiday_fee" class="form-control-premium"
+                      placeholder="0.00" />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group mb-4">
+                  <label class="form-label-premium">{{ 'Minimum Order (€)' | translate }}</label>
+                  <div class="input-group-premium">
+                    <i class="fas fa-coins input-icon"></i>
+                    <input type="number" formControlName="min_delivery_charge" class="form-control-premium"
+                      placeholder="0.00" />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -106,7 +121,8 @@
                 <tr>
                   <th class="text-center" width="60">#</th>
                   <th>{{ 'SUB_CAT.NAME_COL' | translate }}</th>
-                  <th width="30%">{{ 'SUB_CAT.DESC_COL' | translate }}</th>
+                  <th width="30%">{{ 'Description' | translate }}</th>
+                  <th class="text-center">{{ 'Minimum Order (€)' | translate }}</th>
                   <th class="text-end">{{ 'SUB_CAT.ACTIONS_COL' | translate }}</th>
                 </tr>
               </thead>
@@ -121,6 +137,9 @@
                   </td>
                   <td>
                     <p class="cat-desc" [title]="category.category_desc">{{ category.category_desc }}</p>
+                  </td>
+                  <td class="text-center">
+                    <span class="fw-bold">{{ category.min_delivery_charge | currency:'EUR' }}</span>
                   </td>
                   <td class="text-end">
                     <button class="btn-action-premium edit" (click)="onEdit(category)" title="Edit">
