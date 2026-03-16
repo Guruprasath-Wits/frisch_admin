@@ -45,7 +45,8 @@ export class EditproductComponent implements OnInit {
       product_img: [''], // Store image path or base64
       availability: [[]],
       pfand: ['0.00'],
-      tax: ['0.00']
+      tax: ['0.00'],
+      is_18_plus: [0]
     });
 
     this.productId = this.route.snapshot.paramMap.get('id') || '';
@@ -118,7 +119,8 @@ export class EditproductComponent implements OnInit {
           product_img: product.product_img, // Store existing image path
           availability: product.availability ? JSON.parse(product.availability) : [],
           pfand: product.pfand || '0.00',
-          tax: product.tax || '0.00'
+          tax: product.tax || '0.00',
+          is_18_plus: product.is_18_plus || 0
         });
 
         // Store old image
@@ -175,6 +177,14 @@ export class EditproductComponent implements OnInit {
       .filter(cat => selectedIds.includes(cat.id))
       .map(cat => cat.category_name)
       .join(', ');
+  }
+
+  shouldShow18Plus(): boolean {
+    const selectedIds = this.productForm.get('category_id')?.value || [];
+    const ids = Array.isArray(selectedIds) ? selectedIds : (selectedIds ? [selectedIds] : []);
+    return this.categories
+      .filter(cat => ids.includes(cat.id))
+      .some(cat => cat.category_type === 'Andere' || cat.category_type === 'Others');
   }
 
 
@@ -262,6 +272,7 @@ export class EditproductComponent implements OnInit {
       formData.append('availability', JSON.stringify(this.productForm.get('availability')?.value));
       formData.append('pfand', this.productForm.get('pfand')?.value);
       formData.append('tax', this.productForm.get('tax')?.value);
+      formData.append('is_18_plus', this.productForm.get('is_18_plus')?.value);
 
       if (this.selectedFile) {
         formData.append('product_img', this.selectedFile);

@@ -42,7 +42,8 @@ export class AddproductComponent {
       product_img: [null],
       availability: [[]], // Array for selected days
       pfand: ['0.00'],
-      tax: ['0.00']
+      tax: ['0.00'],
+      is_18_plus: [0]
     });
 
 
@@ -111,7 +112,8 @@ export class AddproductComponent {
           product_img: product.product_img,
           availability: product.availability ? JSON.parse(product.availability) : [],
           pfand: product.pfand,
-          tax: product.tax
+          tax: product.tax,
+          is_18_plus: product.is_18_plus || 0
         });
       },
       (error: any) => {
@@ -172,6 +174,14 @@ export class AddproductComponent {
       .join(', ');
   }
 
+  shouldShow18Plus(): boolean {
+    const selectedIds = this.productForm.get('category_id')?.value;
+    const ids = Array.isArray(selectedIds) ? selectedIds : (selectedIds ? [selectedIds] : []);
+    return this.categories
+      .filter(cat => ids.includes(cat.id))
+      .some(cat => cat.category_type === 'Andere' || cat.category_type === 'Others');
+  }
+
 
   daysList = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
@@ -226,6 +236,7 @@ export class AddproductComponent {
       formData.append('availability', JSON.stringify(this.productForm.get('availability')?.value));
       formData.append('pfand', this.productForm.get('pfand')?.value);
       formData.append('tax', this.productForm.get('tax')?.value);
+      formData.append('is_18_plus', this.productForm.get('is_18_plus')?.value);
 
       if (this.selectedFile) {
         formData.append('product_img', this.selectedFile);

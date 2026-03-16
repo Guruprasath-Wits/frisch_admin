@@ -125,6 +125,19 @@
                     </div>
                   </div>
                 </div>
+                <!-- 18+ Product Toggle (Conditional) -->
+                <div class="col-md-4" *ngIf="shouldShow18Plus()">
+                  <div class="form-group-custom">
+                    <label class="form-label-custom">18+ Product?</label>
+                    <div class="input-group-custom">
+                      <i class="fas fa-user-shield input-icon"></i>
+                      <select formControlName="is_18_plus" class="form-control-custom select-custom">
+                        <option [value]="0">No</option>
+                        <option [value]="1">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
                 <div class="col-12">
                   <div class="form-group-custom">
                     <label class="form-label-custom">Availability</label>

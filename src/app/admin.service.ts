@@ -471,7 +471,7 @@ export class AdminService {
   }
 
   public deleteCombo(id: number): Observable<any> {
-    return this.http.delete<any>(`${url}/combo/${id}`);
+    return this.http.post<any>(`${url}/combo/delete/${id}`, {});
   }
 
   public getMissingProducts(): Observable<any> {
@@ -492,6 +492,6 @@ export class AdminService {
   }
 
   public deleteHoliday(id: number): Observable<any> {
-    return this.http.delete<any>(`${url}/holiday/delete/${id}`);
+    return this.http.post<any>(`${url}/holiday/delete/${id}`, {});
   }
 }
