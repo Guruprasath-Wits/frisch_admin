@@ -179,7 +179,7 @@ export class AddproductComponent {
     const ids = Array.isArray(selectedIds) ? selectedIds : (selectedIds ? [selectedIds] : []);
     return this.categories
       .filter(cat => ids.includes(cat.id))
-      .some(cat => cat.category_type === 'Andere' || cat.category_type === 'Others');
+      .some(cat => cat.category_type === 'Getränke und Sonstiges - Lieferzeiten (Mo-Sa): ca. 16:30 bis 20:30 Uhr' || cat.category_type === 'Others');
   }
 
 

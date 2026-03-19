@@ -8,7 +8,10 @@ import { TranslateModule } from '@ngx-translate/core';
 interface MainCategory {
     id?: number;
     category_name: string;
-    category_desc: string;
+    delivery_fee_weekday: number;
+    delivery_fee_weekend: number;
+    holiday_fee: number;
+    min_delivery_charge: number;
 }
 
 @Component({
@@ -37,7 +40,10 @@ export class MainCategoryComponent implements OnInit {
     ) {
         this.categoryForm = this.fb.group({
             category_name: ['', Validators.required],
-            category_desc: ['', Validators.required]
+            delivery_fee_weekday: [0, Validators.required],
+            delivery_fee_weekend: [0, Validators.required],
+            holiday_fee: [0, Validators.required],
+            min_delivery_charge: [0, Validators.required]
         });
     }
 
@@ -97,7 +103,10 @@ export class MainCategoryComponent implements OnInit {
         this.currentCategory = category;
         this.categoryForm.patchValue({
             category_name: category.category_name,
-            category_desc: category.category_desc
+            delivery_fee_weekday: category.delivery_fee_weekday,
+            delivery_fee_weekend: category.delivery_fee_weekend,
+            holiday_fee: category.holiday_fee,
+            min_delivery_charge: category.min_delivery_charge
         });
     }
 

@@ -34,13 +34,7 @@
               </div>
             </div>
 
-            <div class="form-group mb-4">
-              <label class="form-label-premium">{{ 'SUB_CAT.DESCRIPTION' | translate }}</label>
-              <div class="input-group-premium">
-                <textarea formControlName="category_desc" class="form-control-premium"
-                  [placeholder]="'SUB_CAT.DESC_PLACEHOLDER' | translate"></textarea>
-              </div>
-            </div>
+
 
             <div class="row">
               <div class="col-md-6">
@@ -121,8 +115,10 @@
                 <tr>
                   <th class="text-center" width="60">#</th>
                   <th>{{ 'SUB_CAT.NAME_COL' | translate }}</th>
-                  <th width="30%">{{ 'Description' | translate }}</th>
-                  <th class="text-center">{{ 'Minimum Order (€)' | translate }}</th>
+                  <th class="text-center text-nowrap">{{ 'DELIVERY_FEE_WEEKDAY' | translate }}</th>
+                  <th class="text-center text-nowrap">{{ 'DELIVERY_FEE_WEEKEND' | translate }}</th>
+                  <th class="text-center text-nowrap">{{ 'HOLIDAY_FEE' | translate }}</th>
+                  <th class="text-center text-nowrap">{{ 'Minimum Order (€)' | translate }}</th>
                   <th class="text-end">{{ 'SUB_CAT.ACTIONS_COL' | translate }}</th>
                 </tr>
               </thead>
@@ -135,8 +131,14 @@
                     <span class="cat-name">{{ category.category_name }}</span>
                     <span class="cat-badge">{{ category.category_type }}</span>
                   </td>
-                  <td>
-                    <p class="cat-desc" [title]="category.category_desc">{{ category.category_desc }}</p>
+                  <td class="text-center">
+                    <span class="fw-bold">{{ category.delivery_fee_weekday | currency:'EUR' }}</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="fw-bold">{{ category.delivery_fee_weekend | currency:'EUR' }}</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="fw-bold">{{ category.holiday_fee | currency:'EUR' }}</span>
                   </td>
                   <td class="text-center">
                     <span class="fw-bold">{{ category.min_delivery_charge | currency:'EUR' }}</span>

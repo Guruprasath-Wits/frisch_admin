@@ -128,6 +128,18 @@ $input-bg: #f8f9fa;
           color: $primary;
         }
       }
+
+      &:disabled {
+        background-color: #f1f2f6 !important;
+        cursor: not-allowed;
+        color: #b2bec3;
+        opacity: 0.8;
+        border-color: transparent;
+
+        &+.input-icon {
+          opacity: 0.5;
+        }
+      }
     }
 
     select.form-control-premium {

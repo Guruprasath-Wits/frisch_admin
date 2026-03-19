@@ -20,15 +20,51 @@
                                     [placeholder]="'MAIN_CAT.NAME_PLACEHOLDER' | translate" />
                             </div>
                         </div>
-
-                        <div class="form-group mb-4">
-                            <label class="form-label-premium">{{ 'MAIN_CAT.DESCRIPTION' | translate }}</label>
-                            <div class="input-group-premium">
-                                <textarea formControlName="category_desc" class="form-control-premium"
-                                    [placeholder]="'MAIN_CAT.DESC_PLACEHOLDER' | translate"></textarea>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-4">
+                                    <label class="form-label-premium">{{ 'DELIVERY FEE (MO - SA)' | translate }}</label>
+                                    <div class="input-group-premium">
+                                        <i class="fas fa-euro-sign input-icon"></i>
+                                        <input type="number" formControlName="delivery_fee_weekday"
+                                            class="form-control-premium" placeholder="0.00" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-4">
+                                    <label class="form-label-premium">{{ 'DELIVERY FEE (SO)' | translate }}</label>
+                                    <div class="input-group-premium">
+                                        <i class="fas fa-euro-sign input-icon"></i>
+                                        <input type="number" formControlName="delivery_fee_weekend"
+                                            class="form-control-premium" placeholder="0.00" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-4">
+                                    <label class="form-label-premium">{{ 'HOLIDAY FEE' | translate }}</label>
+                                    <div class="input-group-premium">
+                                        <i class="fas fa-calendar-day input-icon"></i>
+                                        <input type="number" formControlName="holiday_fee" class="form-control-premium"
+                                            placeholder="0.00" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-4">
+                                    <label class="form-label-premium">{{ 'Minimum Order (€)' | translate }}</label>
+                                    <div class="input-group-premium">
+                                        <i class="fas fa-coins input-icon"></i>
+                                        <input type="number" formControlName="min_delivery_charge"
+                                            class="form-control-premium" placeholder="0.00" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-actions mt-5">
                             <button type="submit" class="btn-save-premium" [class.active]="categoryForm.valid"
                                 [disabled]="categoryForm.invalid">
@@ -62,7 +98,10 @@
                                 <tr>
                                     <th class="text-center" width="60">#</th>
                                     <th>{{ 'MAIN_CAT.NAME_COL' | translate }}</th>
-                                    <th width="40%">{{ 'MAIN_CAT.DESC_COL' | translate }}</th>
+                                    <th class="text-center">{{ 'DELIVERY_FEE_WEEKDAY' | translate }}</th>
+                                    <th class="text-center">{{ 'DELIVERY_FEE_WEEKEND' | translate }}</th>
+                                    <th class="text-center">{{ 'HOLIDAY_FEE' | translate }}</th>
+                                    <th class="text-center">{{ 'Minimum Order (€)' | translate }}</th>
                                     <th class="text-end">{{ 'MAIN_CAT.ACTIONS_COL' | translate }}</th>
                                 </tr>
                             </thead>
@@ -75,10 +114,21 @@
                                     <td>
                                         <span class="cat-name">{{ category.category_name }}</span>
                                     </td>
-                                    <td>
-                                        <p class="cat-desc" [title]="category.category_desc">{{ category.category_desc
-                                            }}</p>
+                                    <td class="text-center">
+                                        <span class="fw-bold">{{ category.delivery_fee_weekday | currency:'EUR'
+                                            }}</span>
                                     </td>
+                                    <td class="text-center">
+                                        <span class="fw-bold">{{ category.delivery_fee_weekend | currency:'EUR'
+                                            }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="fw-bold">{{ category.holiday_fee | currency:'EUR' }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="fw-bold">{{ category.min_delivery_charge | currency:'EUR' }}</span>
+                                    </td>
+
                                     <td class="text-end">
                                         <button class="btn-action-premium edit" (click)="onEdit(category)" title="Edit">
                                             <i class="fas fa-pencil-alt"></i>
@@ -92,7 +142,7 @@
 
                                 <!-- Empty State -->
                                 <tr *ngIf="categories.length === 0">
-                                    <td colspan="4" class="text-center py-5">
+                                    <td colspan="6" class="text-center py-5">
                                         <div class="text-center opacity-25">
                                             <i class="fas fa-layer-group mb-3" style="font-size: 4rem;"></i>
                                             <h4 class="fw-bold">{{ 'MAIN_CAT.EMPTY' | translate }}</h4>

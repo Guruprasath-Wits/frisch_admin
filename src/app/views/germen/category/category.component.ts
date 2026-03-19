@@ -10,7 +10,6 @@ interface Category {
   category_name: string;
   category_type: string;
 
-  category_desc: string;
   delivery_fee_weekday: number;
   delivery_fee_weekend: number;
   holiday_fee: number;
@@ -49,17 +48,31 @@ export class CategoryComponent implements OnInit {
       category_name: ['', Validators.required],
       category_type: ['', Validators.required],
 
-      category_desc: ['', Validators.required],
-      delivery_fee_weekday: [0, Validators.required],
-      delivery_fee_weekend: [0, Validators.required],
-      holiday_fee: [0, Validators.required],
-      min_delivery_charge: [0, Validators.required]
+      delivery_fee_weekday: [{ value: 0, disabled: true }, Validators.required],
+      delivery_fee_weekend: [{ value: 0, disabled: true }, Validators.required],
+      holiday_fee: [{ value: 0, disabled: true }, Validators.required],
+      min_delivery_charge: [{ value: 0, disabled: true }, Validators.required]
     });
   }
 
   ngOnInit(): void {
     this.getCategories();
     this.getMainCategories();
+    this.setupTypeChangeListener();
+  }
+
+  setupTypeChangeListener(): void {
+    this.categoryForm.get('category_type')?.valueChanges.subscribe(typeName => {
+      const selectedMainCat = this.mainCategories.find(cat => cat.category_name === typeName);
+      if (selectedMainCat) {
+        this.categoryForm.patchValue({
+          delivery_fee_weekday: selectedMainCat.delivery_fee_weekday,
+          delivery_fee_weekend: selectedMainCat.delivery_fee_weekend,
+          holiday_fee: selectedMainCat.holiday_fee,
+          min_delivery_charge: selectedMainCat.min_delivery_charge
+        });
+      }
+    });
   }
 
   getMainCategories(): void {
@@ -102,15 +115,15 @@ export class CategoryComponent implements OnInit {
       Swal.fire('Error', 'Fill the required field', 'error')
       return
     }
+    const rawValues = this.categoryForm.getRawValue();
     const formData = new FormData();
-    formData.append('category_name', this.categoryForm.value.category_name);
-    formData.append('category_type', this.categoryForm.value.category_type);
+    formData.append('category_name', rawValues.category_name);
+    formData.append('category_type', rawValues.category_type);
 
-    formData.append('category_desc', this.categoryForm.value.category_desc);
-    formData.append('delivery_fee_weekday', this.categoryForm.value.delivery_fee_weekday);
-    formData.append('delivery_fee_weekend', this.categoryForm.value.delivery_fee_weekend);
-    formData.append('holiday_fee', this.categoryForm.value.holiday_fee);
-    formData.append('min_delivery_charge', this.categoryForm.value.min_delivery_charge);
+    formData.append('delivery_fee_weekday', rawValues.delivery_fee_weekday);
+    formData.append('delivery_fee_weekend', rawValues.delivery_fee_weekend);
+    formData.append('holiday_fee', rawValues.holiday_fee);
+    formData.append('min_delivery_charge', rawValues.min_delivery_charge);
 
     if (this.isEditMode && this.currentCategory?.id) {
 
@@ -147,7 +160,6 @@ export class CategoryComponent implements OnInit {
     this.categoryForm.patchValue({
       category_name: category.category_name,
       category_type: category.category_type,
-      category_desc: category.category_desc,
       delivery_fee_weekday: category.delivery_fee_weekday,
       delivery_fee_weekend: category.delivery_fee_weekend,
       holiday_fee: category.holiday_fee,

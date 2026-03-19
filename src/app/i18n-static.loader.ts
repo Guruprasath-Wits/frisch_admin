@@ -321,7 +321,7 @@ export const TRANSLATIONS: any = {
             "PAGE_INFO": "Seite {{ current }} von {{ total }}",
             "TYPE_BAKERY": "Backwaren",
             "TYPE_FREE_TRIAL": "Kostenlose Testversion",
-            "TYPE_OTHERS": "Andere"
+            "TYPE_OTHERS": "Getränke und Sonstiges - Lieferzeiten (Mo-Sa): ca. 16:30 bis 20:30 Uhr"
         },
         "MAIN_CAT": {
             "EDIT_TITLE": "Kategorie bearbeiten",
