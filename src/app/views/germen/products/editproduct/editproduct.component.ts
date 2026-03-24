@@ -36,7 +36,7 @@ export class EditproductComponent implements OnInit {
       nick_name: [''],
       product_status: [''],
       category_id: ['', Validators.required],
-      description: [''],
+      desc: [''],
       price: [null, Validators.min(0)],
       weight: [null, Validators.min(0)],
       ingredients: [''],
@@ -110,7 +110,7 @@ export class EditproductComponent implements OnInit {
           category_id: Array.isArray(product.category_id)
             ? product.category_id
             : String(product.category_id).split(',').map(id => Number(id)),
-          description: product.desc || '',
+          desc: product.desc || '',
           price: product.price,
           weight: product.weight,
           ingredients: product.ingredients,
@@ -263,7 +263,7 @@ export class EditproductComponent implements OnInit {
       formData.append('nick_name', this.productForm.get('nick_name')?.value);
       formData.append('product_status', this.productForm.get('product_status')?.value);
       formData.append('category_id', this.productForm.get('category_id')?.value.join(','));
-      formData.append('desc', this.productForm.get('description')?.value);
+      formData.append('desc', this.productForm.get('desc')?.value);
       formData.append('price', this.productForm.get('price')?.value);
       formData.append('weight', this.productForm.get('weight')?.value);
       formData.append('ingredients', this.productForm.get('ingredients')?.value);
