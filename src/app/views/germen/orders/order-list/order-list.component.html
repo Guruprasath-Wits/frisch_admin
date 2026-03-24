@@ -78,6 +78,10 @@
                             </td>
                             <td>
                                 <span class="order-id-badge">#{{ order.order_id }}</span>
+                                <span class="age-verified-badge" *ngIf="order.is_age_verified === 1"
+                                    title="Age Verified Order">
+                                    <i class="fas fa-user-check"></i> 18+
+                                </span>
                             </td>
                             <td>
                                 <span class="price-text">€{{ order.price }}</span>
@@ -136,6 +140,10 @@
                             </td>
                             <td>
                                 <span class="order-id-badge">#{{ order.order_id }}</span>
+                                <span class="age-verified-badge" *ngIf="order.is_age_verified === 1"
+                                    title="Age Verified Order">
+                                    <i class="fas fa-user-check"></i> 18+
+                                </span>
                             </td>
                             <td>
                                 <span class="price-text">€{{ order.price }}</span>

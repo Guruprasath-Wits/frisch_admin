@@ -16,10 +16,12 @@ import { AdminService } from './admin.service';
 import { HttpClientModule } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { StaticTranslateLoader } from './i18n-static.loader';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
     provideRouter(routes,
       withRouterConfig({
         onSameUrlNavigation: 'reload'

@@ -36,51 +36,7 @@
 
 
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group mb-4">
-                  <label class="form-label-premium">{{ 'DELIVERY FEE (MO - SA)' | translate }}</label>
-                  <div class="input-group-premium">
-                    <i class="fas fa-euro-sign input-icon"></i>
-                    <input type="number" formControlName="delivery_fee_weekday" class="form-control-premium"
-                      placeholder="0.00" />
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group mb-4">
-                  <label class="form-label-premium">{{ 'DELIVERY FEE (SO)' | translate }}</label>
-                  <div class="input-group-premium">
-                    <i class="fas fa-euro-sign input-icon"></i>
-                    <input type="number" formControlName="delivery_fee_weekend" class="form-control-premium"
-                      placeholder="0.00" />
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group mb-4">
-                  <label class="form-label-premium">{{ 'HOLIDAY FEE' | translate }}</label>
-                  <div class="input-group-premium">
-                    <i class="fas fa-calendar-day input-icon"></i>
-                    <input type="number" formControlName="holiday_fee" class="form-control-premium"
-                      placeholder="0.00" />
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group mb-4">
-                  <label class="form-label-premium">{{ 'Minimum Order (€)' | translate }}</label>
-                  <div class="input-group-premium">
-                    <i class="fas fa-coins input-icon"></i>
-                    <input type="number" formControlName="min_delivery_charge" class="form-control-premium"
-                      placeholder="0.00" />
-                  </div>
-                </div>
-              </div>
-            </div>
 
             <div class="form-actions mt-5">
               <button type="submit" class="btn-save-premium" [class.active]="categoryForm.valid"
@@ -115,10 +71,7 @@
                 <tr>
                   <th class="text-center" width="60">#</th>
                   <th>{{ 'SUB_CAT.NAME_COL' | translate }}</th>
-                  <th class="text-center text-nowrap">{{ 'DELIVERY_FEE_WEEKDAY' | translate }}</th>
-                  <th class="text-center text-nowrap">{{ 'DELIVERY_FEE_WEEKEND' | translate }}</th>
-                  <th class="text-center text-nowrap">{{ 'HOLIDAY_FEE' | translate }}</th>
-                  <th class="text-center text-nowrap">{{ 'Minimum Order (€)' | translate }}</th>
+
                   <th class="text-end">{{ 'SUB_CAT.ACTIONS_COL' | translate }}</th>
                 </tr>
               </thead>
@@ -131,18 +84,7 @@
                     <span class="cat-name">{{ category.category_name }}</span>
                     <span class="cat-badge">{{ category.category_type }}</span>
                   </td>
-                  <td class="text-center">
-                    <span class="fw-bold">{{ category.delivery_fee_weekday | currency:'EUR' }}</span>
-                  </td>
-                  <td class="text-center">
-                    <span class="fw-bold">{{ category.delivery_fee_weekend | currency:'EUR' }}</span>
-                  </td>
-                  <td class="text-center">
-                    <span class="fw-bold">{{ category.holiday_fee | currency:'EUR' }}</span>
-                  </td>
-                  <td class="text-center">
-                    <span class="fw-bold">{{ category.min_delivery_charge | currency:'EUR' }}</span>
-                  </td>
+
                   <td class="text-end">
                     <button class="btn-action-premium edit" (click)="onEdit(category)" title="Edit">
                       <i class="fas fa-pencil-alt"></i>
@@ -155,7 +97,7 @@
 
                 <!-- Empty State -->
                 <tr *ngIf="categories.length === 0">
-                  <td colspan="7" class="text-center py-5">
+                  <td colspan="3" class="text-center py-5">
                     <div class="text-center opacity-25">
                       <i class="fas fa-layer-group mb-3" style="font-size: 4rem;"></i>
                       <h4 class="fw-bold">{{ 'SUB_CAT.EMPTY' | translate }}</h4>

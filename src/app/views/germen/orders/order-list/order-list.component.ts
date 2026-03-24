@@ -8,9 +8,9 @@ import Swal from 'sweetalert2';
 import { catchError, forkJoin, of } from 'rxjs';
 
 export interface Order {
-  type: string;
+  type?: string;
   id: number;
-  order_id: number;
+  order_id: string;
   user_id: number;
   tips: any;
   price: number;
@@ -20,7 +20,8 @@ export interface Order {
   instruction: string;
   status: string;
   zipcode?: string;
-  ort?: string
+  ort?: string;
+  is_age_verified?: number;
 }
 
 export interface OrderDetails {
@@ -83,7 +84,8 @@ export class OrderListComponent implements OnInit {
             ort: order.ort ?? '',
             contact: order.contact ?? '',
             instruction: order.instruction ?? '',
-            status: order.status ? order.status.toLowerCase() : ''
+            status: order.status ? order.status.toLowerCase() : '',
+            is_age_verified: order.is_age_verified ?? 0
           }));
       },
       error => {
@@ -115,7 +117,8 @@ export class OrderListComponent implements OnInit {
             contact: order.contact,
             instruction: order.instruction,
             status: order.status || 'pending',
-            tips: order.tips
+            tips: order.tips,
+            is_age_verified: order.is_age_verified ?? 0
           }));
 
       },

@@ -55,6 +55,7 @@ export class OrderAssignedComponent implements OnInit {
   mergedOrders: any[] = [];
   hasDistanceColumn = false;
   hasTimeColumn = false;
+  mainCategories: any[] = [];
 
 
   showSubscriptionOrders: boolean = false;
@@ -70,6 +71,20 @@ export class OrderAssignedComponent implements OnInit {
     this.loadDrivers();
     // this.loadSubsOrder();
     this.loadAllOrders();
+    this.loadMainCategories();
+  }
+
+  loadMainCategories(): void {
+    this.adminService.getMainCategory().subscribe(
+      (response: any) => {
+        if (response.status) {
+          this.mainCategories = response.category;
+        }
+      },
+      (error: any) => {
+        console.error('Error fetching main categories:', error);
+      }
+    );
   }
 
   loadSubsOrder(): void {
@@ -725,31 +740,19 @@ export class OrderAssignedComponent implements OnInit {
           <!-- 2. Category Selection (No Scroll) -->
           <div style="position: relative;">
             <label style="display: block; font-size: 0.65rem; font-weight: 900; color: #a29bfe; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-left: 5px;">Category Filter</label>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-height: 300px; overflow-y: auto; padding: 5px;">
               
-              <!-- Bakery Card -->
-              <div class="category-mode-card" data-value="Bakkery" style="background: #ffffff; border: 2px solid #edeff2; border-radius: 18px; padding: 15px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; position: relative; overflow: hidden;">
-                <div class="icon-box" style="width: 44px; height: 44px; background: #f8f9fa; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; transition: all 0.3s;">
-                  <i class="fas fa-bread-slice" style="color: #f7ce3e; font-size: 1.2rem;"></i>
+              ${this.mainCategories.map(cat => `
+                <div class="category-mode-card" data-value="${cat.category_name}" style="background: #ffffff; border: 2px solid #edeff2; border-radius: 18px; padding: 15px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; position: relative; overflow: hidden;">
+                  <div class="icon-box" style="width: 44px; height: 44px; background: #f8f9fa; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; transition: all 0.3s;">
+                    <i class="${this.getCategoryIcon(cat.category_name)}" style="color: ${cat.category_name.toLowerCase().includes('back') ? '#f7ce3e' : '#a29bfe'}; font-size: 1.2rem;"></i>
+                  </div>
+                  <div style="font-weight: 800; color: #2d3436; font-size: 0.8rem; margin-bottom: 2px; line-height: 1.2;">${cat.category_name}</div>
+                  <div class="selection-indicator" style="position: absolute; top: 10px; right: 10px; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #edeff2; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">
+                    <i class="fas fa-check" style="font-size: 0.6rem; color: white; display: none;"></i>
+                  </div>
                 </div>
-                <div style="font-weight: 800; color: #2d3436; font-size: 0.9rem; margin-bottom: 2px;">Bakery</div>
-                <div style="font-size: 0.65rem; color: #b2bec3; font-weight: 600;">Fresh Breads</div>
-                <div class="selection-indicator" style="position: absolute; top: 10px; right: 10px; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #edeff2; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">
-                  <i class="fas fa-check" style="font-size: 0.6rem; color: white; display: none;"></i>
-                </div>
-              </div>
-
-              <!-- Others Card -->
-              <div class="category-mode-card" data-value="Others" style="background: #ffffff; border: 2px solid #edeff2; border-radius: 18px; padding: 15px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; position: relative; overflow: hidden;">
-                <div class="icon-box" style="width: 44px; height: 44px; background: #f8f9fa; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; transition: all 0.3s;">
-                  <i class="fas fa-box" style="color: #a29bfe; font-size: 1.2rem;"></i>
-                </div>
-                <div style="font-weight: 800; color: #2d3436; font-size: 0.9rem; margin-bottom: 2px;">Others</div>
-                <div style="font-size: 0.65rem; color: #b2bec3; font-weight: 600;">General Items</div>
-                <div class="selection-indicator" style="position: absolute; top: 10px; right: 10px; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #edeff2; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">
-                  <i class="fas fa-check" style="font-size: 0.6rem; color: white; display: none;"></i>
-                </div>
-              </div>
+              `).join('')}
 
             </div>
           </div>
@@ -1227,5 +1230,21 @@ export class OrderAssignedComponent implements OnInit {
       console.error('Error preparing labels:', error);
       Swal.fire('Error', 'Failed to prepare premium labels.', 'error');
     }
+  }
+
+  getCategoryIcon(categoryName: string): string {
+    const name = categoryName.toLowerCase();
+    if (name.includes('back') || name.includes('bread') || name.includes('bakery')) {
+      return 'fas fa-bread-slice';
+    } else if (name.includes('drink') || name.includes('getränk') || name.includes('wine') || name.includes('bier')) {
+      return 'fas fa-wine-glass-alt';
+    } else if (name.includes('fruit') || name.includes('obst') || name.includes('gemüse') || name.includes('vegetable')) {
+      return 'fas fa-apple-alt';
+    } else if (name.includes('dairy') || name.includes('milk') || name.includes('milch') || name.includes('käse')) {
+      return 'fas fa-cheese';
+    } else if (name.includes('meat') || name.includes('fleisch') || name.includes('wurst')) {
+      return 'fas fa-drumstick-bite';
+    }
+    return 'fas fa-box';
   }
 }

@@ -206,6 +206,26 @@ $radius: 20px;
   font-size: 0.85rem;
 }
 
+.age-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  background: rgba(#e74c3c, 0.1);
+  color: #e74c3c;
+  border: 1px solid rgba(#e74c3c, 0.2);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  margin-left: 8px;
+  vertical-align: middle;
+  white-space: nowrap;
+
+  i {
+    font-size: 0.75rem;
+    margin-right: 4px;
+  }
+}
+
 .price-text {
   font-weight: 800;
   color: #27ae60;
