@@ -126,11 +126,20 @@ export class UserslistComponent implements OnInit {
 
 
   get filteredUsers() {
-    return this.users.filter(user =>
-      (!this.searchTerm || user.username.toLowerCase().includes(this.searchTerm.toLowerCase())) &&
-      (!this.searchEmail || user.email.toLowerCase().includes(this.searchEmail.toLowerCase())) &&
-      (!this.searchPhone || user.phoneNo.includes(this.searchPhone))
-    );
+    const term = this.searchTerm?.toLowerCase() || '';
+    const email = this.searchEmail?.toLowerCase() || '';
+    const phone = this.searchPhone?.toLowerCase() || '';
+
+    return this.users.filter(user => {
+      const usernameMatch = !term || (user.username && user.username.toLowerCase().includes(term));
+      const emailMatch = !email || (user.email && user.email.toLowerCase().includes(email));
+      const phoneMatch = !phone || (user.phoneNo && String(user.phoneNo).toLowerCase().includes(phone));
+      return usernameMatch && emailMatch && phoneMatch;
+    });
+  }
+
+  onSearchChange() {
+    this.page = 1;
   }
 
   get totalPages() {

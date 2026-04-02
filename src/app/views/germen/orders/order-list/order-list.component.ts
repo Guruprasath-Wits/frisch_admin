@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Router } from '@angular/router';
-import { AdminService } from 'src/app/admin.service';
+import { AdminService } from '../../../../admin.service';
 import Swal from 'sweetalert2';
 import { catchError, forkJoin, of } from 'rxjs';
 
@@ -201,14 +201,39 @@ export class OrderListComponent implements OnInit {
 
   get filteredOrders() {
     const orders = this.showSubscriptionOrders ? this.subscriptionOrders : this.Orders;
-    return orders.filter(order =>
-      (!this.searchEmail || order.address.toLowerCase().includes(this.searchEmail.toLowerCase())) &&
-      (!this.searchPhone || order.contact.includes(this.searchPhone)) &&
-      (!this.searchOrderId || order.order_id.toString().includes(this.searchOrderId)) &&
-      (!this.searchPrice || order.price.toString().includes(this.searchPrice)) &&
-      (!this.searchStatus || order.status.toLowerCase().includes(this.searchStatus.toLowerCase())) &&
-      (!this.searchDate || new Date(order.delivery_date).toISOString().split('T')[0] === this.searchDate)
-    );
+
+    const emailTerm = this.searchEmail?.toLowerCase() || '';
+    const phoneTerm = this.searchPhone || '';
+    const orderIdTerm = this.searchOrderId || '';
+    const priceTerm = this.searchPrice || '';
+    const statusTerm = this.searchStatus?.toLowerCase() || '';
+    const dateTerm = this.searchDate || '';
+
+    return orders.filter(order => {
+      const addressMatch = !emailTerm || (order.address && order.address.toLowerCase().includes(emailTerm));
+      const phoneMatch = !phoneTerm || (order.contact && order.contact.includes(phoneTerm));
+      const orderIdMatch = !orderIdTerm || (order.order_id && order.order_id.toString().includes(orderIdTerm));
+      const priceMatch = !priceTerm || (order.price && order.price.toString().includes(priceTerm));
+      const statusMatch = !statusTerm || (order.status && order.status.toLowerCase().includes(statusTerm));
+
+      let dateMatch = true;
+      if (dateTerm && order.delivery_date) {
+        try {
+          const orderDate = new Date(order.delivery_date).toISOString().split('T')[0];
+          dateMatch = orderDate === dateTerm;
+        } catch (e) {
+          dateMatch = false;
+        }
+      } else if (dateTerm) {
+        dateMatch = false;
+      }
+
+      return addressMatch && phoneMatch && orderIdMatch && priceMatch && statusMatch && dateMatch;
+    });
+  }
+
+  onSearchChange() {
+    this.page = 1;
   }
 
 

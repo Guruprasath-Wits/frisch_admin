@@ -4,7 +4,8 @@ import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 
 import Swal from 'sweetalert2';
 
-import { AdminService } from 'src/app/admin.service';
+
+import { AdminService } from '../../../admin.service';
 import {
   AvatarComponent,
   BadgeComponent,
@@ -45,7 +46,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
   readonly colorMode = this.#colorModeService.colorMode;
 
   currentUserId: any | null = null;
-  currentLang: string = 'de';
+  currentLang: string = 'en';
 
   readonly colorModes = [
     { name: 'light', text: 'Light', icon: 'cilSun' },
@@ -60,7 +61,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
 
   constructor(private router: Router, private adminService: AdminService, private translate: TranslateService) {
     super();
-    this.currentLang = localStorage.getItem('lang') || 'de';
+    this.currentLang = localStorage.getItem('lang') || 'en';
     this.translate.use(this.currentLang);
   }
 

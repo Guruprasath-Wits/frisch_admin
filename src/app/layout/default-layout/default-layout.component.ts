@@ -114,42 +114,105 @@ export class DefaultLayoutComponent implements OnInit {
     console.log('Permissions:', this.permissions);
 
     // Create a set of allowed names based on permissions
-    const allowedNames = new Set<string>();
+    const allowedKeys = new Set<string>();
     for (const obj of this.permissions) {
       if (obj && typeof obj === 'object') {
         for (const key in obj) {
           if (Object.prototype.hasOwnProperty.call(obj, key) && obj[key] === 1) {
-            allowedNames.add(key);
+            allowedKeys.add(key);
           }
         }
       }
     }
 
-    // Explicitly allow essential menu items
-    allowedNames.add('Steuer');
-    allowedNames.add('Flasche');
-    allowedNames.add('Dashboard');
-    allowedNames.add('Combo Packs');
-    allowedNames.add('Fehlende Produkte');
-    allowedNames.add('Transactions');
-    allowedNames.add('Coupon Management');
-    allowedNames.add('Main_Category');
-    allowedNames.add('Sub_Category');
-    allowedNames.add('Holiday');
+    // Mapping from nav item name to permission key
+    const navToPermMapping: Record<string, string> = {
+      'Dashboard': 'Dashboard',
+      'Main_Category': 'Main_Category',
+      'Sub_Category': 'Sub_Category',
+      'Steuer': 'Steuer',
+      'Flasche': 'Bottle',
+      'Product': 'Product',
+      'Fehlende Produkte': 'Missing_Products',
+      'Combo Packs': 'Combo_Packs',
+      'Customer_Enquiry': 'Customer_Enquiry',
+      'Coupon Management': 'Coupon_Management',
+      'OrderList': 'OrderList',
+      'Sample_Order': 'Sample_Order',
+      'Our_Delivery_Areas': 'Our_Delivery_Areas',
+      'User_Advantages': 'User_Advantages',
+      'Jobs': 'Jobs',
+      'Transactions': 'Subscription_Transactions',
+      'FAQ': 'FAQ',
+      'Imprint': 'Imprint',
+      'Holiday': 'Holiday',
+      'Roles': 'Roles',
+      'Permissions': 'Permissions',
+      'Users': 'Users',
+      'Settings': 'Settings'
+    };
 
-    // Filter from originalNavItems to maintain order and structure
-    const filteredSource = originalNavItems.filter(item => {
-      // Always allow titles (headers)
-      if (item.title) return true;
+    // Function to recursively filter nav items
+    const filterNavItems = (items: INavData[], parentAllowed: boolean = false): INavData[] => {
+      return items.reduce((acc: INavData[], item: INavData) => {
+        if (item.title) {
+          acc.push(item);
+          return acc;
+        }
 
-      // Allow if the name is in the allowed list
-      if (item.name && allowedNames.has(item.name)) return true;
+        const permKey = item.name ? (navToPermMapping[item.name] || item.name) : '';
+        const hasMapping = item.name && !!navToPermMapping[item.name];
 
-      return false;
-    });
+        // Item is explicitly allowed if its key is checked
+        const isExplicitlyAllowed = item.name && allowedKeys.has(permKey);
+
+        // If parent is allowed and this child has NO specific mapping, allow it
+        const isAllowedByParent = parentAllowed && !hasMapping;
+
+        const isEffectiveAllowed = isExplicitlyAllowed || isAllowedByParent;
+
+        let filteredChildren: INavData[] | undefined;
+        if (item.children) {
+          filteredChildren = filterNavItems(item.children, isEffectiveAllowed);
+        }
+
+        // Keep item if:
+        // 1. The item itself is allowed
+        // 2. It has children and at least one child is allow (for cases where parent is not in mapping but children are)
+        if (isEffectiveAllowed || (filteredChildren && filteredChildren.length > 0)) {
+          const newItem = { ...item };
+          if (filteredChildren) {
+            newItem.children = filteredChildren;
+          }
+          acc.push(newItem);
+        }
+
+        return acc;
+      }, []);
+    };
+
+    const filteredSource = filterNavItems(originalNavItems);
+
+    // Remove empty titles (headers with no items underneath)
+    const finalFilteredSource: INavData[] = [];
+    for (let i = 0; i < filteredSource.length; i++) {
+      const current = filteredSource[i];
+      if (current.title) {
+        // If it's a title, check if there's any non-title item before the next title
+        let hasContent = false;
+        for (let j = i + 1; j < filteredSource.length; j++) {
+          if (filteredSource[j].title) break;
+          hasContent = true;
+          break;
+        }
+        if (hasContent) finalFilteredSource.push(current);
+      } else {
+        finalFilteredSource.push(current);
+      }
+    }
 
     // Translate names
-    this.navItems = this.translateItems(JSON.parse(JSON.stringify(filteredSource)));
+    this.navItems = this.translateItems(JSON.parse(JSON.stringify(finalFilteredSource)));
 
     console.log('Final Filtered Nav Items (Translated):', this.navItems);
     this.cdr.detectChanges();

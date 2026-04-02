@@ -496,6 +496,6 @@ export const TRANSLATIONS: any = {
 
 export class StaticTranslateLoader implements TranslateLoader {
     getTranslation(lang: string): Observable<any> {
-        return of(TRANSLATIONS[lang] || TRANSLATIONS['de']);
+        return of(TRANSLATIONS[lang] || TRANSLATIONS['en']);
     }
 }

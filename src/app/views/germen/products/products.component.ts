@@ -60,9 +60,14 @@ export class ProductsComponent implements OnInit {
   }
 
   get filteredProducts() {
+    const term = this.searchTerm?.toLowerCase() || '';
     return this.products.filter(product =>
-      !this.searchTerm || product.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+      !term || (product.name && product.name.toLowerCase().includes(term))
     );
+  }
+
+  onSearchChange() {
+    this.page = 1;
   }
 
   get totalPages() {

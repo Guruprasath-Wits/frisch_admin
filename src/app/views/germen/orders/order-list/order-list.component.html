@@ -22,31 +22,32 @@
                 <div class="search-box-premium">
                     <i class="fas fa-map-marker-alt input-icon"></i>
                     <input type="text" class="form-control-premium" [placeholder]="'ORDER.SEARCH_ADDRESS' | translate"
-                        [(ngModel)]="searchEmail" />
+                        [(ngModel)]="searchEmail" (ngModelChange)="onSearchChange()" />
                 </div>
                 <div class="search-box-premium">
                     <i class="fas fa-phone-alt input-icon"></i>
                     <input type="text" class="form-control-premium" [placeholder]="'ORDER.SEARCH_CONTACT' | translate"
-                        [(ngModel)]="searchPhone" />
+                        [(ngModel)]="searchPhone" (ngModelChange)="onSearchChange()" />
                 </div>
                 <div class="search-box-premium">
                     <i class="fas fa-hashtag input-icon"></i>
                     <input type="text" class="form-control-premium" [placeholder]="'ORDER.SEARCH_ORDER_ID' | translate"
-                        [(ngModel)]="searchOrderId" />
+                        [(ngModel)]="searchOrderId" (ngModelChange)="onSearchChange()" />
                 </div>
                 <div class="search-box-premium">
                     <i class="fas fa-info-circle input-icon"></i>
                     <input type="text" class="form-control-premium" [placeholder]="'ORDER.SEARCH_STATUS' | translate"
-                        [(ngModel)]="searchStatus" />
+                        [(ngModel)]="searchStatus" (ngModelChange)="onSearchChange()" />
                 </div>
                 <div class="search-box-premium">
                     <i class="fas fa-calendar-day input-icon"></i>
-                    <input type="date" class="form-control-premium" [(ngModel)]="searchDate" />
+                    <input type="date" class="form-control-premium" [(ngModel)]="searchDate"
+                        (ngModelChange)="onSearchChange()" />
                 </div>
                 <div class="search-box-premium">
                     <i class="fas fa-euro-sign input-icon"></i>
                     <input type="text" class="form-control-premium" [placeholder]="'ORDER.SEARCH_PRICE' | translate"
-                        [(ngModel)]="searchPrice" />
+                        [(ngModel)]="searchPrice" (ngModelChange)="onSearchChange()" />
                 </div>
             </div>
         </div>
@@ -134,7 +135,7 @@
                     <!-- Subscription Orders -->
                     <tbody *ngIf="showSubscriptionOrders">
                         <tr
-                            *ngFor="let order of subscriptionOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
+                            *ngFor="let order of filteredOrders | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
                             <td class="text-center">
                                 <span class="fw-bold text-muted">{{ i + 1 + (page - 1) * itemsPerPage }}</span>
                             </td>

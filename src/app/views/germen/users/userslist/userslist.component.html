@@ -24,21 +24,21 @@
               <div class="filter-group-custom">
                 <i class="fas fa-user input-icon"></i>
                 <input type="text" class="form-control-custom" [placeholder]="'USER.SEARCH_USERNAME' | translate"
-                  [(ngModel)]="searchTerm" />
+                  [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" />
               </div>
             </div>
             <div class="col-md-4">
               <div class="filter-group-custom">
                 <i class="fas fa-envelope input-icon"></i>
                 <input type="email" class="form-control-custom" [placeholder]="'USER.SEARCH_EMAIL' | translate"
-                  [(ngModel)]="searchEmail" />
+                  [(ngModel)]="searchEmail" (ngModelChange)="onSearchChange()" />
               </div>
             </div>
             <div class="col-md-4">
               <div class="filter-group-custom">
                 <i class="fas fa-phone input-icon"></i>
                 <input type="text" class="form-control-custom" [placeholder]="'USER.SEARCH_PHONE' | translate"
-                  [(ngModel)]="searchPhone" />
+                  [(ngModel)]="searchPhone" (ngModelChange)="onSearchChange()" />
               </div>
             </div>
           </div>

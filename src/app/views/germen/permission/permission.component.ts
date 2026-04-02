@@ -22,9 +22,10 @@ import { TranslateModule } from '@ngx-translate/core';
 export class PermissionComponent implements OnInit {
   roleForm: FormGroup;
   pages: string[] = [
-    'Category', 'Product', 'Customer_Enquiry', 'Coupon Management', 'OrderList', 'Sample_Order',
+    'Dashboard', 'Main_Category', 'Sub_Category', 'Product', 'Customer_Enquiry', 'Coupon_Management', 'OrderList', 'Sample_Order',
     'Our_Delivery_Areas', 'User_Advantages', 'Jobs', 'FAQ', 'Roles',
-    'Permissions', 'Users', 'Settings', 'Imprint', 'Subscription_Transactions'
+    'Permissions', 'Subscription_Transactions', 'Steuer', 'Bottle', 'Users', 'Settings', 'Imprint',
+    'Missing_Products', 'Combo_Packs', 'Holiday'
   ];
   allocatedAccess: { [key: string]: number } = {};
   roles: Role[] = [];

@@ -44,7 +44,7 @@ export const appConfig: ApplicationConfig = {
           provide: TranslateLoader,
           useClass: StaticTranslateLoader
         },
-        defaultLanguage: 'de'
+        defaultLanguage: 'en'
       })
     ),
     IconSetService,
