@@ -383,7 +383,8 @@ export class AdminService {
   }
 
   public loadPermissionsById(perId: any): Observable<any> {
-    return this.http.get<any>(`${url}/admin/permissions/readPermissionId/${perId}`);
+    const timestamp = new Date().getTime();
+    return this.http.get<any>(`${url}/admin/permissions/readPermissionId/${perId}?t=${timestamp}`);
   }
 
   public updatePermissions(perId: number, perData: any): Observable<any> {

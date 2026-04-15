@@ -95,8 +95,10 @@ export class LoginComponent implements OnInit {
         customClass: {
           popup: 'swal-narrow-alert'
         }
+      }).then(() => {
+        // Force a hard reload to clear any cached state between user sessions
+        window.location.href = '/#/dashboard';
       });
-      this.router.navigate(['/dashboard']);
     }
     else {
       Swal.fire({

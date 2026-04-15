@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NgScrollbar } from 'ngx-scrollbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Swal from 'sweetalert2';
@@ -50,7 +50,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 })
 export class DefaultLayoutComponent implements OnInit {
   public navItems: INavData[] = [];
-  permissions: Record<string, number>[] = []; // Permissions as an array of key-value objects
+  permissions: any[] = []; // Permissions as an array of key-value objects
   allowedNavItems: INavData[] = []; // Filtered navItems based on permissions
   currentUserId: string | null = null;
   roleId: string | null = null; // Current user ID from localStorage
@@ -59,7 +59,8 @@ export class DefaultLayoutComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private cdr: ChangeDetectorRef,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -215,6 +216,44 @@ export class DefaultLayoutComponent implements OnInit {
     this.navItems = this.translateItems(JSON.parse(JSON.stringify(finalFilteredSource)));
 
     console.log('Final Filtered Nav Items (Translated):', this.navItems);
+
+    // Redirection logic if on Dashboard or root
+    const currentUrl = this.router.url.split('?')[0];
+    const isAtRoot = currentUrl === '/dashboard' || currentUrl === '/';
+
+    // IMPORTANT: Only perform redirection if permissions have been loaded
+    if (isAtRoot && this.permissions.length > 0) {
+      // Check raw permissions for Dashboard access
+      const hasDashboardPermission = this.permissions.some(p => {
+        const value = p['Dashboard'];
+        return value == 1 || value == '1' || value == true || String(value).toLowerCase() === 'true';
+      });
+
+      console.log(`Navigation check for role: ${this.currentUserId}, URL: ${currentUrl}, HasDashboard: ${hasDashboardPermission}`);
+
+      if (hasDashboardPermission) {
+        // Force Dashboard if we are at root
+        if (currentUrl !== '/dashboard') {
+          console.log('Force navigating Admin to Dashboard');
+          this.router.navigateByUrl('/dashboard');
+        }
+      } else {
+        // No dashboard permission, redirect to the first authorized valid navigation item
+        const firstValidItem = finalFilteredSource.find(item => item.url && !item.title);
+        if (firstValidItem && firstValidItem.url) {
+          const targetUrl = firstValidItem.url;
+          if (typeof targetUrl === 'string') {
+            const absoluteUrl = targetUrl.startsWith('/') ? targetUrl : '/' + targetUrl;
+            console.log('No Dashboard access, redirecting to first allowed route:', absoluteUrl);
+            this.router.navigateByUrl(absoluteUrl);
+          } else {
+            console.log('No Dashboard access, redirecting to first allowed route (array):', targetUrl);
+            this.router.navigate(targetUrl);
+          }
+        }
+      }
+    }
+
     this.cdr.detectChanges();
   }
 

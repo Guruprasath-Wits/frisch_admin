@@ -28,7 +28,7 @@ import { HolidayComponent } from './views/germen/pages/holiday/holiday.component
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'dashboard',
     pathMatch: 'full'
   },
   {
