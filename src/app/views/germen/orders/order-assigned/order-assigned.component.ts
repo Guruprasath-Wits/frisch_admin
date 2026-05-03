@@ -186,52 +186,62 @@ export class OrderAssignedComponent implements OnInit {
   }
 
   GetOrder() {
-    const order = {
-      driver_id: this.selectedDriver,
-      delivery_date: this.searchDate,
-      status: "Assigned"
-    };
+    this.isLoading = true;
 
-    this.adminService.getOrder(order).subscribe(
-      (res: any) => {
-        console.log('Raw API response:', res);
+    // We use allMergedOrders as the source of truth (loaded in loadAllOrders)
+    if (!this.allMergedOrders || this.allMergedOrders.length === 0) {
+      this.loadAllOrders(); // Re-load if somehow empty
+    }
 
-        if (res.status === false) {
-          Swal.fire('Please Select Required Fields', '', 'info');
-          return;
-        }
+    // Filter logic
+    const filtered = this.allMergedOrders.filter((order: any) => {
+      const dateMatch = !this.searchDate || this.compareDates(order.delivery_date, this.searchDate);
+      const driverMatch = !this.selectedDriver || order.driver_id == this.selectedDriver;
+      return dateMatch && driverMatch;
+    });
 
-        console.log('Orders fetched successfully', res.orders);
+    this.mergedOrders = [...filtered];
+    this.page = 1; // Reset to first page
+    this.updateColumnFlags();
+    this.isLoading = false;
 
-        // Convert both sides to YYYY-MM-DD for comparison
-        const filteredOrders = res.orders.filter((o: any) => {
-          // Convert delivery_date to local YYYY-MM-DD
-          const apiDate = new Date(o.delivery_date).toLocaleDateString('en-CA'); // en-CA gives YYYY-MM-DD
-          const searchDate = new Date(this.searchDate).toLocaleDateString('en-CA');
-          return apiDate === searchDate;
-        });
+    if (this.mergedOrders.length === 0) {
+      // Optional: Show a small toast instead of a blocking alert
+      console.log('No orders found for the selected criteria');
+    }
+  }
 
-        console.log('Filtered Orders by Date:', filteredOrders);
+  /**
+   * Resets all filters to their default state
+   */
+  public resetFilters(): void {
+    this.searchDate = '';
+    this.selectedDriver = '';
+    this.mergedOrders = [...this.allMergedOrders];
+    this.page = 1;
+    this.updateColumnFlags();
+  }
 
+  /**
+   * Specifically clears the driver filter
+   */
+  public clearDriverFilter(): void {
+    this.selectedDriver = '';
+    this.isDriverDropdownOpen = false;
+    // We don't automatically trigger GetOrder() here to match existing behavior
+    // but the user can click Get Order after clearing.
+  }
 
-        const sortedOrders = filteredOrders.sort((a: any, b: any) => a.index_id - b.index_id);
-
-        const processedOrders = sortedOrders.map((order: any) => ({
-          ...order,
-          customerName: this.getUserName(order.user_id || order.userid || order.customer_id)
-        }));
-
-        this.allMergedOrders = [...processedOrders];
-        this.mergedOrders = [...processedOrders];
-        this.updateColumnFlags();
-
-        this.showSubscriptionOrders = false;
-      },
-      (err: any) => {
-        console.error('Error fetching orders', err);
-        Swal.fire('Error', 'An error occurred while fetching orders.', 'error');
-      }
-    );
+  // Helper for timezone-safe date comparison
+  compareDates(orderDate: any, searchDate: string): boolean {
+    if (!orderDate || !searchDate) return false;
+    try {
+      // orderDate might be a string or a Date object from the API
+      const d1 = new Date(orderDate).toLocaleDateString('en-CA'); // YYYY-MM-DD
+      return d1 === searchDate;
+    } catch (e) {
+      return false;
+    }
   }
 
 
@@ -742,8 +752,9 @@ export class OrderAssignedComponent implements OnInit {
             <label style="display: block; font-size: 0.65rem; font-weight: 900; color: #a29bfe; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-left: 5px;">Category Filter</label>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-height: 300px; overflow-y: auto; padding: 5px;">
               
-              ${this.mainCategories.map(cat => `
-                <div class="category-mode-card" data-value="${cat.category_name}" style="background: #ffffff; border: 2px solid #edeff2; border-radius: 18px; padding: 15px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; position: relative; overflow: hidden;">
+              ${this.mainCategories.map(cat => {
+                return `
+                <div class="category-mode-card" data-value="${cat.id}" style="background: #ffffff; border: 2px solid #edeff2; border-radius: 18px; padding: 15px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; position: relative; overflow: hidden;">
                   <div class="icon-box" style="width: 44px; height: 44px; background: #f8f9fa; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; transition: all 0.3s;">
                     <i class="${this.getCategoryIcon(cat.category_name)}" style="color: ${cat.category_name.toLowerCase().includes('back') ? '#f7ce3e' : '#a29bfe'}; font-size: 1.2rem;"></i>
                   </div>
@@ -752,7 +763,7 @@ export class OrderAssignedComponent implements OnInit {
                     <i class="fas fa-check" style="font-size: 0.6rem; color: white; display: none;"></i>
                   </div>
                 </div>
-              `).join('')}
+              `;}).join('')}
 
             </div>
           </div>
@@ -801,13 +812,6 @@ export class OrderAssignedComponent implements OnInit {
         }
 
         const formattedDate = dateInput.value;
-        const isHoliday = await this.checkPublicHoliday(formattedDate);
-        const day = inputDate.getDay(); // 0 = Sunday, 6 = Saturday
-
-        if (!isHoliday && day !== 6 && day !== 0) {
-          Swal.showValidationMessage('Only Saturdays, Sundays, or public holidays are allowed.');
-          return false;
-        }
 
         return {
           date: dateInput.value,
@@ -841,19 +845,51 @@ export class OrderAssignedComponent implements OnInit {
 
   // Fetch PDF from backend
   getLabels(date: string, category: string): void {
-    this.isLoading = true; // Start loader
+    this.isLoading = true;
 
     this.adminService.getLabels(date, category).subscribe(
       (response: Blob) => {
+        this.isLoading = false;
+        if (response.size === 0) {
+          Swal.fire('No Data', 'No production data found for the selected date and category.', 'info');
+          return;
+        }
+
         const blob = new Blob([response], { type: 'application/pdf' });
         const blobUrl = URL.createObjectURL(blob);
-        window.open(blobUrl, '_blank'); // Open PDF in new tab
-        this.isLoading = false; // Stop loader
+        
+        // Use a link to trigger the open/download
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Clean up
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
       },
       (error: any) => {
-        this.isLoading = false; // Stop loader on error
-        console.error('Error fetching PDF:', error);
-        Swal.fire('Error', 'There was an error fetching the labels. Please try again later.', 'error');
+        this.isLoading = false;
+        console.error('Error fetching Production Report:', error);
+        
+        // Try to read the error message from the blob if it's not a PDF
+        if (error.error instanceof Blob) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = reader.result as string;
+            try {
+              const errObj = JSON.parse(result);
+              Swal.fire('Error', errObj.message || 'Failed to fetch the report.', 'error');
+            } catch (e) {
+              // If not JSON, show the raw text result (e.g. "No orders found...")
+              Swal.fire('Error', result || 'Server returned an error while generating the report.', 'error');
+            }
+          };
+          reader.readAsText(error.error);
+        } else {
+          Swal.fire('Error', 'There was an error fetching the report. Please check if the date and category are correct.', 'error');
+        }
       }
     );
   }
@@ -1185,8 +1221,8 @@ export class OrderAssignedComponent implements OnInit {
     this.isDriverDropdownOpen = !this.isDriverDropdownOpen;
   }
 
-  selectDriverOption(driver: Driver): void {
-    this.selectedDriver = driver.id.toString();
+  selectDriverOption(driver: Driver | null): void {
+    this.selectedDriver = driver ? driver.id.toString() : '';
     this.isDriverDropdownOpen = false;
   }
 

@@ -184,7 +184,10 @@ export class EditproductComponent implements OnInit {
     const ids = Array.isArray(selectedIds) ? selectedIds : (selectedIds ? [selectedIds] : []);
     return this.categories
       .filter(cat => ids.includes(cat.id))
-      .some(cat => cat.category_type === 'Getränke und Sonstiges - Lieferzeiten (Mo-Sa): ca. 16:30 bis 20:30 Uhr' || cat.category_type === 'Others');
+      .some(cat => 
+        (cat.category_type && cat.category_type.includes('Getränke und Sonstiges')) || 
+        cat.category_type === 'Others'
+      );
   }
 
 

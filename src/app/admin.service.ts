@@ -420,7 +420,7 @@ export class AdminService {
 
   public getLabels(date: string, category: string): Observable<Blob> {
     const url = `${this.apiUrl}/?date=${encodeURIComponent(date)}&category=${encodeURIComponent(category)}`;
-    return this.http.get<Blob>(url, { responseType: 'blob' as 'json' });
+    return this.http.get(url, { responseType: 'blob' });
   }
 
   public getTaxes(): Observable<any> {

@@ -36,6 +36,16 @@
                         </div>
 
                         <div class="select-options-container" *ngIf="isDriverDropdownOpen">
+                            <div class="option-item" (click)="clearDriverFilter()"
+                                [class.selected]="!selectedDriver">
+                                <div class="option-content">
+                                    <div class="driver-info">
+                                        <span class="driver-name">All Drivers</span>
+                                        <span class="driver-role">Clear Filter</span>
+                                    </div>
+                                    <i class="fas fa-check check-icon" *ngIf="!selectedDriver"></i>
+                                </div>
+                            </div>
                             <div class="option-item" *ngFor="let driver of drivers" (click)="selectDriverOption(driver)"
                                 [class.selected]="selectedDriver === driver.id.toString()">
                                 <div class="option-content">
@@ -52,21 +62,25 @@
                 </div>
 
                 <div class="action-buttons-strip">
-                    <button (click)="GetOrder()" class="btn-premium search-btn"
-                        [disabled]="!searchDate || !selectedDriver">
+                    <button (click)="GetOrder()" class="btn-premium search-btn">
                         <i class="fas fa-search"></i> Get Order
+                    </button>
+
+                    <button (click)="resetFilters()" class="btn-premium report-btn"
+                        style="background: #e74c3c; border-color: #c0392b;">
+                        <i class="fas fa-undo"></i> Clear Filters
                     </button>
 
                     <button (click)="selectDateAndDownload()" class="btn-premium report-btn">
                         <i class="fas fa-file-invoice"></i> Production Report
                     </button>
 
-                    <button (click)="getLabelReport()" class="btn-premium label-btn">
+                    <!-- <button (click)="getLabelReport()" class="btn-premium label-btn">
                         <i class="fas fa-tags"></i> Get Labels (PDF)
-                    </button>
+                    </button> -->
 
                     <button (click)="printPremiumLabels()" class="btn-premium search-btn" style="background: #9b59b6;">
-                        <i class="fas fa-print"></i> Premium Labels
+                        <i class="fas fa-print"></i> Get Labels
                     </button>
                 </div>
             </div>
