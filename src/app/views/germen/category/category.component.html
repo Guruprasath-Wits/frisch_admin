@@ -34,6 +34,11 @@
               </div>
             </div>
 
+            <div class="form-group mb-4 d-flex align-items-center">
+              <input type="checkbox" formControlName="is_18_plus" id="is_18_plus" class="form-check-input me-2" style="width: 20px; height: 20px; cursor: pointer;" />
+              <label for="is_18_plus" class="form-label-premium mb-0" style="cursor: pointer;">18+ Required</label>
+            </div>
+
 
 
 
@@ -83,6 +88,7 @@
                   <td>
                     <span class="cat-name">{{ category.category_name }}</span>
                     <span class="cat-badge">{{ category.category_type }}</span>
+                    <span *ngIf="category.is_18_plus" class="badge bg-danger ms-2" style="font-size: 0.7rem;">18+</span>
                   </td>
 
                   <td class="text-end">

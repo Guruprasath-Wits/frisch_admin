@@ -177,11 +177,11 @@ export class AddproductComponent {
   shouldShow18Plus(): boolean {
     const selectedIds = this.productForm.get('category_id')?.value;
     const ids = Array.isArray(selectedIds) ? selectedIds : (selectedIds ? [selectedIds] : []);
+
     return this.categories
       .filter(cat => ids.includes(cat.id))
-      .some(cat => 
-        (cat.category_type && cat.category_type.includes('Getränke und Sonstiges')) || 
-        cat.category_type === 'Others'
+      .some(cat =>
+        cat.is_18_plus === 1
       );
   }
 
