@@ -195,7 +195,7 @@ export class AddproductComponent {
     if (input.checked) {
       if (!currentDays.includes(day)) {
         currentDays.push(day);
-      }
+      }1
     } else {
       const index = currentDays.indexOf(day);
       if (index > -1) {
